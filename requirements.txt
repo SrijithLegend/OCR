@@ -1,0 +1,22 @@
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9
+pydantic>=2.6
+pymupdf>=1.24
+pillow>=10.0
+openpyxl>=3.1
+anthropic>=0.40   # only for EXTRACTOR=claude
+
+# DeepSeek-OCR-2 (EXTRACTOR=deepseek). Install torch first:
+#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+transformers==4.46.3
+tokenizers==0.20.3
+accelerate
+bitsandbytes
+einops
+addict
+easydict
+
+# dev / tests
+pytest>=8.0
+httpx>=0.27

@@ -1,45 +1,22 @@
-#!/usr/bin/env python3
-"""
-Extract SERVICE / PROCESS CONDITIONS from valve datasheets of ANY layout
-(PDF or image) into a clean Excel workbook, with per-cell review flags.
+"""Extract valve-datasheet process conditions with DeepSeek-OCR-2 (local, 4-bit) into Excel.
 
-    pip install google-genai pymupdf pillow openpyxl
-    put GENAI_API_KEY=... in a .env file next to this script
-    python main.py a.pdf b.png c.pdf -o process_conditions.xlsx
+Pipeline: PDF/image -> page PNG -> DeepSeek-OCR-2 markdown -> table parser -> rules -> xlsx.
+
+    pip install -r requirements.txt
+    python main.py a.pdf b.png -o process_conditions.xlsx
     (no files given = every pdf/image in this folder)
-
-Options
-    --passes {1,2}  2 = independent second read; disputed cells are re-read a
-                    third time and decided by majority (default 2)
-    --dpi N         PDF render resolution (default 300)
-    --bands N       vertical zoom tiles per page (default 3, 0 = none)
-    --cols N        horizontal zoom tiles per page (default 1; use 2 for dense,
-                    two-column sheets)
-    --model M       default env GEMINI_MODEL or gemini-3.5-flash-lite
-
-Accuracy design
-    * columns are mapped by HEADER TEXT (Max/Norm/Min order differs per vendor)
-    * PDF text layer (layout preserved) is supplied when it exists, so digits
-      come from real characters, not pixels
-    * full page + overlapping zoom tiles are sent for legibility
-    * values are copied as printed; illegible -> "UNREADABLE", blanks omitted
-    * two independent reads, disputed cells re-read and majority-voted
-    * engineering checks (P1 - dP = P2, unit sanity, ordering, ranges)
-    * everything doubtful lands on the Review sheet and is coloured in Excel
 """
 import argparse
-import copy
-import io
-import json
+import html
 import math
 import os
 import re
 import sys
+import tempfile
 import time
+from html.parser import HTMLParser
 from pathlib import Path
 
-from google import genai
-from google.genai import types
 from PIL import Image
 from openpyxl import Workbook
 from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
@@ -52,14 +29,8 @@ except ImportError:  # older PyMuPDF
 
 Image.MAX_IMAGE_PIXELS = None
 
-_env = Path(__file__).with_name(".env")
-if _env.exists():
-    for _l in _env.read_text(encoding="utf-8").splitlines():
-        if "=" in _l and not _l.lstrip().startswith("#"):
-            _k, _v = _l.split("=", 1)
-            os.environ.setdefault(_k.strip(), _v.strip().strip("\"'"))
-
-MODEL =os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite")
+MODEL = os.environ.get("DEEPSEEK_MODEL", "deepseek-ai/DeepSeek-OCR-2")
+PROMPT = "<image>\n<|grounding|>Convert the document to markdown. "
 
 CASES = ["minimum", "normal", "maximum", "design", "single", "other"]
 CASE_TITLES = {"minimum": "Minimum", "normal": "Normal", "maximum": "Maximum",
@@ -82,99 +53,6 @@ NON_NUMERIC = {"fluid_name", "fluid_state", "other", "corrosion_allowance"}
 P_UNIT = re.compile(r"(bar|psi|kpa|mpa|pa|kg/?cm|kgf|atm|torr|mmhg|mmwc|inh|ksi)")
 P_BASES = {"bar", "mbar", "kpa", "mpa", "pa", "psi", "kg/cm2", "kgf/cm2", "atm"}
 T_UNITS = {"c", "f", "k", "r"}
-
-# --------------------------------------------------------------------- prompts
-SYSTEM = """You transcribe the SERVICE / PROCESS CONDITIONS of industrial valve datasheets (control valves, relief valves, ball/on-off valves) from many customers and vendors. Layouts differ; the job does not.
-
-SCOPE - extract only:
-- Sheet identity: title, tag / item / KKS number, service, fluid, line number, project, template or vendor name.
-- The block(s) describing the duty of the valve, under headings such as PROCESS DATA, OPERATING DATA, OPERATING CONDITIONS, SERVICE CONDITIONS, UPSTREAM / DOWNSTREAM CONDITIONS, VALVE DESIGN CONDITIONS, or "Process Data" on relief-valve sheets. Include the fluid name / state and critical or shut-off pressure when printed with that block.
-- IGNORE: pipe line, body, bonnet, trim, actuator, positioner, accessories, testing, notes, revision/approval tables, logos, charts.
-
-OUTPUT: one entry per FILLED cell. Fields:
-- section: block heading as printed (or null).
-- row_no: printed line number at the left of the row, else null.
-- parameter: row label EXACTLY as printed, symbols included, e.g. "Inlet Pressure (P1)".
-- canonical: closest value from the enum. Use "other" if nothing fits; never force a fit. Flow: mass units (kg/h, lb/h) -> flow_rate_mass; volumetric liquid (m3/h, gpm) -> flow_rate_volume; gas at standard conditions (scfh, Nm3/h) -> flow_rate_gas_std. Upstream/inlet temperature T1 -> inlet_temperature; T2 -> outlet_temperature. dP / pressure differential / pressure drop -> pressure_drop. Cp/Cv, gamma, isentropic exponent -> specific_heat_ratio.
-- kind: "condition" = specified duty value (flow, pressures, temperatures, fluid properties); "design" = design limits (design pressure/temperature, shut-off or max allowable differential pressure, corrosion allowance); "calculated" = results of sizing sitting in the same table (Cv, % open / travel, capacity required, noise / SPL, velocities, Reynolds number).
-- case: which column the value is under. Map by the printed HEADER TEXT, never by position (some sheets print Max/Norm/Min, others Min/Normal/Max): max/maximum -> maximum; norm/normal/operating -> normal; min/minimum -> minimum; design -> design; "Others"/"Other"/"Notes" -> other; a single value column with no case header -> single.
-- case_label: the column header exactly as printed (or null).
-- value: the cell text EXACTLY as printed.
-- unit: unit exactly as printed, taken from the Units column or from inside the label (e.g. "Flow Rate Mass kg/h"). Keep gauge/absolute markers: "bar(g)", "kPaa", "kg/cm2g". Write superscripts as plain digits. If one unit applies to the whole row, repeat it on every entry of the row. null if none.
-- page: page number the cell is on.
-
-TRANSCRIPTION RULES (accuracy matters more than completeness):
-1. Copy values exactly: digits, decimals, exponents (1.4E+06), signs, "<", ">". Never round, convert units, compute, reorder or normalise.
-2. Never infer, interpolate or copy a value from another cell or another sheet. Empty cell -> no entry.
-3. If any character is not clearly legible, set value to "UNREADABLE". Do not guess digits.
-4. Sub-headers such as "Liquid / Liquid / Liquid" under Max / Norm / Min are VALUES of a row (e.g. Inlet State), not case labels.
-5. Watermarks, stamps, logos or revision clouds overlapping text are not data. Read through them; if a character stays unclear use "UNREADABLE". Black bars / redactions = empty cell.
-6. Placeholder text such as "XXXX" or "xxxxxxxx" = empty. "N/A", "NA", "-", "NIL" are real answers: copy them.
-7. A blank template (no values filled in) -> has_values=false and entries=[]. Do NOT invent example values.
-8. A sheet's title or tag can be on a different page from its table. Attach each table to the correct sheet using the tag/title, not page order; list the pages used in source_pages. One record per sheet.
-9. Sheets without a process/service-conditions block (or with nothing filled) still get a record with has_values=false.
-10. TEXT LAYER (when supplied) is real text: use it for characters; the images decide which row/column a value belongs to. If they disagree on a digit, use "UNREADABLE". ZOOM tiles are overlapping crops of the same page for legibility; emit each cell once.
-
-Return only JSON matching the provided schema."""
-
-ADJ_SYSTEM = """You re-read specific cells of valve datasheets. For each numbered question, locate the cell using the page, section, row label and column header given, and report the value and unit EXACTLY as printed.
-- Do not infer from neighbouring cells, other columns or physics.
-- If the cell is empty, return value null. If any character is not clearly legible, return "UNREADABLE".
-- A TEXT LAYER, when supplied, holds real characters; the images decide the row/column.
-Return only JSON matching the provided schema."""
-
-STR = {"type": ["string", "null"]}
-ENTRY = {
-    "type": "object",
-    "properties": {
-        "section": STR,
-        "row_no": {"type": ["integer", "null"]},
-        "parameter": {"type": "string"},
-        "canonical": {"type": "string", "enum": CANON},
-        "kind": {"type": "string", "enum": KINDS},
-        "case": {"type": "string", "enum": CASES},
-        "case_label": STR,
-        "value": STR,
-        "unit": STR,
-        "page": {"type": "integer"},
-    },
-    "required": ["parameter", "canonical", "kind", "case", "value", "unit", "page"],
-}
-RECORD_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "valves": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {
-                    "sheet_title": STR, "format_name": STR, "tag": STR, "item_no": STR,
-                    "service": STR, "fluid": STR, "line_no": STR, "project": STR,
-                    "source_pages": {"type": "array", "items": {"type": "integer"}},
-                    "has_values": {"type": "boolean"},
-                    "entries": {"type": "array", "items": ENTRY},
-                },
-                "required": ["tag", "source_pages", "has_values", "entries"],
-            },
-        }
-    },
-    "required": ["valves"],
-}
-ANSWER_SCHEMA = {
-    "type": "object",
-    "properties": {
-        "answers": {
-            "type": "array",
-            "items": {
-                "type": "object",
-                "properties": {"id": {"type": "integer"}, "value": STR, "unit": STR},
-                "required": ["id", "value", "unit"],
-            },
-        }
-    },
-    "required": ["answers"],
-}
-
 
 # --------------------------------------------------------------------- helpers
 def norm(s):
@@ -217,34 +95,213 @@ def cell_value(raw):
     return n if n is not None else raw
 
 
-# ------------------------------------------------------------ document -> content
-def layout_text(page):
-    """Rebuild text rows from word boxes; ' | ' marks a column gap."""
-    words = page.get_text("words")
-    if not words:
-        return ""
-    words = sorted(words, key=lambda w: ((w[1] + w[3]) / 2, w[0]))
-    rows = []
-    for w in words:
-        yc, h = (w[1] + w[3]) / 2, max(w[3] - w[1], 1.0)
-        if rows and abs(yc - rows[-1]["yc"]) <= 0.5 * max(h, rows[-1]["h"]):
-            r = rows[-1]
-            r["w"].append(w)
-            r["yc"] = (r["yc"] * (len(r["w"]) - 1) + yc) / len(r["w"])
-            r["h"] = max(r["h"], h)
-        else:
-            rows.append({"yc": yc, "h": h, "w": [w]})
-    lines = []
+
+# ----------------------------------------------------------------------- rules
+KIND_CALC = re.compile(r"\b(cv|kv|cg)\b|travel|% ?open|noise|\bspl\b|velocity|reynolds|required|mach|dba")
+DESIGN_CANON = {"design_pressure", "design_temperature", "shutoff_pressure", "corrosion_allowance"}
+CASE_RX = [("minimum", r"(min|minimum)"), ("normal", r"(norm|normal|nor|operating|oper)"),
+           ("maximum", r"(max|maximum)"), ("design", r"design"), ("other", r"(others?|notes?)")]
+UNIT_RX = re.compile(
+    r"(kg/?h|lb/?h|t/?h|kg/?s|m3/?h|nm3/?h|sm3/?h|gpm|scfh|scfm|mmscfd|bar[ga]?|mbar|psi[ga]?|kpa[ga]?|"
+    r"mpa[ga]?|pa|kg/?cm2[ga]?|kgf/?cm2[ga]?|atm|c|f|k|r|cp|cst|kg/m3|lb/ft3|g/mol|mm|in|ppm|%|cm2|m3/?s|"
+    r"l/?s|l/?min|kw|m/?s)")
+MASS_U, GAS_U = re.compile(r"(kg|lb|t)/?[hs]"), re.compile(r"(scf|nm3|sm3|mmscf|scm)")
+PROCESS_RX = re.compile(r"process|operating|service|upstream|downstream|conditions")
+IDENT = {  # field -> label regex (matched against the whole label cell)
+    "tag": r"(tag|item|kks|instrument)( ?(no|number|#)\.?)?",
+    "service": r"service", "fluid": r"fluid( name)?", "line_no": r"line( ?(no|number|#)\.?)?",
+    "project": r"project( ?name)?",
+}
+# first match wins, so specific rules go before generic ones
+CANON_RULES = [
+    ("design_pressure", r"design pres"), ("design_temperature", r"design temp"),
+    ("shutoff_pressure", r"shut.?off|allowable.*(d\.?p|differential)"),
+    ("vapor_pressure", r"vapou?r pres|\bpv\b"), ("critical_pressure", r"critical pres|\bpc\b"),
+    ("critical_temperature", r"critical temp"),
+    ("percent_vapour", r"vapou?r.*%|% ?vapou?r|vapou?r fraction|quality"),
+    ("percent_solids", r"solid"), ("corrosion_allowance", r"corrosion"),
+    ("inlet_pressure", r"(inlet|upstream|\bp1\b).*pres|pres.*(inlet|upstream|\bp1\b)|^p1\b"),
+    ("outlet_pressure", r"(outlet|downstream|\bp2\b).*pres|pres.*(outlet|downstream|\bp2\b)|^p2\b"),
+    ("pressure_drop", r"press.*(drop|diff)|\bd\.?p\b|delta ?p|differential"),
+    ("inlet_temperature", r"(inlet|upstream|\bt1\b).*temp|temp.*(inlet|upstream|\bt1\b)"),
+    ("outlet_temperature", r"(outlet|downstream|\bt2\b).*temp|temp.*(outlet|downstream|\bt2\b)"),
+    ("flow", r"flow|capacity"),
+    ("specific_heat_ratio", r"cp/cv|gamma|isentropic|heat ratio"),
+    ("specific_gravity", r"specific gravity|\bsg\b|spec\.? grav|relative density"),
+    ("molecular_weight", r"mol(ecular)? ?w|\bmw\b"), ("viscosity", r"viscosity"),
+    ("compressibility_factor", r"compress|\bz\b"), ("specific_volume", r"specific volume"),
+    ("cavitation_factor", r"cavitation|\bxf\b|\bkc\b|sigma"), ("density", r"dens"),
+    ("fluid_state", r"fluid state|phase|\bstate\b"), ("fluid_name", r"fluid|medium"),
+]
+
+
+def is_unit(s):
+    u = unit_norm(s)
+    return bool(u) and len(str(s)) <= 14 and UNIT_RX.fullmatch(u) is not None
+
+
+def unit_from_label(label):
+    m = re.search(r"[\(\[]\s*([^()\[\]]{1,12}?)\s*[\)\]]\s*$", label)
+    if m and is_unit(m.group(1)):
+        return m.group(1)
+    last = label.split()[-1] if label.split() else ""
+    return last if len(last) > 1 and is_unit(last) else None
+
+
+def canonical(label, unit):
+    t = norm(label)
+    for canon, rx in CANON_RULES:
+        if re.search(rx, t):
+            if canon != "flow":
+                return canon
+            u = unit_norm(unit or unit_from_label(label))
+            if MASS_U.fullmatch(u) or "mass" in t:
+                return "flow_rate_mass"
+            if GAS_U.match(u) or re.search(r"std|gas", t):
+                return "flow_rate_gas_std"
+            return "flow_rate_volume" if u or "volum" in t else "other"
+    return "other"
+
+
+def kind_of(label, canon):
+    t = norm(label)
+    if KIND_CALC.search(t):
+        return "calculated"
+    return "design" if canon in DESIGN_CANON or "design" in t or "allowable" in t else "condition"
+
+
+def case_of(cell):
+    t = norm(cell).strip(" .:()")
+    return next((c for c, rx in CASE_RX if re.match(rx + r"\b", t)), None)
+
+
+# ------------------------------------------------------------- markdown -> tables
+def clean(s):
+    s = re.sub(r"<br\s*/?>", " ", s or "", flags=re.I)
+    s = re.sub(r"<[^>]+>|\*\*|\\\*", "", s)
+    s = re.sub(r"\s+", " ", html.unescape(s)).strip()
+    return "" if re.fullmatch(r"x{3,}", s, re.I) else s  # XXXX placeholder = empty
+
+
+class _Html(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.rows, self.cell, self.span = [], None, 1
+
+    def handle_starttag(self, tag, attrs):
+        if tag == "tr":
+            self.rows.append([])
+        elif tag in ("td", "th") and self.rows:
+            self.cell, self.span = [], int(re.sub(r"\D", "", dict(attrs).get("colspan") or "1") or 1)
+        elif tag == "br" and self.cell is not None:
+            self.cell.append(" ")
+
+    def handle_data(self, data):
+        if self.cell is not None:
+            self.cell.append(data)
+
+    def handle_endtag(self, tag):
+        if tag in ("td", "th") and self.cell is not None:
+            self.rows[-1] += [clean("".join(self.cell))] + [""] * (self.span - 1)
+            self.cell = None
+
+
+def split_md(md):
+    """-> (text_lines, tables); each table = (preceding_text, rows)."""
+    md = re.sub(r"<\|ref\|>.*?<\|/ref\|>|<\|det\|>.*?<\|/det\|>", "", md, flags=re.S)
+    md = re.sub(r"<table.*?</table>", lambda m: "\n\x00" + m.group(0).replace("\n", " ") + "\n",
+                md, flags=re.S | re.I)
+    texts, tables, pipe = [], [], []
+
+    def flush():
+        rows = [[clean(c) for c in l.strip().strip("|").split("|")] for l in pipe
+                if not re.fullmatch(r"[\s|:\-]+", l)]
+        if rows:
+            tables.append((texts[-1] if texts else "", rows))
+        pipe.clear()
+
+    for line in md.splitlines():
+        if line.startswith("|"):
+            pipe.append(line)
+            continue
+        flush()
+        if line.startswith("\x00"):
+            p = _Html()
+            p.feed(line[1:])
+            tables.append((texts[-1] if texts else "", p.rows))
+        elif line.strip():
+            texts.append(clean(line.lstrip("# ")))
+    flush()
+    return texts, tables
+
+
+def parse_table(rows, heading, page):
+    """One table -> list of entries (empty if it does not look like a process-conditions block)."""
+    cols, section, ents = None, heading, []
     for r in rows:
-        ws = sorted(r["w"], key=lambda w: w[0])
-        parts = [ws[0][4]]
-        for a, b in zip(ws, ws[1:]):
-            parts.append(" | " if b[0] - a[2] > 1.2 * r["h"] else " ")
-            parts.append(b[4])
-        lines.append("".join(parts))
-    return "\n".join(lines)
+        cs = {j: case_of(c) for j, c in enumerate(r) if c and case_of(c)}
+        if len(cs) >= 2:
+            cols = cs
+            continue
+        ne = [c for c in r if c]
+        if not ne:
+            continue
+        if len(ne) == 1:
+            section = ne[0]
+            continue
+        if cols:
+            left = [c for c in r[:min(cols)] if c]
+            right = [c for c in r[max(cols) + 1:] if c]
+            vals = [(cols[j], r[j]) for j in cols if j < len(r) and r[j]]
+        else:  # key / value / unit row
+            left, right, vals = ne[:1], ne[2:], [("single", ne[1])]
+        row_no = next((int(c) for c in left if re.fullmatch(r"\d{1,3}", c)), None)
+        left = [c for c in left if not re.fullmatch(r"\d{1,3}", c)]
+        unit = next((c for c in left[1:] + right if is_unit(c)), None)
+        names = [c for c in left if c != unit]
+        label = max(names, key=len) if names else ""
+        if not label or not vals:
+            continue
+        unit = unit or unit_from_label(label)
+        canon = canonical(label, unit)
+        for case, v in vals:
+            if v != unit:
+                ents.append({"section": section or None, "row_no": row_no, "parameter": label,
+                             "canonical": canon, "kind": kind_of(label, canon), "case": case,
+                             "case_label": None, "value": v, "unit": unit, "page": page})
+    n_canon = len({e["canonical"] for e in ents} - {"other"})
+    if n_canon >= 3 or (n_canon >= 1 and cols and PROCESS_RX.search(norm(heading))):
+        return ents
+    return []
 
 
+def identity(texts, tables):
+    out = {}
+    lines = list(texts) + [" ".join(r) for _, rows in tables for r in rows]
+    for f, rx in IDENT.items():
+        for l in lines:
+            m = re.match(rf"\s*({rx})\s*[:#]\s*(.+)", l, re.I)
+            if m and not out.get(f):
+                out[f] = m.group(m.lastindex).strip()
+    for _, rows in tables:
+        for r in rows:
+            for i, c in enumerate(r):
+                for f, rx in IDENT.items():
+                    if not out.get(f) and re.fullmatch(rx, norm(c).strip(" :.#")):
+                        v = next((x for x in r[i + 1:] if x), None)
+                        if v and not any(re.fullmatch(x, norm(v).strip(" :.#")) for x in IDENT.values()):
+                            out[f] = v
+    out["sheet_title"] = texts[0] if texts else None
+    return out
+
+
+def parse_page(md, page):
+    texts, tables = split_md(md)
+    ents = [e for h, rows in tables for e in parse_table(rows, h, page)]
+    return {**identity(texts, tables), "entries": ents}
+
+
+# ------------------------------------------------------------ document -> OCR
 def render_page(page, dpi):
     r = page.rect
     scale = dpi / 72
@@ -254,77 +311,30 @@ def render_page(page, dpi):
     return Image.frombytes("RGB", (pix.width, pix.height), pix.samples)
 
 
-def fit(img, lo=1400, hi=1568):
-    """Keep the long edge in [lo, hi] px: small images get enough tokens to read,
-    large ones are not silently downscaled by the API."""
-    w, h = img.size
-    long_edge = max(w, h)
-    if lo <= long_edge <= hi:
-        return img
-    s = (lo if long_edge < lo else hi) / long_edge
-    return img.resize((max(1, round(w * s)), max(1, round(h * s))), Image.LANCZOS)
+def load_model(name):
+    import torch
+    from transformers import AutoModel, AutoTokenizer, BitsAndBytesConfig
+    tok = AutoTokenizer.from_pretrained(name, trust_remote_code=True)
+    q = BitsAndBytesConfig(  # 4-bit LLM so the 3B model fits 6 GB; vision tower stays bf16
+        load_in_4bit=True, bnb_4bit_quant_type="nf4", bnb_4bit_compute_dtype=torch.bfloat16,
+        llm_int8_skip_modules=["sam_model", "qwen2_model", "projector", "lm_head"])
+    model = AutoModel.from_pretrained(
+        name, trust_remote_code=True, use_safetensors=True, quantization_config=q,
+        torch_dtype=torch.bfloat16, device_map={"": 0}, attn_implementation="eager")
+    return model.eval(), tok
 
 
-def img_block(img):
-    buf = io.BytesIO()
-    img.save(buf, format="PNG")
-    return types.Part.from_bytes(data=buf.getvalue(), mime_type="image/png")
+def ocr_image(model, tok, img, tmp):
+    p = Path(tmp) / "page.png"
+    img.save(p)
+    return model.infer(tok, prompt=PROMPT, image_file=str(p), output_path=str(tmp),
+                       base_size=1024, image_size=768, crop_mode=True, eval_mode=True)
 
 
-def tiles(img, rows, cols, overlap=0.12):
-    w, h = img.size
-
-    def spans(total, n):
-        if n <= 1:
-            return [(0, total)]
-        size = total / (n - (n - 1) * overlap)
-        step = size * (1 - overlap)
-        return [(int(k * step), min(total, int(k * step + size))) for k in range(n)]
-
-    for ri, (t, b) in enumerate(spans(h, rows), 1):
-        for ci, (l, r) in enumerate(spans(w, cols), 1):
-            yield ri, ci, img.crop((l, t, r, b))
-
-
-def build_content(path: Path, dpi=300, bands=3, cols=1):
-    pages = []
+def page_images(path: Path, dpi):
     if path.suffix.lower() == ".pdf":
-        doc = fitz.open(path)
-        for page in doc:
-            pages.append((render_page(page, dpi), layout_text(page)))
-    else:
-        pages.append((Image.open(path).convert("RGB"), ""))
-
-    blocks = []
-    for i, (img, text) in enumerate(pages, 1):
-        blocks.append(f"=== PAGE {i} of {len(pages)} ===")
-        blocks.append(img_block(fit(img)))
-        if len(text) >= 80:
-            blocks.append(f"TEXT LAYER of page {i} (real characters; ' | ' = column gap):\n{text}")
-        if bands > 0 or cols > 1:
-            for ri, ci, t in tiles(img, max(bands, 1), max(cols, 1)):
-                blocks.append(f"ZOOM tile row {ri} col {ci} of page {i} (overlaps neighbours)")
-                blocks.append(img_block(fit(t)))
-    return blocks
-
-
-# ---------------------------------------------------------------------- API calls
-def call_json(client, model, system, schema, content):
-    for attempt in range(6):
-        try:
-            resp = client.models.generate_content(
-                model=model, contents=content,
-                config=types.GenerateContentConfig(
-                    system_instruction=system, temperature=0,
-                    response_mime_type="application/json", response_json_schema=schema))
-            if not resp.text:
-                raise RuntimeError("Model returned no output (blocked or truncated).")
-            return json.loads(resp.text)
-        except Exception as e:
-            transient = any(c in str(e) for c in ("503", "429", "500", "disconnected", "timed out"))
-            if attempt == 5 or not transient:
-                raise
-            time.sleep(10 * (attempt + 1))
+        return [render_page(p, dpi) for p in fitz.open(path)]
+    return [Image.open(path).convert("RGB")]
 
 
 def normalize(valves):
@@ -334,94 +344,30 @@ def normalize(valves):
         pages = v.get("source_pages") or []
         v["_name"] = tag or (f"{title} (p{min(pages)})" if title and pages else f"(untitled sheet {i})")
         v["_id"] = norm(v["_name"])
-        v["entries"] = v.get("entries") or []
     return valves
 
 
-def extract_once(client, model, shared):
-    out = call_json(client, model, SYSTEM, RECORD_SCHEMA, shared + [
-        "Extract the service/process conditions of every valve sheet in this document."])
-    return normalize(out.get("valves", []))
-
-
-# ------------------------------------------------------- reconcile two passes
-def keyed(v):
-    out, seen = {}, {}
-    for e in v["entries"]:
-        k = (norm(e.get("section")), norm(e["parameter"]), e["case"])
-        n = seen.get(k, 0)
-        seen[k] = n + 1
-        out[k + (n,)] = e
-    return out
-
-
-def find_disputes(a_valves, b_valves, fname, issues):
-    disputes = []
-    idx_b = {v["_id"]: v for v in b_valves}
-    for va in a_valves:
-        vb = idx_b.pop(va["_id"], None)
-        if vb is None:
-            issues.append({"file": fname, "valve": va["_name"], "section": "", "parameter": "",
-                           "case": "", "severity": "error", "issue": "Sheet not found in second pass"})
-            continue
-        ka, kb = keyed(va), keyed(vb)
-        for k in sorted(set(ka) | set(kb), key=str):
-            a, b = ka.get(k), kb.get(k)
-            if a and b and same_value(a.get("value"), b.get("value")) \
-                    and unit_norm(a.get("unit")) == unit_norm(b.get("unit")):
-                continue
-            disputes.append({"id": len(disputes), "valve": va, "a": a, "b": b})
-    for vb in idx_b.values():
-        issues.append({"file": fname, "valve": vb["_name"], "section": "", "parameter": "",
-                       "case": "", "severity": "error", "issue": "Sheet only found in second pass"})
-    return disputes
-
-
-def adjudicate(client, model, shared, disputes):
-    lines = []
-    for d in disputes:
-        ref = d["a"] or d["b"]
-        lines.append(f'Q{d["id"]}: sheet "{d["valve"]["_name"]}", page {ref.get("page")}, '
-                     f'section "{ref.get("section") or "-"}", row {ref.get("row_no") or "-"} '
-                     f'"{ref["parameter"]}", column "{ref.get("case_label") or ref["case"]}": '
-                     f'value and unit as printed?')
-    out = call_json(client, model, ADJ_SYSTEM, ANSWER_SCHEMA, shared + [
-        "Re-read these cells. Use the question number as id.\n" + "\n".join(lines)])
-    return {a["id"]: a for a in out.get("answers", [])}
-
-
-def apply_adjudication(disputes, answers, fname, issues):
-    for d in disputes:
-        a, b, v = d["a"], d["b"], d["valve"]
-        ref = a or b
-        base = {"file": fname, "valve": v["_name"], "section": ref.get("section") or "",
-                "parameter": ref["parameter"], "case": ref["case"]}
-        ans = answers.get(d["id"]) or {}
-        av, bv = (a or {}).get("value"), (b or {}).get("value")
-        ua, ub = (a or {}).get("unit"), (b or {}).get("unit")
-        rv = ans.get("value")
-        readable = rv is not None and "UNREADABLE" not in str(rv).upper()
-        win = None
-        if readable and a and av is not None and same_value(rv, av):
-            win = "a"
-        elif readable and b and bv is not None and same_value(rv, bv):
-            win = "b"
-        if win is None:
-            if a is None and b is not None:
-                v["entries"].append(copy.deepcopy(b))
-            issues.append({**base, "severity": "error",
-                           "issue": f"Unresolved: pass 1 {av!r}, pass 2 {bv!r}, re-read {rv!r}"})
-            continue
-        t = a if a else copy.deepcopy(b)
-        if not a:
-            v["entries"].append(t)
-        if win == "b":
-            t["value"], t["unit"] = bv, ub
-        msg = f"Passes disagreed (1: {av!r}, 2: {bv!r}); re-read decided {t['value']!r}"
-        if a and b and unit_norm(ua) != unit_norm(ub):
-            t["unit"] = ub if unit_norm(ans.get("unit")) == unit_norm(ub) else ua
-            msg += f"; unit differed ({ua!r} vs {ub!r}) -> {t['unit']!r}"
-        issues.append({**base, "severity": "warning", "issue": msg})
+def extract(model, tok, path: Path, dpi):
+    """-> (valves, raw markdown). Pages without a tag continue the previous sheet."""
+    valves, raw = [], []
+    with tempfile.TemporaryDirectory() as tmp:
+        for n, img in enumerate(page_images(path, dpi), 1):
+            md = ocr_image(model, tok, img, tmp)
+            raw.append(f"<!-- PAGE {n} -->\n{md}")
+            pg = parse_page(md, n)
+            tag = (pg.get("tag") or "").strip()
+            v = next((v for v in valves if tag and norm(v["tag"]) == norm(tag)), None)
+            if v is None and not tag and valves:  # ponytail: assumes continuation page, no title matching
+                v = valves[-1]
+            if v is None:
+                v = {k: pg.get(k) for k in ("sheet_title", "service", "fluid", "line_no", "project")}
+                v.update(tag=tag or None, format_name=None, item_no=None, source_pages=[], entries=[])
+                valves.append(v)
+            v["source_pages"].append(n)
+            v["entries"] += pg["entries"]
+    for v in valves:
+        v["has_values"] = bool(v["entries"])
+    return normalize(valves), "\n\n".join(raw)
 
 
 # ------------------------------------------------------------------ validation
@@ -646,29 +592,14 @@ def build_workbook(results, issues, out):
         print(f"Original file is open in Excel - saved as {out} instead.", file=sys.stderr)
 
 
+
+
 # ------------------------------------------------------------------------ main
-def process_file(client, model, path, args):
-    shared = build_content(path, args.dpi, args.bands, args.cols)
-    issues = []
-    runs = [extract_once(client, model, shared) for _ in range(args.passes)]
-    valves = runs[0]
-    if len(runs) == 2:
-        disputes = find_disputes(runs[0], runs[1], path.name, issues)
-        if disputes:
-            answers = adjudicate(client, model, shared, disputes)
-            apply_adjudication(disputes, answers, path.name, issues)
-    issues += validate(valves, path.name)
-    return valves, issues
-
-
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawTextHelpFormatter)
     ap.add_argument("files", nargs="*", type=Path)
     ap.add_argument("-o", "--out", default="process_conditions.xlsx")
-    ap.add_argument("--passes", type=int, choices=[1, 2], default=2)
-    ap.add_argument("--dpi", type=int, default=300)
-    ap.add_argument("--bands", type=int, default=3)
-    ap.add_argument("--cols", type=int, default=1)
+    ap.add_argument("--dpi", type=int, default=200)
     ap.add_argument("--model", default=MODEL)
     args = ap.parse_args()
 
@@ -677,11 +608,14 @@ def main():
         args.files = sorted(p for p in here.iterdir() if p.suffix.lower() in (".pdf", ".png", ".jpg", ".jpeg"))
         if not args.files:
             sys.exit("No image/PDF files found next to main.py.")
-    client = genai.Client(api_key=os.environ["GENAI_API_KEY"])
+    print(f"Loading {args.model} (4-bit)...", file=sys.stderr)
+    model, tok = load_model(args.model)
     results, all_issues = [], []
     for f in args.files:
-        print(f"[{f.name}] extracting...", file=sys.stderr)
-        valves, issues = process_file(client, args.model, f, args)
+        print(f"[{f.name}] OCR...", file=sys.stderr)
+        valves, raw = extract(model, tok, f, args.dpi)
+        f.with_suffix(".ocr.md").write_text(raw, encoding="utf-8")  # raw OCR, for checking the parser
+        issues = validate(valves, f.name)
         results.append((f.name, valves))
         all_issues += issues
         n_err = sum(1 for i in issues if i["severity"] == "error")

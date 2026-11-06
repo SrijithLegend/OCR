@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Process Conditions Extractor</title>
+<link rel="stylesheet" href="/static/app.css">
+</head>
+<body>
+<header class="top">
+  <h1>Process conditions extractor</h1>
+  <div class="top-actions">
+    <button id="btn-new" class="ghost hidden" type="button">New upload</button>
+    <button id="btn-delete" class="ghost danger hidden" type="button">Delete my data</button>
+  </div>
+</header>
+
+<main>
+  <section id="drop" class="drop" tabindex="0" role="button" aria-label="Choose or drop files">
+    <p class="drop-title">Drop PDFs or images here</p>
+    <p class="muted">or click to choose &middot; PDF, PNG, JPG, TIFF &middot; originals work far better than screenshots</p>
+    <input id="picker" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.tif,.tiff,application/pdf,image/*" hidden>
+  </section>
+
+  <section id="progress" class="panel hidden" aria-live="polite">
+    <div class="spinner" aria-hidden="true"></div>
+    <div><strong id="progress-title">Working</strong><div id="progress-text" class="muted"></div></div>
+  </section>
+
+  <section id="error" class="panel err hidden" role="alert"></section>
+
+  <section id="results" class="hidden">
+    <div class="bar">
+      <div id="summary" class="summary"></div>
+      <label class="check"><input id="only-flagged" type="checkbox"> Show only rows needing review</label>
+      <button id="btn-export" class="primary" type="button">Export to Excel</button>
+    </div>
+    <p class="legend">
+      <span class="chip c-error">error</span>
+      <span class="chip c-warning">check</span>
+      <span class="chip c-edited">edited by you</span>
+      <span class="chip c-reviewed">reviewed</span>
+      <span class="muted">Click a cell to edit. Press OK on a row once you have checked it against the page.</span>
+    </p>
+    <div id="sheets"></div>
+  </section>
+</main>
+
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Source page">
+  <div class="modal-body">
+    <div class="modal-head"><strong id="modal-title"></strong><button id="modal-close" class="ghost" type="button">Close</button></div>
+    <div class="modal-img"><img id="modal-img" alt="Source page"></div>
+  </div>
+</div>
+<script src="/static/app.js"></script>
+</body>
+</html>
