@@ -14,7 +14,7 @@ from .pipeline import run_job
 from .schemas import Cell, CellPatch, FileInfo, Job, NewCell
 
 STATIC = Path(__file__).parent / "static"
-app = FastAPI(title="Valve datasheet process-conditions extractor", docs_url=None, redoc_url=None)
+app = FastAPI(title="Datasheet process-conditions extractor", docs_url=None, redoc_url=None)
 
 MAX_FIELD = 300  # longest accepted value / unit / parameter text
 
@@ -211,7 +211,7 @@ def model_output(job_id: str):
             v, u = (c.original_value, c.original_unit) if c.edited else (c.value, c.unit)
             rows.append([sh.tag or sh.title or "(untitled)", c.parameter, c.case, v or "", u or "",
                          "; ".join(f.message for f in c.flags if f.severity != "info")])
-    return _csv(rows, ["valve", "parameter", "case", "value", "unit", "flag"])
+    return _csv(rows, ["record", "parameter", "case", "value", "unit", "flag"])
 
 
 @app.get("/api/jobs/{job_id}/truth.csv")
@@ -220,7 +220,7 @@ def truth(job_id: str):
     job = get_job(job_id)
     rows = [[sh.tag or sh.title or "(untitled)", c.parameter, c.case, c.value or "", c.unit or ""]
             for sh in job.sheets for c in sh.cells if c.reviewed or c.edited]
-    return _csv(rows, ["valve", "parameter", "case", "value", "unit"])
+    return _csv(rows, ["record", "parameter", "case", "value", "unit"])
 
 
 @app.exception_handler(Exception)

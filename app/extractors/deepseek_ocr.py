@@ -103,13 +103,13 @@ class DeepSeekExtractor:
         pb = [mp.parse_page(md, n) for n, md in enumerate(mds_b, 1)] if mds_b else None
         idents = [self._merge_ident(a, pb[i] if pb else None, i + 1, fname, issues)
                   for i, a in enumerate(pa)]
-        valves = normalize(mp.build_valves(idents, [p["entries"] for p in pa]))
+        records = normalize(mp.build_records(idents, [p["entries"] for p in pa]))
         if pb:
-            valves_b = normalize(mp.build_valves(idents, [p["entries"] for p in pb]))
-            disputes = find_disputes(valves, valves_b, fname, issues)
+            records_b = normalize(mp.build_records(idents, [p["entries"] for p in pb]))
+            disputes = find_disputes(records, records_b, fname, issues)
             self._settle(disputes, pages, cache, fname, issues)
-        self._provenance(valves, pages, cache, fname, issues)
-        return valves, issues
+        self._provenance(records, pages, cache, fname, issues)
+        return records, issues
 
     @staticmethod
     def _merge_ident(a, b, page, fname, issues):
@@ -147,15 +147,15 @@ class DeepSeekExtractor:
                 answers[d["id"]] = {"value": pick.get("value"), "unit": pick.get("unit")}
         apply_adjudication(disputes, answers, fname, issues)
 
-    def _provenance(self, valves, pages, cache, fname, issues):
+    def _provenance(self, records, pages, cache, fname, issues):
         # numbers the OCR itself read per page: a neighbour already used by another cell is never a fix
         used = {}
-        for v in valves:
+        for v in records:
             for e in v["entries"]:
                 c = mp._core(e.get("value"))
                 if c is not None:
                     used.setdefault(e.get("page", 1), set()).add(c)
-        for v in valves:
+        for v in records:
             for e in v["entries"]:
                 core = mp._core(e.get("value"))
                 if core is None:

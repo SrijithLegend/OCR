@@ -1,8 +1,8 @@
 """Extractor registry. An extractor turns page images (+ text layer) into raw sheet dicts.
 
-    extract(pages, plan, fname) -> (valves, issues)
+    extract(pages, plan, fname) -> (records, issues)
 
-`pages` is a list of (PIL.Image, text_layer_str). `valves` use the dict shape in
+`pages` is a list of (PIL.Image, text_layer_str). `records` use the dict shape in
 `claude_vision.RECORD_TOOL`. `issues` are reconciliation problems found while reading.
 """
 

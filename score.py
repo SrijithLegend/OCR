@@ -16,7 +16,7 @@ def load(path):
     out = defaultdict(list)
     with open(path, newline="", encoding="utf-8") as f:
         for r in csv.DictReader(f):
-            out[(norm(r["valve"]), norm(r["parameter"]), r["case"])].append(r)
+            out[(norm(r["record"]), norm(r["parameter"]), r["case"])].append(r)
     return out
 
 

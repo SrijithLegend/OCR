@@ -28,9 +28,9 @@ def run_job(job_id: str):
             plan = plan_for(pages, PASSES)
             job.progress = f"[{f.idx + 1}/{len(job.files)}] {f.name}: reading ({plan.passes} pass(es))"
             store.save(job)
-            valves, issues = extractor.extract(pages, plan, f.name)
-            issues = issues + validate(valves, f.name)
-            sheets += to_sheets(f.idx, f.name, valves, issues)
+            records, issues = extractor.extract(pages, plan, f.name)
+            issues = issues + validate(records, f.name)
+            sheets += to_sheets(f.idx, f.name, records, issues)
         job.sheets, job.status, job.progress = sheets, "done", "Done"
     except Exception as e:  # surfaced to the UI, trimmed; full trace in the log
         log.exception("job %s failed", job_id)

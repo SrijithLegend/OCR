@@ -4,7 +4,7 @@
 * engineering checks (validate): P1 - dP = P2, ordering, units, ranges, duplicates
 * to_sheets: turn raw dicts + issues into Sheet/Cell models with per-cell flags
 
-An issue is a dict: file, valve, section, parameter, case, severity, code, issue.
+An issue is a dict: file, record, section, parameter, case, severity, code, issue.
 """
 import copy
 import re
@@ -16,23 +16,23 @@ from .textutil import norm, same_value, to_num, unit_norm
 P_UNIT = re.compile(r"(bar|psi|kpa|mpa|pa|kg/?cm|kgf|atm|torr|mmhg|mmwc|inh|ksi)")
 
 
-def normalize(valves):
-    for i, v in enumerate(valves, 1):
+def normalize(records):
+    for i, v in enumerate(records, 1):
         tag = (v.get("tag") or "").strip()
         title = (v.get("sheet_title") or "").strip()
         pages = v.get("source_pages") or []
         v["_name"] = tag or (f"{title} (p{min(pages)})" if title and pages else f"(untitled sheet {i})")
         v["_id"] = norm(v["_name"])
         v["entries"] = v.get("entries") or []
-    return valves
+    return records
 
 
 def vkey(v):
     return v["_id"]
 
 
-def issue(fname, valve, section, parameter, case, severity, code, msg):
-    return {"file": fname, "valve": valve, "section": section or "", "parameter": parameter or "",
+def issue(fname, record, section, parameter, case, severity, code, msg):
+    return {"file": fname, "record": record, "section": section or "", "parameter": parameter or "",
             "case": case or "", "severity": severity, "code": code, "issue": msg}
 
 
@@ -47,10 +47,10 @@ def keyed(v):
     return out
 
 
-def find_disputes(a_valves, b_valves, fname, issues):
+def find_disputes(a_records, b_records, fname, issues):
     disputes = []
-    idx_b = {v["_id"]: v for v in b_valves}
-    for va in a_valves:
+    idx_b = {v["_id"]: v for v in b_records}
+    for va in a_records:
         vb = idx_b.pop(va["_id"], None)
         if vb is None:
             issues.append(issue(fname, va["_name"], "", "", "", "error", "not_in_pass2",
@@ -62,7 +62,7 @@ def find_disputes(a_valves, b_valves, fname, issues):
             if a and b and same_value(a.get("value"), b.get("value")) \
                     and unit_norm(a.get("unit")) == unit_norm(b.get("unit")):
                 continue
-            disputes.append({"id": len(disputes), "valve": va, "a": a, "b": b})
+            disputes.append({"id": len(disputes), "record": va, "a": a, "b": b})
     for vb in idx_b.values():
         issues.append(issue(fname, vb["_name"], "", "", "", "error", "only_pass2",
                             "Sheet only found in the second read"))
@@ -73,7 +73,7 @@ def dispute_questions(disputes):
     lines = []
     for d in disputes:
         ref = d["a"] or d["b"]
-        lines.append(f'Q{d["id"]}: sheet "{d["valve"]["_name"]}", page {ref.get("page")}, '
+        lines.append(f'Q{d["id"]}: sheet "{d["record"]["_name"]}", page {ref.get("page")}, '
                      f'section "{ref.get("section") or "-"}", row {ref.get("row_no") or "-"} '
                      f'"{ref["parameter"]}", column "{ref.get("case_label") or ref["case"]}": '
                      f'value and unit as printed?')
@@ -83,7 +83,7 @@ def dispute_questions(disputes):
 def apply_adjudication(disputes, answers, fname, issues):
     """Majority vote of read 1, read 2 and the re-read. An unmatched re-read stays an error."""
     for d in disputes:
-        a, b, v = d["a"], d["b"], d["valve"]
+        a, b, v = d["a"], d["b"], d["record"]
         ref = a or b
         sec, par, case, name = ref.get("section"), ref["parameter"], ref["case"], v["_name"]
         ans = answers.get(d["id"]) or {}
@@ -123,7 +123,7 @@ def _pressure_base(un):
     return un
 
 
-def validate(valves, fname):
+def validate(records, fname):
     issues = []
 
     def add(v, e, sev, code, msg):
@@ -131,7 +131,7 @@ def validate(valves, fname):
                             e["parameter"] if e else "", e["case"] if e else "", sev, code, msg))
 
     seen_names = {}
-    for v in valves:
+    for v in records:
         ents = v["entries"]
         seen_names[v["_id"]] = seen_names.get(v["_id"], 0) + 1
         if not v.get("has_values") and not ents:
@@ -221,9 +221,9 @@ def _enum(value, allowed, default):
     return value if value in allowed else default
 
 
-def to_sheets(file_idx, fname, valves, issues, source="model"):
+def to_sheets(file_idx, fname, records, issues, source="model"):
     sheets = []
-    for v in valves:
+    for v in records:
         cells = [Cell(section=e.get("section"), row_no=e.get("row_no"), parameter=e["parameter"],
                       canonical=e.get("canonical") or "other",
                       kind=_enum(e.get("kind"), KINDS, "condition"),
@@ -239,7 +239,7 @@ def to_sheets(file_idx, fname, valves, issues, source="model"):
         by = {}
         for c in cells:
             by.setdefault((norm(c.section), norm(c.parameter)), []).append(c)
-        for i in (x for x in issues if x["valve"] == v["_name"]):
+        for i in (x for x in issues if x["record"] == v["_name"]):
             flag = Flag(severity=i["severity"], code=i.get("code", "check"), message=i["issue"])
             if not i.get("parameter"):
                 sheet.notes.append(flag)

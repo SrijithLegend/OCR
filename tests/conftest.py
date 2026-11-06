@@ -24,7 +24,7 @@ def make_pdf(pages=2) -> bytes:
     doc = pymupdf.open()
     for i in range(pages):
         p = doc.new_page()
-        p.insert_text((72, 100), f"Control valve data sheet page {i + 1}", fontsize=14)
+        p.insert_text((72, 100), f"Process data sheet page {i + 1}", fontsize=14)
     return doc.tobytes()
 
 

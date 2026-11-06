@@ -86,10 +86,10 @@ class ClaudeVisionExtractor:
     def extract(self, pages, plan, fname):
         shared = build_content(pages, plan)
         ask = {"type": "text",
-               "text": "Extract the service/process conditions of every valve sheet in this document."}
+               "text": "Extract the service/process conditions of every sheet in this document."}
         runs = [normalize(call_tool(self.client, CLAUDE_MODEL, SYSTEM, RECORD_TOOL, shared + [ask])
-                          .get("valves", [])) for _ in range(plan.passes)]
-        valves, issues = runs[0], []
+                          .get("records", [])) for _ in range(plan.passes)]
+        records, issues = runs[0], []
         if len(runs) == 2 and plan.adjudicate:
             disputes = find_disputes(runs[0], runs[1], fname, issues)
             if disputes:
@@ -97,4 +97,4 @@ class ClaudeVisionExtractor:
                     {"type": "text", "text": "Re-read these cells. Use the question number as id.\n"
                      + "\n".join(dispute_questions(disputes))}], max_tokens=8000)
                 apply_adjudication(disputes, {a["id"]: a for a in out.get("answers", [])}, fname, issues)
-        return valves, issues
+        return records, issues

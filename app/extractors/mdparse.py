@@ -1,4 +1,4 @@
-"""OCR markdown -> valve-sheet entries. Pure Python (no torch), so it is unit-tested without a GPU.
+"""OCR markdown -> sheet entries. Pure Python (no torch), so it is unit-tested without a GPU.
 
 DeepSeek-OCR-2 returns markdown / HTML tables, not structured data. This module turns each table
 into entries using printed-header rules only: columns are mapped by header TEXT, values are copied
@@ -224,25 +224,25 @@ def parse_page(md, page):
     return {**identity(texts, tables), "entries": ents}
 
 
-# ------------------------------------------------------------ pages -> valve sheets
-def build_valves(identities, entry_lists):
+# ------------------------------------------------------------ pages -> sheets
+def build_records(identities, entry_lists):
     """identities[i] / entry_lists[i] belong to page i+1. A page without a tag continues the previous
-    sheet. Two reads that share `identities` produce valves in the same order with the same tags."""
-    valves = []
+    sheet. Two reads that share `identities` produce records in the same order with the same tags."""
+    records = []
     for n, (ident, ents) in enumerate(zip(identities, entry_lists), 1):
         tag = (ident.get("tag") or "").strip()
-        v = next((v for v in valves if tag and norm(v["tag"]) == norm(tag)), None)
-        if v is None and not tag and valves:  # ponytail: continuation page assumed, no title matching
-            v = valves[-1]
+        v = next((v for v in records if tag and norm(v["tag"]) == norm(tag)), None)
+        if v is None and not tag and records:  # ponytail: continuation page assumed, no title matching
+            v = records[-1]
         if v is None:
             v = {k: ident.get(k) for k in ("sheet_title", "service", "fluid", "line_no", "project")}
             v.update(tag=tag or None, format_name=None, item_no=None, source_pages=[], entries=[])
-            valves.append(v)
+            records.append(v)
         v["source_pages"].append(n)
         v["entries"] += [dict(e) for e in ents]
-    for v in valves:
+    for v in records:
         v["has_values"] = bool(v["entries"])
-    return valves
+    return records
 
 
 # ----------------------------------------------------- provenance (text layer / tiles)

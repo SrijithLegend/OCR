@@ -6,7 +6,7 @@ from app.controller import Plan
 from app.extractors import mdparse as mp
 from app.extractors.deepseek_ocr import DeepSeekExtractor
 
-HTML = """# Control Valve Data Sheet
+HTML = """# Process Data Sheet
 Tag No.: FV-101
 <table><tr><td colspan="6">PROCESS DATA</td></tr>
 <tr><td>No</td><td>Parameter</td><td>Unit</td><td>Max</td><td>Norm</td><td>Min</td></tr>
@@ -36,7 +36,7 @@ def by(ents, canon):
 
 def test_html_table_maps_columns_by_header_text():
     pg = mp.parse_page(HTML, 1)
-    assert pg["tag"] == "FV-101" and pg["sheet_title"] == "Control Valve Data Sheet"
+    assert pg["tag"] == "FV-101" and pg["sheet_title"] == "Process Data Sheet"
     e = pg["entries"]
     assert by(e, "inlet_pressure") == {"maximum": "20.5", "normal": "18", "minimum": "15"}
     assert by(e, "flow_rate_mass") == {"maximum": "12000", "normal": "10000", "minimum": "5000"}
@@ -79,10 +79,10 @@ def test_grounding_tags_stripped():
 
 def test_pages_without_tag_continue_previous_sheet():
     a, b = mp.parse_page(HTML, 1), mp.parse_page(PIPE.replace("Item: PSV-7", ""), 2)
-    v = mp.build_valves([a, b], [a["entries"], b["entries"]])
+    v = mp.build_records([a, b], [a["entries"], b["entries"]])
     assert len(v) == 1 and v[0]["source_pages"] == [1, 2]
     c = mp.parse_page(PIPE, 3)
-    assert len(mp.build_valves([a, c], [a["entries"], c["entries"]])) == 2
+    assert len(mp.build_records([a, c], [a["entries"], c["entries"]])) == 2
 
 
 # ------------------------------------------------------------------ extractor logic
@@ -94,12 +94,12 @@ def run(reads, text, passes=2):
     seq = iter(reads)
     ex = DeepSeekExtractor(read=lambda img, crop: next(seq))
     pages = [(Image.new("RGB", (60, 90), "white"), text)]
-    valves, issues = ex.extract(pages, Plan(passes=passes, bands=3, cols=1), "f.pdf")
-    return valves, issues + validate(valves, "f.pdf")
+    records, issues = ex.extract(pages, Plan(passes=passes, bands=3, cols=1), "f.pdf")
+    return records, issues + validate(records, "f.pdf")
 
 
-def val(valves, canon, case):
-    return next(e["value"] for e in valves[0]["entries"] if e["canonical"] == canon and e["case"] == case)
+def val(records, canon, case):
+    return next(e["value"] for e in records[0]["entries"] if e["canonical"] == canon and e["case"] == case)
 
 
 def codes(issues):

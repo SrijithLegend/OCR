@@ -259,7 +259,7 @@ def test_reconcile_majority_vote():
 
 def test_to_sheets_unmatched_issue_becomes_sheet_note():
     v = V([E("P1", "inlet_pressure", "normal", "10")])
-    issues = [dict(file="f", valve="T1", section="", parameter="", case="", severity="error", code="x", issue="boom")]
+    issues = [dict(file="f", record="T1", section="", parameter="", case="", severity="error", code="x", issue="boom")]
     sh = to_sheets(0, "f", v, issues)[0]
     assert sh.notes and not sh.cells[0].flags
 
@@ -288,7 +288,7 @@ def test_eval_csv_roundtrip(client, done_job):
     _, c = find(done_job, "Inlet Temperature", "normal")
     client.patch(f"/api/jobs/{jid}/cells/{c['id']}", json={"value": "99.9"})
     out = list(_csv.DictReader(io.StringIO(client.get(f"/api/jobs/{jid}/model-output.csv").text)))
-    r = [x for x in out if x["parameter"] == "Inlet Temperature" and x["case"] == "normal" and x["valve"] == "DEMO-101"][0]
+    r = [x for x in out if x["parameter"] == "Inlet Temperature" and x["case"] == "normal" and x["record"] == "DEMO-101"][0]
     assert r["value"] == "150"          # model value, not the human edit
     flagged = [x for x in out if x["parameter"] == "Flow Rate Mass" and x["case"] == "minimum"][0]
     assert "read this cell" in flagged["flag"]

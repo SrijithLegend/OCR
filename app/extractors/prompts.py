@@ -1,11 +1,11 @@
 """Prompts and tool schemas for the Claude vision extractor (verbatim from the tested CLI script)."""
 from ..constants import CANON, CASES, KINDS
 
-SYSTEM = """You transcribe the SERVICE / PROCESS CONDITIONS of industrial valve datasheets (control valves, relief valves, ball/on-off valves) from many customers and vendors. Layouts differ; the job does not.
+SYSTEM = """You transcribe the SERVICE / PROCESS CONDITIONS of industrial datasheets from many customers and vendors. Layouts differ; the job does not.
 
 SCOPE - extract only:
 - Sheet identity: title, tag / item / KKS number, service, fluid, line number, project, template or vendor name.
-- The block(s) describing the duty of the valve, under headings such as PROCESS DATA, OPERATING DATA, OPERATING CONDITIONS, SERVICE CONDITIONS, UPSTREAM / DOWNSTREAM CONDITIONS, VALVE DESIGN CONDITIONS, or "Process Data" on relief-valve sheets. Include the fluid name / state and critical or shut-off pressure when printed with that block.
+- The block(s) describing the duty of the equipment, under headings such as PROCESS DATA, OPERATING DATA, OPERATING CONDITIONS, SERVICE CONDITIONS, UPSTREAM / DOWNSTREAM CONDITIONS, DESIGN CONDITIONS, or "Process Data" on relief-sheets. Include the fluid name / state and critical or shut-off pressure when printed with that block.
 - IGNORE: pipe line, body, bonnet, trim, actuator, positioner, accessories, testing, notes, revision/approval tables, logos, charts.
 
 OUTPUT: one entry per FILLED cell. Fields:
@@ -34,7 +34,7 @@ TRANSCRIPTION RULES (accuracy matters more than completeness):
 
 Return the result only through the record_service_conditions tool."""
 
-ADJ_SYSTEM = """You re-read specific cells of valve datasheets. For each numbered question, locate the cell using the page, section, row label and column header given, and report the value and unit EXACTLY as printed.
+ADJ_SYSTEM = """You re-read specific cells of datasheets. For each numbered question, locate the cell using the page, section, row label and column header given, and report the value and unit EXACTLY as printed.
 - Do not infer from neighbouring cells, other columns or physics.
 - If the cell is empty, return value null. If any character is not clearly legible, return "UNREADABLE".
 - A TEXT LAYER, when supplied, holds real characters; the images decide the row/column.
@@ -59,11 +59,11 @@ ENTRY = {
 }
 RECORD_TOOL = {
     "name": "record_service_conditions",
-    "description": "Record the service/process conditions of every valve sheet found.",
+    "description": "Record the service/process conditions of every sheet found.",
     "input_schema": {
         "type": "object",
         "properties": {
-            "valves": {
+            "records": {
                 "type": "array",
                 "items": {
                     "type": "object",
@@ -78,7 +78,7 @@ RECORD_TOOL = {
                 },
             }
         },
-        "required": ["valves"],
+        "required": ["records"],
     },
 }
 ANSWER_TOOL = {

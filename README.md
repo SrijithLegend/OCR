@@ -1,6 +1,6 @@
-# Valve Datasheet OCR
+# Datasheet OCR
 
-Turn valve datasheets (PDF or image) into a clean Excel table of their **process / service conditions**: flow, pressures, temperatures and fluid properties for the minimum, normal and maximum cases.
+Turn datasheets (PDF or image) into a clean Excel table of their **process / service conditions**: flow, pressures, temperatures and fluid properties for the minimum, normal and maximum cases.
 
 It reads the sheets with **DeepSeek-OCR-2**, a free OCR model that runs on your own computer. Your files never leave your machine.
 
@@ -9,7 +9,7 @@ It reads the sheets with **DeepSeek-OCR-2**, a free OCR model that runs on your 
 ## What you get
 
 1. Upload one or more datasheets in your browser (click or drag and drop).
-2. The app reads them and shows one table per valve.
+2. The app reads them and shows one table per sheet.
 3. Cells that look wrong are coloured, with the reason on hover:
    - **Red**: probably an error. Check it.
    - **Yellow**: worth a second look.
@@ -186,7 +186,7 @@ The number to watch is **silent errors**: wrong values that were not flagged. Th
 
 ## Limits
 
-- One valve sheet per page tag. Two different sheets on one page are merged.
+- One sheet per page tag. Two different sheets on one page are merged.
 - Parameter names are matched by keyword rules. Unfamiliar labels are kept but marked as `other`.
 - Scanned pages with no text layer get weaker checking than PDFs, because there is less to compare against.
 - Accuracy on your own sheets has to be measured. See *Measure your accuracy*.

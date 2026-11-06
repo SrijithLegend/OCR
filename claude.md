@@ -1,4 +1,4 @@
-# Valve datasheet process-conditions extractor: implementation guide
+# Datasheet process-conditions extractor: implementation guide
 
 Stack: Python 3.11+, FastAPI. Upload or drag-drop PDFs and images, get an editable table of the service/process conditions, export to Excel.
 
@@ -24,7 +24,7 @@ Do not trust any accuracy claim, including your own 99% target, until section 11
 1. Drop up to 20 files (PDF, PNG, JPG, TIFF; 50 MB each, 40 pages each by default).
 2. A background job renders each page, reads the PDF text layer when there is one, and sends page + zoom tiles to Claude twice, independently. Cells where the two reads disagree get a third targeted re-read; majority decides.
 3. Code (not the model) checks the result: P1 - dP = P2, Min <= Normal <= Max, unit sanity, plausible ranges, duplicates, unreadable cells.
-4. The UI shows one table per valve sheet: Min / Normal / Max (plus Design / Single / Other when present). Cells are colour-coded: red = error, yellow = check, blue = you edited it, green = you reviewed it. Hover for the reason. Page link opens the source page.
+4. The UI shows one table per sheet: Min / Normal / Max (plus Design / Single / Other when present). Cells are colour-coded: red = error, yellow = check, blue = you edited it, green = you reviewed it. Hover for the reason. Page link opens the source page.
 5. You edit any cell, add or delete rows, press **OK** on rows you verified.
 6. **Export to Excel** writes the current state, including your edits.
 
@@ -76,7 +76,7 @@ Cost grows with `pages x (1 + tiles) x passes` images per file, plus the re-read
 | AMDP component | MVP decision | Why | When to add it |
 |---|---|---|---|
 | Table Transformer | Not in MVP | Claude reads layout directly; TATR adds a model to host and a new failure mode (bad cell boxes) before there is any evidence it helps. | Phase 2, as an ablation: keep only if it lowers the silent-error rate. |
-| SAM refinement | **Off. I recommend never**, unless an ablation proves it. | SAM segments objects, not text. Hi-SAM / Char-SAM need extra machinery to do text at all. Valve sheets are clean tables. | Only if Phase 4 ablation shows a gain on your worst scans. |
+| SAM refinement | **Off. I recommend never**, unless an ablation proves it. | SAM segments objects, not text. Hi-SAM / Char-SAM need extra machinery to do text at all. Record sheets are clean tables. | Only if Phase 4 ablation shows a gain on your worst scans. |
 | DeepSeek-OCR 2 | Not in MVP | Needs a GPU, flash-attn, a pinned environment. Useful as an independent second reader. | Phase 3. |
 | LLM "reconstruction / verification" | LLM only transcribes and maps labels; code verifies | An LLM allowed to "fix" a value will confidently invent a plausible one. Checks that matter (P1 - dP = P2) are arithmetic. | Phase 3: LLM may propose a label mapping, but a provenance check in code rejects any value not present in an OCR/text-layer read. |
 | Adaptive Document Controller (RL) | Rules (`controller.py`): dense text layer -> 2 tile columns; shrink tiling to fit the 100-image limit | Bandits/RL need thousands of labelled outcomes you do not have. | Phase 5, only if data exists and rules plateau. |
@@ -103,7 +103,7 @@ How accuracy is protected (all in code, nothing is "fixed" by a model):
 4. Engineering checks (P1 - dP = P2, order, units) run on the result as before.
 5. The parser (`mdparse.py`) maps columns by printed header text, copies values exactly, skips BODY/TRIM/ACTUATOR sections, ignores tables with fewer than 3 recognisable process parameters.
 
-Known limits: the label to canonical mapping is keyword rules (unknown labels become `other`); one valve sheet per page tag (two sheets on one page are merged); scans without a text layer get weaker protection (two reads agreeing on the same misread is not caught). Measure with section 11 before trusting it.
+Known limits: the label to canonical mapping is keyword rules (unknown labels become `other`); one sheet per page tag (two sheets on one page are merged); scans without a text layer get weaker protection (two reads agreeing on the same misread is not caught). Measure with section 11 before trusting it.
 
 ---
 
@@ -135,11 +135,11 @@ Extractor contract (every future engine implements this):
 class Extractor:
     name: str
     def extract(self, pages, plan, fname) -> tuple[list[dict], list[dict]]:
-        """pages: [(PIL.Image, text_layer_str)]. Returns (valves, issues).
-        valve = {sheet_title, tag, fluid, service, source_pages, has_values,
+        """pages: [(PIL.Image, text_layer_str)]. Returns (records, issues).
+        record = {sheet_title, tag, fluid, service, source_pages, has_values,
                  entries: [{section, row_no, parameter, canonical, kind, case,
                             case_label, value, unit, page}]}
-        issue = {file, valve, section, parameter, case, severity, code, issue}"""
+        issue = {file, record, section, parameter, case, severity, code, issue}"""
 ```
 
 Rules that carry the accuracy and must not be "improved" casually:
@@ -177,7 +177,7 @@ amdp/
 ## 6. Data model
 
 - `Cell`: `id, section, row_no, parameter (as printed), canonical, kind (condition|design|calculated), case (minimum|normal|maximum|design|single|other), value (string, as printed), unit, page, bbox (reserved for Phase 2+), flags[], source (model|human), original_value/original_unit (before the first human edit), edited, reviewed`.
-- `Sheet`: one per valve datasheet found: `tag, title, fluid, service, pages, has_values, info, cells[], notes[]` (sheet-level flags).
+- `Sheet`: one per datasheet found: `tag, title, fluid, service, pages, has_values, info, cells[], notes[]` (sheet-level flags).
 - `Job`: `status (queued|processing|done|error), progress, files[], sheets[], error`.
 - Values stay **strings** end to end so `1.4E+06`, `<75`, `N/A` survive. They become numbers only in the Excel export.
 
@@ -815,7 +815,7 @@ def plan_for(pages, default_passes: int) -> Plan:
 * engineering checks (validate): P1 - dP = P2, ordering, units, ranges, duplicates
 * to_sheets: turn raw dicts + issues into Sheet/Cell models with per-cell flags
 
-An issue is a dict: file, valve, section, parameter, case, severity, code, issue.
+An issue is a dict: file, record, section, parameter, case, severity, code, issue.
 """
 import copy
 import re
@@ -827,23 +827,23 @@ from .textutil import norm, same_value, to_num, unit_norm
 P_UNIT = re.compile(r"(bar|psi|kpa|mpa|pa|kg/?cm|kgf|atm|torr|mmhg|mmwc|inh|ksi)")
 
 
-def normalize(valves):
-    for i, v in enumerate(valves, 1):
+def normalize(records):
+    for i, v in enumerate(records, 1):
         tag = (v.get("tag") or "").strip()
         title = (v.get("sheet_title") or "").strip()
         pages = v.get("source_pages") or []
         v["_name"] = tag or (f"{title} (p{min(pages)})" if title and pages else f"(untitled sheet {i})")
         v["_id"] = norm(v["_name"])
         v["entries"] = v.get("entries") or []
-    return valves
+    return records
 
 
 def vkey(v):
     return v["_id"]
 
 
-def issue(fname, valve, section, parameter, case, severity, code, msg):
-    return {"file": fname, "valve": valve, "section": section or "", "parameter": parameter or "",
+def issue(fname, record, section, parameter, case, severity, code, msg):
+    return {"file": fname, "record": record, "section": section or "", "parameter": parameter or "",
             "case": case or "", "severity": severity, "code": code, "issue": msg}
 
 
@@ -858,10 +858,10 @@ def keyed(v):
     return out
 
 
-def find_disputes(a_valves, b_valves, fname, issues):
+def find_disputes(a_records, b_records, fname, issues):
     disputes = []
-    idx_b = {v["_id"]: v for v in b_valves}
-    for va in a_valves:
+    idx_b = {v["_id"]: v for v in b_records}
+    for va in a_records:
         vb = idx_b.pop(va["_id"], None)
         if vb is None:
             issues.append(issue(fname, va["_name"], "", "", "", "error", "not_in_pass2",
@@ -873,7 +873,7 @@ def find_disputes(a_valves, b_valves, fname, issues):
             if a and b and same_value(a.get("value"), b.get("value")) \
                     and unit_norm(a.get("unit")) == unit_norm(b.get("unit")):
                 continue
-            disputes.append({"id": len(disputes), "valve": va, "a": a, "b": b})
+            disputes.append({"id": len(disputes), "record": va, "a": a, "b": b})
     for vb in idx_b.values():
         issues.append(issue(fname, vb["_name"], "", "", "", "error", "only_pass2",
                             "Sheet only found in the second read"))
@@ -884,7 +884,7 @@ def dispute_questions(disputes):
     lines = []
     for d in disputes:
         ref = d["a"] or d["b"]
-        lines.append(f'Q{d["id"]}: sheet "{d["valve"]["_name"]}", page {ref.get("page")}, '
+        lines.append(f'Q{d["id"]}: sheet "{d["record"]["_name"]}", page {ref.get("page")}, '
                      f'section "{ref.get("section") or "-"}", row {ref.get("row_no") or "-"} '
                      f'"{ref["parameter"]}", column "{ref.get("case_label") or ref["case"]}": '
                      f'value and unit as printed?')
@@ -894,7 +894,7 @@ def dispute_questions(disputes):
 def apply_adjudication(disputes, answers, fname, issues):
     """Majority vote of read 1, read 2 and the re-read. An unmatched re-read stays an error."""
     for d in disputes:
-        a, b, v = d["a"], d["b"], d["valve"]
+        a, b, v = d["a"], d["b"], d["record"]
         ref = a or b
         sec, par, case, name = ref.get("section"), ref["parameter"], ref["case"], v["_name"]
         ans = answers.get(d["id"]) or {}
@@ -934,7 +934,7 @@ def _pressure_base(un):
     return un
 
 
-def validate(valves, fname):
+def validate(records, fname):
     issues = []
 
     def add(v, e, sev, code, msg):
@@ -942,7 +942,7 @@ def validate(valves, fname):
                             e["parameter"] if e else "", e["case"] if e else "", sev, code, msg))
 
     seen_names = {}
-    for v in valves:
+    for v in records:
         ents = v["entries"]
         seen_names[v["_id"]] = seen_names.get(v["_id"], 0) + 1
         if not v.get("has_values") and not ents:
@@ -1032,9 +1032,9 @@ def _enum(value, allowed, default):
     return value if value in allowed else default
 
 
-def to_sheets(file_idx, fname, valves, issues, source="model"):
+def to_sheets(file_idx, fname, records, issues, source="model"):
     sheets = []
-    for v in valves:
+    for v in records:
         cells = [Cell(section=e.get("section"), row_no=e.get("row_no"), parameter=e["parameter"],
                       canonical=e.get("canonical") or "other",
                       kind=_enum(e.get("kind"), KINDS, "condition"),
@@ -1050,7 +1050,7 @@ def to_sheets(file_idx, fname, valves, issues, source="model"):
         by = {}
         for c in cells:
             by.setdefault((norm(c.section), norm(c.parameter)), []).append(c)
-        for i in (x for x in issues if x["valve"] == v["_name"]):
+        for i in (x for x in issues if x["record"] == v["_name"]):
             flag = Flag(severity=i["severity"], code=i.get("code", "check"), message=i["issue"])
             if not i.get("parameter"):
                 sheet.notes.append(flag)
@@ -1098,9 +1098,9 @@ def run_job(job_id: str):
             plan = plan_for(pages, PASSES)
             job.progress = f"[{f.idx + 1}/{len(job.files)}] {f.name}: reading ({plan.passes} pass(es))"
             store.save(job)
-            valves, issues = extractor.extract(pages, plan, f.name)
-            issues = issues + validate(valves, f.name)
-            sheets += to_sheets(f.idx, f.name, valves, issues)
+            records, issues = extractor.extract(pages, plan, f.name)
+            issues = issues + validate(records, f.name)
+            sheets += to_sheets(f.idx, f.name, records, issues)
         job.sheets, job.status, job.progress = sheets, "done", "Done"
     except Exception as e:  # surfaced to the UI, trimmed; full trace in the log
         log.exception("job %s failed", job_id)
@@ -1291,7 +1291,7 @@ from .pipeline import run_job
 from .schemas import Cell, CellPatch, FileInfo, Job, NewCell
 
 STATIC = Path(__file__).parent / "static"
-app = FastAPI(title="Valve datasheet process-conditions extractor", docs_url=None, redoc_url=None)
+app = FastAPI(title="Datasheet process-conditions extractor", docs_url=None, redoc_url=None)
 
 MAX_FIELD = 300  # longest accepted value / unit / parameter text
 
@@ -1488,7 +1488,7 @@ def model_output(job_id: str):
             v, u = (c.original_value, c.original_unit) if c.edited else (c.value, c.unit)
             rows.append([sh.tag or sh.title or "(untitled)", c.parameter, c.case, v or "", u or "",
                          "; ".join(f.message for f in c.flags if f.severity != "info")])
-    return _csv(rows, ["valve", "parameter", "case", "value", "unit", "flag"])
+    return _csv(rows, ["record", "parameter", "case", "value", "unit", "flag"])
 
 
 @app.get("/api/jobs/{job_id}/truth.csv")
@@ -1497,7 +1497,7 @@ def truth(job_id: str):
     job = get_job(job_id)
     rows = [[sh.tag or sh.title or "(untitled)", c.parameter, c.case, c.value or "", c.unit or ""]
             for sh in job.sheets for c in sh.cells if c.reviewed or c.edited]
-    return _csv(rows, ["valve", "parameter", "case", "value", "unit"])
+    return _csv(rows, ["record", "parameter", "case", "value", "unit"])
 
 
 @app.exception_handler(Exception)
@@ -1518,9 +1518,9 @@ app.mount("/static", StaticFiles(directory=STATIC), name="static")
 ````python
 """Extractor registry. An extractor turns page images (+ text layer) into raw sheet dicts.
 
-    extract(pages, plan, fname) -> (valves, issues)
+    extract(pages, plan, fname) -> (records, issues)
 
-`pages` is a list of (PIL.Image, text_layer_str). `valves` use the dict shape in
+`pages` is a list of (PIL.Image, text_layer_str). `records` use the dict shape in
 `claude_vision.RECORD_TOOL`. `issues` are reconciliation problems found while reading.
 """
 
@@ -1541,11 +1541,11 @@ def get_extractor(name: str):
 """Prompts and tool schemas for the Claude vision extractor (verbatim from the tested CLI script)."""
 from ..constants import CANON, CASES, KINDS
 
-SYSTEM = """You transcribe the SERVICE / PROCESS CONDITIONS of industrial valve datasheets (control valves, relief valves, ball/on-off valves) from many customers and vendors. Layouts differ; the job does not.
+SYSTEM = """You transcribe the SERVICE / PROCESS CONDITIONS of industrial datasheets from many customers and vendors. Layouts differ; the job does not.
 
 SCOPE - extract only:
 - Sheet identity: title, tag / item / KKS number, service, fluid, line number, project, template or vendor name.
-- The block(s) describing the duty of the valve, under headings such as PROCESS DATA, OPERATING DATA, OPERATING CONDITIONS, SERVICE CONDITIONS, UPSTREAM / DOWNSTREAM CONDITIONS, VALVE DESIGN CONDITIONS, or "Process Data" on relief-valve sheets. Include the fluid name / state and critical or shut-off pressure when printed with that block.
+- The block(s) describing the duty of the equipment, under headings such as PROCESS DATA, OPERATING DATA, OPERATING CONDITIONS, SERVICE CONDITIONS, UPSTREAM / DOWNSTREAM CONDITIONS, DESIGN CONDITIONS, or "Process Data" on relief-sheets. Include the fluid name / state and critical or shut-off pressure when printed with that block.
 - IGNORE: pipe line, body, bonnet, trim, actuator, positioner, accessories, testing, notes, revision/approval tables, logos, charts.
 
 OUTPUT: one entry per FILLED cell. Fields:
@@ -1574,7 +1574,7 @@ TRANSCRIPTION RULES (accuracy matters more than completeness):
 
 Return the result only through the record_service_conditions tool."""
 
-ADJ_SYSTEM = """You re-read specific cells of valve datasheets. For each numbered question, locate the cell using the page, section, row label and column header given, and report the value and unit EXACTLY as printed.
+ADJ_SYSTEM = """You re-read specific cells of datasheets. For each numbered question, locate the cell using the page, section, row label and column header given, and report the value and unit EXACTLY as printed.
 - Do not infer from neighbouring cells, other columns or physics.
 - If the cell is empty, return value null. If any character is not clearly legible, return "UNREADABLE".
 - A TEXT LAYER, when supplied, holds real characters; the images decide the row/column.
@@ -1599,11 +1599,11 @@ ENTRY = {
 }
 RECORD_TOOL = {
     "name": "record_service_conditions",
-    "description": "Record the service/process conditions of every valve sheet found.",
+    "description": "Record the service/process conditions of every sheet found.",
     "input_schema": {
         "type": "object",
         "properties": {
-            "valves": {
+            "records": {
                 "type": "array",
                 "items": {
                     "type": "object",
@@ -1618,7 +1618,7 @@ RECORD_TOOL = {
                 },
             }
         },
-        "required": ["valves"],
+        "required": ["records"],
     },
 }
 ANSWER_TOOL = {
@@ -1732,10 +1732,10 @@ class ClaudeVisionExtractor:
     def extract(self, pages, plan, fname):
         shared = build_content(pages, plan)
         ask = {"type": "text",
-               "text": "Extract the service/process conditions of every valve sheet in this document."}
+               "text": "Extract the service/process conditions of every sheet in this document."}
         runs = [normalize(call_tool(self.client, CLAUDE_MODEL, SYSTEM, RECORD_TOOL, shared + [ask])
-                          .get("valves", [])) for _ in range(plan.passes)]
-        valves, issues = runs[0], []
+                          .get("records", [])) for _ in range(plan.passes)]
+        records, issues = runs[0], []
         if len(runs) == 2 and plan.adjudicate:
             disputes = find_disputes(runs[0], runs[1], fname, issues)
             if disputes:
@@ -1743,7 +1743,7 @@ class ClaudeVisionExtractor:
                     {"type": "text", "text": "Re-read these cells. Use the question number as id.\n"
                      + "\n".join(dispute_questions(disputes))}], max_tokens=8000)
                 apply_adjudication(disputes, {a["id"]: a for a in out.get("answers", [])}, fname, issues)
-        return valves, issues
+        return records, issues
 ````
 
 ### `app/extractors/stub.py`
@@ -1763,7 +1763,7 @@ class StubExtractor:
     name = "stub"
 
     def extract(self, pages, plan, fname):
-        v1 = dict(sheet_title="Control valve data sheet", format_name="Demo", tag="DEMO-101",
+        v1 = dict(sheet_title="Process data sheet", format_name="Demo", tag="DEMO-101",
                   item_no="1", fluid="Water", service="Demo service", source_pages=[1], has_values=True,
                   entries=_t("Inlet Pressure (P1)", "inlet_pressure", ["56.7", "56.7", "56.7"], "bar(g)", row=3)
                   + _t("Outlet Pressure (P2)", "outlet_pressure", ["52.7", "52.9", "40.0"], "bar(g)", row=4)
@@ -1775,10 +1775,10 @@ class StubExtractor:
         v2 = dict(sheet_title="Spec sheet", tag="DEMO-102", source_pages=[min(2, len(pages))], has_values=True,
                   entries=_t("Inlet Pressure (P1)", "inlet_pressure", ["10.0", "10.0", "10.0"], "kg/cm2g", sec="OPERATING DATA")
                   + _t("Flow Rate", "flow_rate_gas_std", ["3600", "3000", "1500"], "scfh", sec="OPERATING DATA"))
-        valves = normalize([v1, v2])
+        records = normalize([v1, v2])
         issues = [issue(fname, "DEMO-101", "PROCESS DATA", "Flow Rate Mass", "maximum", "warning",
                         "pass_disagree", "Reads disagreed (1: '43300.9', 2: '45300.0'); re-read decided '45300.0'")]
-        return valves, issues
+        return records, issues
 ````
 
 ### `app/static/index.html`
@@ -2246,7 +2246,7 @@ def make_pdf(pages=2) -> bytes:
     doc = pymupdf.open()
     for i in range(pages):
         p = doc.new_page()
-        p.insert_text((72, 100), f"Control valve data sheet page {i + 1}", fontsize=14)
+        p.insert_text((72, 100), f"Process data sheet page {i + 1}", fontsize=14)
     return doc.tobytes()
 
 
@@ -2530,7 +2530,7 @@ def test_reconcile_majority_vote():
 
 def test_to_sheets_unmatched_issue_becomes_sheet_note():
     v = V([E("P1", "inlet_pressure", "normal", "10")])
-    issues = [dict(file="f", valve="T1", section="", parameter="", case="", severity="error", code="x", issue="boom")]
+    issues = [dict(file="f", record="T1", section="", parameter="", case="", severity="error", code="x", issue="boom")]
     sh = to_sheets(0, "f", v, issues)[0]
     assert sh.notes and not sh.cells[0].flags
 
@@ -2559,7 +2559,7 @@ def test_eval_csv_roundtrip(client, done_job):
     _, c = find(done_job, "Inlet Temperature", "normal")
     client.patch(f"/api/jobs/{jid}/cells/{c['id']}", json={"value": "99.9"})
     out = list(_csv.DictReader(io.StringIO(client.get(f"/api/jobs/{jid}/model-output.csv").text)))
-    r = [x for x in out if x["parameter"] == "Inlet Temperature" and x["case"] == "normal" and x["valve"] == "DEMO-101"][0]
+    r = [x for x in out if x["parameter"] == "Inlet Temperature" and x["case"] == "normal" and x["record"] == "DEMO-101"][0]
     assert r["value"] == "150"          # model value, not the human edit
     flagged = [x for x in out if x["parameter"] == "Flow Rate Mass" and x["case"] == "minimum"][0]
     assert "read this cell" in flagged["flag"]
