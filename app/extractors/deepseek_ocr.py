@@ -35,8 +35,15 @@ _MODEL = None
 def _load():
     global _MODEL
     if _MODEL is None:
-        import torch
-        from transformers import AutoModel, AutoTokenizer, BitsAndBytesConfig
+        try:
+            import torch
+            from transformers import AutoModel, AutoTokenizer, BitsAndBytesConfig
+        except ImportError as e:
+            raise RuntimeError(f"DeepSeek-OCR-2 needs torch + transformers==4.46.3 ({e}). "
+                               "See requirements.txt, or set EXTRACTOR=stub.") from e
+        if not torch.cuda.is_available():
+            raise RuntimeError("DeepSeek-OCR-2 needs an NVIDIA GPU with a CUDA build of torch "
+                               "(torch.cuda.is_available() is False).")
         kw = {"trust_remote_code": True, "revision": REVISION}
         tok = AutoTokenizer.from_pretrained(MODEL_NAME, **kw)
         extra = {}

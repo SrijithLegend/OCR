@@ -12,6 +12,7 @@ This file is self-contained. The **Appendix** holds the full source of a working
 |---|---|
 | **Tested** | Upload (picker + drag-drop), PDF/image ingest, job lifecycle, flags, inline edit, add/delete rows, row review, Excel export with edits, CSV export for scoring, security checks. 28 pytest tests plus a headless-Chromium run (upload, drag-drop, edit, XSS probe, reload-resume, download, delete). |
 | **Tested only with a stub** | Everything above ran with `EXTRACTOR=stub`, a canned reader that returns fixed fake sheets. It proves the app, not the extraction. |
+| **Built, unit-tested without a GPU** | `EXTRACTOR=deepseek` (default): `app/extractors/deepseek_ocr.py` + `mdparse.py`. Parser and reconciliation logic covered by `tests/test_deepseek.py` with a faked OCR reader. The model itself has **not been run** on real sheets yet (see section 3a). |
 | **NOT tested** | The live Claude reader (`claude_vision.py`) has never been run against the real API. Accuracy on real datasheets is **unmeasured**. Table Transformer, SAM and DeepSeek-OCR 2 are **not implemented**, and could not be run in the build environment (no GPU, no model downloads). |
 
 Do not trust any accuracy claim, including your own 99% target, until section 11's evaluation says so on files you did not tune against.
@@ -83,6 +84,26 @@ Cost grows with `pages x (1 + tiles) x passes` images per file, plus the re-read
 | Correction loop | Human review loop in the UI; edited cells keep the model's original value; CSV export feeds `score.py` | Human corrections are the only trustworthy training/eval signal. | Phase 5. |
 
 **One independent second read is the single biggest accuracy lever here.** Two reads from the same model are less independent than two different engines. That is the real argument for Phase 3.
+
+## 3a. DeepSeek-OCR-2 engine (default, `EXTRACTOR=deepseek`)
+
+Replaces Gemini/Claude as the reader. Local, 4-bit (fits a 6 GB GPU), no data leaves the machine.
+
+```bash
+pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
+pip install -r requirements.txt
+EXTRACTOR=deepseek PASSES=2 uvicorn app.main:app --host 127.0.0.1 --port 8000
+```
+First run downloads the model (several GB). Pin `DEEPSEEK_REVISION` to a commit: the repo's code is executed (`trust_remote_code`).
+
+How accuracy is protected (all in code, nothing is "fixed" by a model):
+1. **Two OCR reads** per page (tiled-crop view and global view). Cells where they differ are disputes.
+2. **Evidence settles disputes**: the PDF text layer, or for scans a third OCR over 3 overlapping page bands. The candidate present in the evidence wins and is flagged `pass_disagree`. If neither or both are present the cell stays `unresolved` (red) for a human.
+3. **Provenance**: every numeric value must appear in the evidence. If not, it is flagged `not_in_evidence`; if exactly one evidence number is one character away *and is not already used by another cell*, it is corrected and flagged `evidence_fix`.
+4. Engineering checks (P1 - dP = P2, order, units) run on the result as before.
+5. The parser (`mdparse.py`) maps columns by printed header text, copies values exactly, skips BODY/TRIM/ACTUATOR sections, ignores tables with fewer than 3 recognisable process parameters.
+
+Known limits: the label to canonical mapping is keyword rules (unknown labels become `other`); one valve sheet per page tag (two sheets on one page are merged); scans without a text layer get weaker protection (two reads agreeing on the same misread is not caught). Measure with section 11 before trusting it.
 
 ---
 
