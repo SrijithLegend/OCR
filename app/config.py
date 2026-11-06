@@ -2,7 +2,7 @@ import os
 from pathlib import Path
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "data")).resolve()
-EXTRACTOR = os.environ.get("EXTRACTOR", "claude")  # claude | stub
+EXTRACTOR = os.environ.get("EXTRACTOR", "deepseek")  # deepseek | claude | stub
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5-5")
 PASSES = max(1, min(2, int(os.environ.get("PASSES", "2"))))
 

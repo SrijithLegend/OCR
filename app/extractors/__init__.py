@@ -14,4 +14,7 @@ def get_extractor(name: str):
     if name == "claude":
         from .claude_vision import ClaudeVisionExtractor
         return ClaudeVisionExtractor()
-    raise ValueError(f"Unknown EXTRACTOR {name!r} (use 'claude' or 'stub')")
+    if name == "deepseek":
+        from .deepseek_ocr import DeepSeekExtractor
+        return DeepSeekExtractor()
+    raise ValueError(f"Unknown EXTRACTOR {name!r} (use 'deepseek', 'claude' or 'stub')")
