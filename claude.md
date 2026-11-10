@@ -12,8 +12,8 @@ This file is self-contained. The **Appendix** holds the full source of a working
 |---|---|
 | **Tested** | Upload (picker + drag-drop), PDF/image ingest, job lifecycle, flags, inline edit, add/delete rows, row review, Excel export with edits, CSV export for scoring, security checks. 28 pytest tests plus a headless-Chromium run (upload, drag-drop, edit, XSS probe, reload-resume, download, delete). |
 | **Tested only with a stub** | Everything above ran with `EXTRACTOR=stub`, a canned reader that returns fixed fake sheets. It proves the app, not the extraction. |
-| **Built, unit-tested without a GPU** | `EXTRACTOR=deepseek` (default): `app/extractors/deepseek_ocr.py` + `mdparse.py`. Parser and reconciliation logic covered by `tests/test_deepseek.py` with a faked OCR reader. The model itself has **not been run** on real sheets yet (see section 3a). |
-| **NOT tested** | The live Claude reader (`claude_vision.py`) has never been run against the real API. Accuracy on real datasheets is **unmeasured**. Table Transformer, SAM and DeepSeek-OCR 2 are **not implemented**, and could not be run in the build environment (no GPU, no model downloads). |
+| **Built, unit-tested without a GPU** | `EXTRACTOR=deepseek` (default), `ensemble`, optional `TABLE_CROP=1` and `LABEL_MAP=1`: `app/extractors/` `deepseek_ocr.py`, `mdparse.py`, `ensemble.py`, `labelmap.py`, `tablecrop.py`. 47 pytest tests, all with faked readers. |
+| **NOT run / NOT measured** | DeepSeek-OCR-2 itself has **never run** (no CUDA torch installed yet). The live Claude reader has never run against the real API. The Table Transformer detector has never been downloaded or run. **Accuracy on real datasheets is unmeasured.** UI checklist (section 8) re-verified in headless Chrome against `EXTRACTOR=stub` on 2026-11-10. |
 
 Do not trust any accuracy claim, including your own 99% target, until section 11's evaluation says so on files you did not tune against.
 
@@ -102,6 +102,11 @@ How accuracy is protected (all in code, nothing is "fixed" by a model):
 3. **Provenance**: every numeric value must appear in the evidence. If not, it is flagged `not_in_evidence`; if exactly one evidence number is one character away *and is not already used by another cell*, it is corrected and flagged `evidence_fix`.
 4. Engineering checks (P1 - dP = P2, order, units) run on the result as before.
 5. The parser (`mdparse.py`) maps columns by printed header text, copies values exactly, skips BODY/TRIM/ACTUATOR sections, ignores tables with fewer than 3 recognisable process parameters.
+
+Optional layers, all off by default, each judged by the section 11 score (keep only if it lowers silent errors):
+- `EXTRACTOR=ensemble`: DeepSeek primary + Claude witness (`ensemble.py`). Engines that disagree are settled by evidence, else `unresolved`.
+- `LABEL_MAP=1`: Claude re-tags rows whose label fell to `other` (`labelmap.py`). It sees labels and units only, answers only from the canonical enum, and never touches values.
+- `TABLE_CROP=1`: Table Transformer crops (`tablecrop.py`, needs `timm`) used as OCR evidence for scans instead of page bands; falls back to bands on any failure.
 
 Known limits: the label to canonical mapping is keyword rules (unknown labels become `other`); one sheet per page tag (two sheets on one page are merged); scans without a text layer get weaker protection (two reads agreeing on the same misread is not caught). Measure with section 11 before trusting it.
 
@@ -278,13 +283,13 @@ Caveats:
 
 | Phase | Do | Exit criterion |
 |---|---|---|
-| 0 | This MVP | 28 tests green, e2e green (done) |
-| 1 | Live Claude run on your 5 to 10 sheets; baseline score | Baseline silent-error rate recorded. If it is already 0 on a fresh set, stop here |
-| 2 | Table Transformer: crop each table, send the crop as an extra zoom image | Silent-error rate lower than baseline on the **same** files, else remove it |
-| 3 | DeepSeek-OCR 2 as an independent second reader on a GPU box; consistency engine votes across engines; LLM label mapping with provenance check | Disagreements flagged, never silently resolved; silent errors lower |
-| 4 | SAM refinement | Keep only if the ablation shows a gain. Expect none |
-| 5 | Learned controller | Only with >1000 reviewed outcomes and rules plateaued |
-| 6 | Production: auth, Postgres, task queue (Celery/Redis), object storage, MLflow | Needed only when more than one user or a restart-proof queue is required |
+| 0 | This MVP | 47 tests green, UI checklist re-verified in Chrome (done) |
+| 1 | Live run (DeepSeek, or Claude) on your 5 to 10 sheets; baseline score. **Open: needs CUDA torch + your sheets** | Baseline silent-error rate recorded. If it is already 0 on a fresh set, stop here |
+| 2 | Table Transformer: crop each table, send the crop as an extra zoom image | **Built** as `TABLE_CROP=1` (evidence crops), never run. Exit criterion still open: silent-error rate lower than baseline on the **same** files, else remove it |
+| 3 | DeepSeek-OCR 2 as an independent second reader on a GPU box; consistency engine votes across engines; LLM label mapping with provenance check | **Built**: `deepseek`, `ensemble`, `LABEL_MAP`. Never run on a GPU. Exit criterion open: disagreements flagged, never silently resolved; silent errors lower |
+| 4 | SAM refinement | **Not built, on purpose** (section 3). Needs an ablation that shows a gain first; no verified API snippet exists |
+| 5 | Learned controller | **Not built**: needs >1000 reviewed outcomes you do not have yet. Rule controller stays |
+| 6 | Production: auth, Postgres, task queue (Celery/Redis), object storage, MLflow | **Not built**: only needed for more than one user or a restart-proof queue |
 
 A change that does not improve the score on held-out files does not ship.
 
