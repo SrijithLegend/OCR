@@ -15,7 +15,11 @@ except ImportError:  # older PyMuPDF
 
 def layout_text(page) -> str:
     """Rebuild text rows from word boxes; ' | ' marks a column gap. Empty for scanned pages."""
-    words = page.get_text("words")
+    return words_to_text(page.get_text("words"))
+
+
+def words_to_text(words, every_gap=False) -> str:
+    """words: (x0, y0, x1, y1, text). every_gap=True: each box is a cell (OCR boxes are cell-level)."""
     if not words:
         return ""
     words = sorted(words, key=lambda w: ((w[1] + w[3]) / 2, w[0]))
@@ -34,7 +38,7 @@ def layout_text(page) -> str:
         ws = sorted(r["w"], key=lambda w: w[0])
         parts = [ws[0][4]]
         for a, b in zip(ws, ws[1:]):
-            parts.append(" | " if b[0] - a[2] > 1.2 * r["h"] else " ")
+            parts.append(" | " if every_gap or b[0] - a[2] > 1.2 * r["h"] else " ")
             parts.append(b[4])
         lines.append("".join(parts))
     return "\n".join(lines)

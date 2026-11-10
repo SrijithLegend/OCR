@@ -1,4 +1,5 @@
 import pymupdf
+import pytest
 from PIL import Image
 
 from app.consistency import validate
@@ -40,7 +41,18 @@ def test_text_layer_extraction():
     assert "p_balance" not in {i["code"] for i in validate(records, "f.pdf")}  # all three columns balance
 
 
-def test_scan_page_gets_error_note():
+def test_scan_page_without_ocr_gets_error_note(monkeypatch):
+    monkeypatch.setattr("app.extractors.textlayer.ocr_text", lambda img: None)
     pages = [(Image.new("RGB", (10, 10)), "")]
     records, issues = TextLayerExtractor().extract(pages, plan_for(pages, 1), "s.pdf")
     assert issues and issues[0]["code"] == "no_text_layer" and issues[0]["severity"] == "error"
+
+
+def test_scan_page_read_by_ocr():
+    from app.ingest import _render
+    pytest.importorskip("rapidocr_onnxruntime")
+    pages = [(_render(pdf_page(), 200), "")]            # image only: no text layer
+    records, issues = TextLayerExtractor().extract(pages, plan_for(pages, 1), "s.pdf")
+    got = {(e["canonical"], e["case"]): e["value"] for e in records[0]["entries"]}
+    assert got[("inlet_pressure", "minimum")] == "55.0" and got[("flow_rate_mass", "maximum")] == "45300.0"
+    assert [i["code"] for i in issues] == ["ocr_page"]

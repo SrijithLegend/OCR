@@ -7,6 +7,7 @@ pillow>=10.0
 openpyxl>=3.1
 anthropic>=0.40   # only for EXTRACTOR=claude
 google-genai>=1.0   # only for EXTRACTOR=gemini
+rapidocr-onnxruntime   # EXTRACTOR=text: OCR for scanned pages (optional)
 
 # DeepSeek-OCR-2 (EXTRACTOR=deepseek). Install torch first:
 #   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
