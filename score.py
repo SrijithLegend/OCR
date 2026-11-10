@@ -9,7 +9,7 @@ import csv
 import sys
 from collections import defaultdict
 
-from app.textutil import norm, same_value, unit_norm
+from main import norm, same_value, unit_norm
 
 
 def load(path):
