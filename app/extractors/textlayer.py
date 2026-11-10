@@ -57,3 +57,14 @@ class TextLayerExtractor:
                     issues.append(issue(fname, v["_name"], "", "", "", "warning", "ocr_page",
                                         f"Page {n} was read by OCR (scan): verify every value"))
         return records, issues
+
+
+class AutoExtractor:
+    """Text layer when every page has one (instant, exact); otherwise Gemini vision for the whole file."""
+    name = "auto"
+
+    def extract(self, pages, plan, fname):
+        if all(len(t.strip()) >= MIN_CHARS for _, t in pages):
+            return TextLayerExtractor().extract(pages, plan, fname)
+        from .gemini_vision import GeminiVisionExtractor
+        return GeminiVisionExtractor().extract(pages, plan, fname)

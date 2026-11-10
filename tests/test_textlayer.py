@@ -56,3 +56,16 @@ def test_scan_page_read_by_ocr():
     got = {(e["canonical"], e["case"]): e["value"] for e in records[0]["entries"]}
     assert got[("inlet_pressure", "minimum")] == "55.0" and got[("flow_rate_mass", "maximum")] == "45300.0"
     assert [i["code"] for i in issues] == ["ocr_page"]
+
+
+def test_auto_routes_by_text_layer(monkeypatch):
+    from app.extractors import textlayer as tl
+    calls = []
+    monkeypatch.setattr(tl.TextLayerExtractor, "extract", lambda self, *a: calls.append("text") or ([], []))
+    import app.extractors.gemini_vision as gv
+    monkeypatch.setattr(gv.GeminiVisionExtractor, "__init__", lambda self: None)
+    monkeypatch.setattr(gv.GeminiVisionExtractor, "extract", lambda self, *a: calls.append("gemini") or ([], []))
+    img = Image.new("RGB", (10, 10))
+    tl.AutoExtractor().extract([(img, "x" * 100)], None, "f")
+    tl.AutoExtractor().extract([(img, "x" * 100), (img, "")], None, "f")
+    assert calls == ["text", "gemini"]
