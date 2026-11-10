@@ -5,3 +5,4 @@ data/
 .env
 *.ocr.md
 process_conditions*.xlsx
+.claude.md
