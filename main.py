@@ -582,8 +582,8 @@ def build_workbook(results, issues, out):
 
     wb = Workbook()
     ws = wb.active
-    ws.title = "Process Conditions"
-    write_conditions(ws, [r for f, vs in results for r in pivot(f, vs, {"condition", "design", "calculated"})],
+    ws.title = "Datasheet Data"
+    write_conditions(ws, [r for f, vs in results for r in pivot(f, vs, {"condition", "design", "calculated", "spec"})],
                      cell_sev, row_sev)
     for row in ws.iter_rows():  # a typed or printed "=..." must stay text, never a formula
         for c in row:
