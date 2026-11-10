@@ -1,0 +1,190 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Process conditions extractor</title>
+<style>
+:root{--bg:#f5f6f8;--panel:#fff;--text:#1b1f27;--muted:#667085;--line:#d9dde4;--accent:#1f4e9c;--accent-fg:#fff;
+--err:#fbd5d5;--err-b:#d64545;--warn:#fff0c2;--warn-b:#d9a400;--edit:#cfe3f8;--edit-b:#3b82c4}
+@media (prefers-color-scheme:dark){:root{--bg:#14171c;--panel:#1c2027;--text:#e7eaf0;--muted:#9aa4b2;--line:#323946;
+--accent:#6ea0f0;--accent-fg:#0b1220;--err:#4a2326;--err-b:#e06666;--warn:#4a3d12;--warn-b:#e0b422;--edit:#1f3a56;--edit-b:#5aa0e0}}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+.hidden{display:none!important}.muted{color:var(--muted)}
+header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;
+ padding:12px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
+header h1{font-size:17px;margin:0}
+main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
+button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 14px}
+button:hover{border-color:var(--accent)}
+button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
+button.small{padding:2px 9px;font-size:12px}
+#drop{border:2px dashed var(--line);border-radius:14px;background:var(--panel);text-align:center;padding:56px 20px;cursor:pointer;transition:.15s}
+#drop:hover,#drop.over{border-color:var(--accent)}#drop.over{background:var(--edit)}
+#drop b{display:block;font-size:18px;margin-bottom:6px}
+.panel{display:flex;gap:14px;align-items:center;margin-top:16px;padding:14px 18px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+.panel.err{border-color:var(--err-b);background:var(--err)}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:s .9s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.bar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
+.bar .sum{flex:1;min-width:260px;font-weight:600}
+.legend{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 16px}
+.chip{padding:1px 9px;border-radius:10px;font-size:12px;border:1px solid transparent}
+.chip.error{background:var(--err);border-color:var(--err-b)}.chip.warning{background:var(--warn);border-color:var(--warn-b)}
+.chip.edited{background:var(--edit);border-color:var(--edit-b)}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:18px;overflow:hidden}
+.card-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline}
+.card-head h2{font-size:15px;margin:0}
+.notes{padding:8px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.notes .error{color:var(--err-b)}.notes .warning{color:var(--warn-b)}
+.scroll{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th,td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
+th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:var(--bg)}
+tr.sec td{background:var(--bg);font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase}
+td.rn{color:var(--muted);text-align:right;width:30px}
+input.c{width:100%;min-width:96px;font:inherit;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 7px}
+input.c:focus{outline:2px solid var(--accent)}
+input.p{min-width:240px}input.u{min-width:80px;width:96px}
+input.c.error{background:var(--err);border-color:var(--err-b)}input.c.warning{background:var(--warn);border-color:var(--warn-b)}
+input.c.edited{background:var(--edit);border-color:var(--edit-b)}
+.kind{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:0 6px;margin-left:6px}
+.flag{font-size:12px;color:var(--muted);white-space:normal;max-width:300px}
+a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
+</style></head><body>
+<header><h1>Process conditions extractor</h1>
+ <div><button id="new" class="hidden" type="button">New upload</button></div></header>
+<main>
+ <div id="drop" tabindex="0" role="button"><b>Drop PDFs or images here</b>
+  <span class="muted">or click to choose &middot; PDF, PNG, JPG &middot; original files read far better than screenshots</span>
+  <input id="pick" type="file" multiple accept=".pdf,.png,.jpg,.jpeg" hidden></div>
+ <div id="busy" class="panel hidden"><div class="spin"></div><div><b>Extracting</b><div id="busytxt" class="muted"></div></div></div>
+ <div id="err" class="panel err hidden" role="alert"></div>
+ <section id="res" class="hidden">
+  <div class="bar"><div id="sum" class="sum"></div>
+   <label class="muted"><input id="only" type="checkbox"> Show only rows needing review</label>
+   <button id="export" class="primary" type="button">Export to Excel</button></div>
+  <div class="legend"><span class="chip error">error</span><span class="chip warning">check</span>
+   <span class="chip edited">edited by you</span>
+   <span class="muted">Compare with the page (p1 link), fix any value, then export. Values are shown exactly as read.</span></div>
+  <div id="sheets"></div>
+ </section>
+</main>
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const CASES=["minimum","normal","maximum","design","single","other"];
+const TITLE={minimum:"Min",normal:"Normal",maximum:"Max",design:"Design",single:"Single",other:"Other"};
+const norm=s=>String(s??"").replace(/\s+/g," ").trim().toLowerCase();
+let files=[],data=null;
+
+function h(tag,props,...kids){const e=document.createElement(tag);
+ for(const[k,v]of Object.entries(props||{})){if(k==="class")e.className=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);
+  else if(v!==null&&v!==undefined&&v!==false)e.setAttribute(k,v===true?"":v)}
+ for(const k of kids.flat())if(k!==null&&k!==undefined)e.append(k.nodeType?k:document.createTextNode(String(k)));return e}
+
+function view(v,msg){$("drop").classList.toggle("hidden",v!=="drop");$("busy").classList.toggle("hidden",v!=="busy");
+ $("res").classList.toggle("hidden",v!=="res");$("new").classList.toggle("hidden",v==="drop");if(msg)$("busytxt").textContent=msg}
+function fail(m){const e=$("err");e.textContent=m;e.classList.toggle("hidden",!m)}
+async function errText(r){let d=r.statusText;try{d=(await r.json()).detail}catch{}return typeof d==="string"?d:JSON.stringify(d)}
+
+async function upload(list){
+ files=[...list];if(!files.length)return;fail("");
+ const fd=new FormData();files.forEach(f=>fd.append("files",f));
+ view("busy",files.map(f=>f.name).join(", ")+" - this can take a few minutes");
+ try{const r=await fetch("/extract",{method:"POST",body:fd});
+  if(!r.ok)throw new Error(await errText(r));
+  data=await r.json();prepare();view("res");render()}
+ catch(e){view("drop");fail("Extraction failed: "+e.message)}
+}
+
+// attach each issue to the entries it describes (same matching rule as the Excel colours)
+function prepare(){
+ for(const r of data.results)for(const v of r.valves)for(const e of v.entries){
+  e._issues=data.issues.filter(i=>i.file===r.file&&i.valve===v._name&&i.parameter&&norm(i.section)===norm(e.section)
+   &&norm(i.parameter)===norm(e.parameter)&&(!i.case||i.case===e.case))}
+}
+const sev=e=>e._edited?"edited":e._issues.some(i=>i.severity==="error")?"error":e._issues.some(i=>i.severity==="warning")?"warning":"";
+function groups(v){const m=new Map();
+ for(const e of v.entries){const k=norm(e.section)+"\u0001"+norm(e.parameter);
+  if(!m.has(k))m.set(k,{section:e.section||"",entries:[]});m.get(k).entries.push(e)}
+ return[...m.values()]}
+
+function flagsOf(g){return[...new Set(g.entries.filter(e=>!e._edited).flatMap(e=>e._issues.filter(i=>i.severity!=="info").map(i=>i.issue)))].join(" · ")}
+function tip(e){return e._issues.map(i=>i.severity.toUpperCase()+": "+i.issue).join("\n")+(e._edited?"\nEdited by you. Read as: "+(e._orig??"(empty)"):"")}
+
+function cellInput(v,g,flagEl,cn){
+ const e=g.entries.find(x=>x.case===cn);
+ const i=h("input",{class:"c"+(e&&sev(e)?" "+sev(e):""),type:"text","aria-label":TITLE[cn]});
+ i.value=e?e.value??"":"";if(e)i.title=tip(e);
+ i.addEventListener("change",()=>{let t=g.entries.find(x=>x.case===cn);
+  if(!t){if(!i.value.trim())return;const r=g.entries[0];
+   t={section:r.section,row_no:r.row_no,parameter:r.parameter,canonical:r.canonical,kind:r.kind,case:cn,case_label:null,
+      value:null,unit:r.unit,page:r.page,_issues:[]};v.entries.push(t);g.entries.push(t)}
+  if(!t._edited)t._orig=t.value;
+  t.value=i.value.trim()===""?null:i.value;t._edited=true;i.className="c edited";i.title=tip(t);flagEl.textContent=flagsOf(g);summary()});
+ return i}
+
+function rowTr(r,v,g,cols,fi){
+ const flagEl=h("div",{class:"flag"},flagsOf(g)),rep=g.entries[0];
+ const par=h("input",{class:"c p",type:"text","aria-label":"Parameter"});par.value=rep.parameter;
+ par.addEventListener("change",()=>{g.entries.forEach(e=>{e.parameter=par.value;e._edited=true});par.className="c p edited";flagEl.textContent=flagsOf(g);summary()});
+ const units=[...new Set(g.entries.map(e=>e.unit).filter(Boolean))];
+ const un=h("input",{class:"c u",type:"text","aria-label":"Unit"});un.value=units.join(" / ");
+ un.addEventListener("change",()=>{g.entries.forEach(e=>{e.unit=un.value.trim()||null;e._edited=true});un.className="c u edited";flagEl.textContent=flagsOf(g);summary()});
+ const kind=rep.kind==="calculated"?h("span",{class:"kind"},"calculated"):null;
+ return h("tr",{"data-row":"1"},h("td",{class:"rn"},rep.row_no??""),h("td",{},par,kind),h("td",{},un),
+  cols.map(cn=>h("td",{},cellInput(v,g,flagEl,cn))),
+  h("td",{},h("a",{class:"pg",tabindex:"0",role:"button",onclick:()=>openPage(fi,rep.page)},"p"+(rep.page??1))),
+  h("td",{},flagEl),
+  h("td",{},h("button",{class:"small",type:"button",title:"Delete this row",onclick:()=>{
+    if(!confirm("Delete this row?"))return;v.entries=v.entries.filter(e=>!g.entries.includes(e));render()}},"×")))}
+
+function render(){
+ const root=$("sheets");root.replaceChildren();
+ data.results.forEach((r,fi)=>{for(const v of r.valves){
+  const gs=groups(v),used=new Set(v.entries.map(e=>e.case)),cols=CASES.filter(c=>["minimum","normal","maximum"].includes(c)||used.has(c));
+  const notes=data.issues.filter(i=>i.file===r.file&&i.valve===v._name&&!i.parameter);
+  const body=h("tbody");let last=null;
+  for(const g of gs){if(g.section!==last){last=g.section;if(g.section)body.append(h("tr",{class:"sec"},h("td",{colspan:6+cols.length},g.section)))}
+   body.append(rowTr(r,v,g,cols,fi))}
+  const card=h("div",{class:"card"},
+   h("div",{class:"card-head"},h("h2",{},v._name),
+    h("span",{class:"muted"},[v.sheet_title&&v.tag?v.sheet_title:null,v.fluid?"Fluid: "+v.fluid:null,v.service?"Service: "+v.service:null,
+     r.file,"pages "+((v.source_pages||[]).join(", ")||"-")].filter(Boolean).join(" · "))));
+  if(notes.length)card.append(h("div",{class:"notes"},notes.map(i=>h("div",{class:i.severity},i.severity.toUpperCase()+": "+i.issue))));
+  if(!gs.length)card.append(h("div",{class:"notes muted"},"No process-condition values found on this sheet."));
+  else card.append(h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{},"#"),h("th",{},"Parameter"),h("th",{},"Unit"),
+   cols.map(c=>h("th",{},TITLE[c])),h("th",{},"Page"),h("th",{},"Flags"),h("th",{}))),body)));
+  root.append(card)}});
+ summary()}
+
+function summary(){let cells=0,err=0,warn=0,ed=0;
+ for(const r of data.results)for(const v of r.valves)for(const e of v.entries){cells++;const s=sev(e);if(s==="error")err++;else if(s==="warning")warn++;else if(s==="edited")ed++}
+ $("sum").textContent=`${cells} cells · ${err} errors · ${warn} to check · ${ed} edited by you`;filter()}
+function filter(){const only=$("only").checked;
+ document.querySelectorAll("tr[data-row]").forEach(tr=>tr.classList.toggle("hidden",only&&!tr.querySelector("input.error,input.warning")))}
+
+function openPage(fi,page){const f=files[fi];if(!f)return;
+ window.open(URL.createObjectURL(f)+(/\.pdf$/i.test(f.name)?"#page="+(page||1):""),"_blank")}
+
+// UI-only fields (leading "_", except _name/_id) are stripped before sending; edited cells drop their old flags
+function payload(){
+ const edited=new Set(data.results.flatMap(r=>r.valves.flatMap(v=>v.entries.filter(e=>e._edited).flatMap(e=>e._issues))));
+ return JSON.stringify({results:data.results,issues:data.issues.filter(i=>!edited.has(i))},
+  (k,v)=>k.startsWith("_")&&k!=="_name"&&k!=="_id"?undefined:v)}
+$("export").addEventListener("click",async()=>{
+ try{const r=await fetch("/export",{method:"POST",headers:{"Content-Type":"application/json"},body:payload()});
+  if(!r.ok)throw new Error(await errText(r));
+  const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());a.download="process_conditions.xlsx";a.click()}
+ catch(e){fail("Export failed: "+e.message)}});
+
+const drop=$("drop"),pick=$("pick");
+drop.addEventListener("click",()=>pick.click());
+drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick.click()}});
+pick.addEventListener("change",()=>{upload(pick.files);pick.value=""});
+["dragenter","dragover"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("over")}));
+["dragleave","drop"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove("over")}));
+drop.addEventListener("drop",e=>upload(e.dataTransfer.files));
+["dragover","drop"].forEach(t=>window.addEventListener(t,e=>e.preventDefault()));
+$("only").addEventListener("change",filter);
+$("new").addEventListener("click",()=>{data=null;files=[];fail("");view("drop")});
+</script></body></html>
