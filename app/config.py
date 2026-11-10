@@ -2,7 +2,8 @@ import os
 from pathlib import Path
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "data")).resolve()
-EXTRACTOR = os.environ.get("EXTRACTOR", "deepseek")  # deepseek | ensemble | claude | stub
+EXTRACTOR = os.environ.get("EXTRACTOR", "deepseek")  # deepseek | ensemble | claude | gemini | stub
+GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-3.8-flash")  # free tier
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5-5")
 LABEL_MAP = os.environ.get("LABEL_MAP", "0") == "1"  # LLM re-tags unknown row labels (needs ANTHROPIC_API_KEY)
 PASSES = max(1, min(2, int(os.environ.get("PASSES", "2"))))

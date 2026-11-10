@@ -3,6 +3,7 @@
 It decides how a file is read, and it logs why. The one hard constraint is the model API's
 limit of 100 images per request.
 """
+import os
 from dataclasses import dataclass, field
 
 MAX_IMAGES_PER_REQUEST = 100
@@ -25,7 +26,7 @@ class Plan:
 def plan_for(pages, default_passes: int) -> Plan:
     n = len(pages)
     dense = any(len(t) > DENSE_TEXT_CHARS for _, t in pages)
-    plan = Plan(passes=default_passes, bands=3, cols=2 if dense else 1)
+    plan = Plan(passes=default_passes, bands=int(os.environ.get("BANDS", "3")), cols=2 if dense else 1)  # BANDS=0: page image only
     if dense:
         plan.notes.append("dense text layer: 2 tile columns")
     # shrink tiling until the request fits the image limit

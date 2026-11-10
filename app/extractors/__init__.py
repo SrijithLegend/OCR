@@ -11,6 +11,9 @@ def get_extractor(name: str):
     if name == "stub":
         from .stub import StubExtractor
         return StubExtractor()
+    if name == "gemini":
+        from .gemini_vision import GeminiVisionExtractor
+        return GeminiVisionExtractor()
     if name == "claude":
         from .claude_vision import ClaudeVisionExtractor
         return ClaudeVisionExtractor()
@@ -23,4 +26,4 @@ def get_extractor(name: str):
             return ds
         from .ensemble import EnsembleExtractor
         return EnsembleExtractor(primary=ds)
-    raise ValueError(f"Unknown EXTRACTOR {name!r} (use 'deepseek', 'ensemble', 'claude' or 'stub')")
+    raise ValueError(f"Unknown EXTRACTOR {name!r} (use 'deepseek', 'ensemble', 'claude', 'gemini' or 'stub')")
