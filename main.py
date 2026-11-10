@@ -35,7 +35,7 @@ MODEL =os.environ.get("GEMINI_MODEL", "gemini-3.5-flash-lite")
 CASES = ["minimum", "normal", "maximum", "design", "single", "other"]
 CASE_TITLES = {"minimum": "Minimum", "normal": "Normal", "maximum": "Maximum",
                "design": "Design", "single": "Single", "other": "Other"}
-KINDS = ["condition", "design", "calculated"]
+KINDS = ["condition", "design", "calculated", "spec"]
 CANON = [
     "fluid_name", "fluid_state", "flow_rate_mass", "flow_rate_volume", "flow_rate_gas_std",
     "inlet_pressure", "outlet_pressure", "pressure_drop", "shutoff_pressure", "design_pressure",
@@ -55,20 +55,22 @@ P_BASES = {"bar", "mbar", "kpa", "mpa", "pa", "psi", "kg/cm2", "kgf/cm2", "atm"}
 T_UNITS = {"c", "f", "k", "r"}
 
 # --------------------------------------------------------------------- prompts
-SYSTEM = """You transcribe the SERVICE / PROCESS CONDITIONS of industrial valve datasheets (control valves, relief valves, ball/on-off valves) from many customers and vendors. Layouts differ; the job does not.
+SYSTEM = """You transcribe EVERYTHING printed on industrial valve datasheets (control valves, relief valves, ball/on-off valves) from many customers and vendors. Layouts differ; the job does not.
 
-SCOPE - extract only:
+SCOPE - extract all filled content on every page, in reading order:
 - Sheet identity: title, tag / item / KKS number, service, fluid, line number, project, template or vendor name.
-- The block(s) describing the duty of the valve, under headings such as PROCESS DATA, OPERATING DATA, OPERATING CONDITIONS, SERVICE CONDITIONS, UPSTREAM / DOWNSTREAM CONDITIONS, VALVE DESIGN CONDITIONS, or "Process Data" on relief-valve sheets. Include the fluid name / state and critical or shut-off pressure when printed with that block.
-- IGNORE: pipe line, body, bonnet, trim, actuator, positioner, accessories, testing, notes, revision/approval tables, logos, charts.
+- Every labelled field, table row and table cell: process / service conditions (PROCESS DATA, OPERATING DATA, SERVICE CONDITIONS, UPSTREAM / DOWNSTREAM CONDITIONS, DESIGN CONDITIONS), and also line/pipe, body, bonnet, trim, actuator, positioner, accessories, testing, materials, dimensions, certification, notes / remarks, revision and approval tables, header and footer fields.
+- Free text (notes, remarks, footnotes): one entry per line or numbered note, parameter "Note" (or its printed number), value = the text.
+- Text in drawings and diagrams (dimensions, callouts, labels): section "Drawing".
+- IGNORE only decoration: logos, watermarks, stamps, empty form lines.
 
 OUTPUT: one entry per FILLED cell. Fields:
 - section: block heading as printed (or null).
 - row_no: printed line number at the left of the row, else null.
 - parameter: row label EXACTLY as printed, symbols included, e.g. "Inlet Pressure (P1)".
 - canonical: closest value from the enum. Use "other" if nothing fits; never force a fit. Flow: mass units (kg/h, lb/h) -> flow_rate_mass; volumetric liquid (m3/h, gpm) -> flow_rate_volume; gas at standard conditions (scfh, Nm3/h) -> flow_rate_gas_std. Upstream/inlet temperature T1 -> inlet_temperature; T2 -> outlet_temperature. dP / pressure differential / pressure drop -> pressure_drop. Cp/Cv, gamma, isentropic exponent -> specific_heat_ratio.
-- kind: "condition" = specified duty value (flow, pressures, temperatures, fluid properties); "design" = design limits (design pressure/temperature, shut-off or max allowable differential pressure, corrosion allowance); "calculated" = results of sizing sitting in the same table (Cv, % open / travel, capacity required, noise / SPL, velocities, Reynolds number).
-- case: which column the value is under. Map by the printed HEADER TEXT, never by position (some sheets print Max/Norm/Min, others Min/Normal/Max): max/maximum -> maximum; norm/normal/operating -> normal; min/minimum -> minimum; design -> design; "Others"/"Other"/"Notes" -> other; a single value column with no case header -> single.
+- kind: "condition" = specified duty value (flow, pressures, temperatures, fluid properties); "design" = design limits (design pressure/temperature, shut-off or max allowable differential pressure, corrosion allowance); "calculated" = results of sizing sitting in the same table (Cv, % open / travel, capacity required, noise / SPL, velocities, Reynolds number); "spec" = everything else (body, trim, actuator, materials, dimensions, certification, notes, revision / approval, header fields).
+- case: which column the value is under. Map by the printed HEADER TEXT, never by position (some sheets print Max/Norm/Min, others Min/Normal/Max): max/maximum -> maximum; norm/normal/operating -> normal; min/minimum -> minimum; design -> design; "Others"/"Other"/"Notes" -> other; a single value column or a plain label: value field -> single.
 - case_label: the column header exactly as printed (or null).
 - value: the cell text EXACTLY as printed.
 - unit: unit exactly as printed, taken from the Units column or from inside the label (e.g. "Flow Rate Mass kg/h"). Keep gauge/absolute markers: "bar(g)", "kPaa", "kg/cm2g". Write superscripts as plain digits. If one unit applies to the whole row, repeat it on every entry of the row. null if none.
@@ -83,7 +85,7 @@ TRANSCRIPTION RULES (accuracy matters more than completeness):
 6. Placeholder text such as "XXXX" or "xxxxxxxx" = empty. "N/A", "NA", "-", "NIL" are real answers: copy them.
 7. A blank template (no values filled in) -> has_values=false and entries=[]. Do NOT invent example values.
 8. A sheet's title or tag can be on a different page from its table. Attach each table to the correct sheet using the tag/title, not page order; list the pages used in source_pages. One record per sheet.
-9. Sheets without a process/service-conditions block (or with nothing filled) still get a record with has_values=false.
+9. Sheets with nothing filled still get a record with has_values=false.
 10. TEXT LAYER (when supplied) is real text: use it for characters; the images decide which row/column a value belongs to. If they disagree on a digit, use "UNREADABLE". ZOOM tiles are overlapping crops of the same page for legibility; emit each cell once.
 
 Return only JSON matching the provided schema."""
@@ -319,7 +321,7 @@ def normalize(valves):
 
 def extract_once(client, model, shared):
     out = call_json(client, model, SYSTEM, RECORD_SCHEMA, shared + [
-        "Extract the service/process conditions of every valve sheet in this document."])
+        "Extract all filled content of every valve sheet in this document."])
     return normalize(out.get("valves", []))
 
 
@@ -424,7 +426,7 @@ def validate(valves, fname):
     for v in valves:
         ents = v["entries"]
         if not v.get("has_values") and not ents:
-            add(v, None, "info", "No filled process-condition values (blank template or no such block)")
+            add(v, None, "info", "No filled values (blank template)")
         elif not v.get("has_values") and ents:
             add(v, None, "warning", "Sheet marked blank but entries were returned")
         if v.get("has_values") and not (v.get("tag") or "").strip():

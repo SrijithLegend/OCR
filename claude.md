@@ -1,6 +1,6 @@
 # Datasheet OCR: notes for Claude
 
-Gemini-based extractor of valve process conditions to Excel. See README.md for setup and usage.
+Gemini-based extractor of everything printed on valve datasheets (process conditions and specs) to Excel. See README.md for setup and usage.
 
 - `main.py` holds everything: prompts, Gemini calls, dispute re-read, `validate`, `build_workbook`, CLI. `web.py` (FastAPI) imports it; `web.html` is the single-page UI.
 - Rules that carry accuracy, do not "improve" casually: map columns by printed header text, copy values exactly, `UNREADABLE` instead of guessing, code (not the model) verifies, a blank template gives no values.

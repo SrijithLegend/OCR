@@ -1,6 +1,6 @@
 # Datasheet OCR
 
-Reads valve datasheets (PDF, PNG, JPG) with the Gemini API and writes the **process / service conditions** (flow, pressures, temperatures, fluid properties; min / normal / max) to an Excel file. Files are sent to the Gemini API.
+Reads valve datasheets (PDF, PNG, JPG) with the Gemini API and writes everything printed on them to an Excel file: process / service conditions (min / normal / max), body, trim, actuator, materials, dimensions, notes, revision tables and header fields. Each row carries a `Kind` (condition, design, calculated, spec) so you can filter. Files are sent to the Gemini API.
 
 ## How it works
 

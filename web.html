@@ -1,6 +1,6 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Process conditions extractor</title>
+<title>Datasheet extractor</title>
 <style>
 :root{--bg:#f5f6f8;--panel:#fff;--text:#1b1f27;--muted:#667085;--line:#d9dde4;--accent:#1f4e9c;--accent-fg:#fff;
 --err:#fbd5d5;--err-b:#d64545;--warn:#fff0c2;--warn-b:#d9a400;--edit:#cfe3f8;--edit-b:#3b82c4}
@@ -50,7 +50,7 @@ input.c.edited{background:var(--edit);border-color:var(--edit-b)}
 .flag{font-size:12px;color:var(--muted);white-space:normal;max-width:300px}
 a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
 </style></head><body>
-<header><h1>Process conditions extractor</h1>
+<header><h1>Datasheet extractor</h1>
  <div><button id="new" class="hidden" type="button">New upload</button></div></header>
 <main>
  <div id="drop" tabindex="0" role="button"><b>Drop PDFs or images here</b>
@@ -130,7 +130,7 @@ function rowTr(r,v,g,cols,fi){
  const units=[...new Set(g.entries.map(e=>e.unit).filter(Boolean))];
  const un=h("input",{class:"c u",type:"text","aria-label":"Unit"});un.value=units.join(" / ");
  un.addEventListener("change",()=>{g.entries.forEach(e=>{e.unit=un.value.trim()||null;e._edited=true});un.className="c u edited";flagEl.textContent=flagsOf(g);summary()});
- const kind=rep.kind==="calculated"?h("span",{class:"kind"},"calculated"):null;
+ const kind=rep.kind==="calculated"||rep.kind==="spec"?h("span",{class:"kind"},rep.kind):null;
  return h("tr",{"data-row":"1"},h("td",{class:"rn"},rep.row_no??""),h("td",{},par,kind),h("td",{},un),
   cols.map(cn=>h("td",{},cellInput(v,g,flagEl,cn))),
   h("td",{},h("a",{class:"pg",tabindex:"0",role:"button",onclick:()=>openPage(fi,rep.page)},"p"+(rep.page??1))),
@@ -151,7 +151,7 @@ function render(){
     h("span",{class:"muted"},[v.sheet_title&&v.tag?v.sheet_title:null,v.fluid?"Fluid: "+v.fluid:null,v.service?"Service: "+v.service:null,
      r.file,"pages "+((v.source_pages||[]).join(", ")||"-")].filter(Boolean).join(" · "))));
   if(notes.length)card.append(h("div",{class:"notes"},notes.map(i=>h("div",{class:i.severity},i.severity.toUpperCase()+": "+i.issue))));
-  if(!gs.length)card.append(h("div",{class:"notes muted"},"No process-condition values found on this sheet."));
+  if(!gs.length)card.append(h("div",{class:"notes muted"},"No values found on this sheet."));
   else card.append(h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{},"#"),h("th",{},"Parameter"),h("th",{},"Unit"),
    cols.map(c=>h("th",{},TITLE[c])),h("th",{},"Page"),h("th",{},"Flags"),h("th",{}))),body)));
   root.append(card)}});
