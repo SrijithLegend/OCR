@@ -20,4 +20,7 @@ easydict
 # dev / tests
 pytest>=8.0
 httpx>=0.27
-timm            # only for TABLE_CROP=1
+# Only for TABLE_CROP=1. Do NOT plain-install timm/torchvision: they replace the CUDA torch with a CPU build.
+# Install the matching CUDA builds instead:
+#   pip install torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124 --no-deps
+#   pip install timm --no-deps
