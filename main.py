@@ -188,6 +188,14 @@ def cell_value(raw):
     return n if n is not None else raw
 
 
+def decimals_format(raw):
+    """Excel number format that shows exactly the decimals printed on the sheet ('41000.0' -> '0.0')."""
+    m = re.fullmatch(r"[+-]?[\d,]*?(?:\.(\d+))?", str(raw).strip())
+    if m is None or to_num(raw) is None:
+        return None
+    return "0" + ("." + "0" * len(m.group(1)) if m.group(1) else "")
+
+
 # ------------------------------------------------------------ document -> content
 def layout_text(page):
     """Rebuild text rows from word boxes; ' | ' marks a column gap."""
@@ -537,16 +545,19 @@ def write_conditions(ws, rows, cell_sev, row_sev):
                "Kind", "Unit"] + [CASE_TITLES[c] for c in CASES] + ["Page", "Review"])
     for r in rows:
         rk = (r["file"], r["valve"], norm(r["section"]), norm(r["parameter"]))
-        vals = []
+        vals, fmts = [], []
         for c in CASES:
             xs = [x for x in r["cells"].get(c, []) if x not in (None, "")]
             vals.append(cell_value(xs[0]) if len(xs) == 1 else (" | ".join(map(str, xs)) or None))
+            fmts.append(decimals_format(xs[0]) if len(xs) == 1 else None)
         sev = row_sev.get(rk, -1)
         ws.append([r["file"], r["valve"], r["section"], r["row_no"], r["parameter"], r["canonical"],
                    r["kind"], " / ".join(r["units"]) or None] + vals + [r["page"],
                    {2: "ERROR", 1: "CHECK"}.get(sev, "")])
         n = ws.max_row
         for j, c in enumerate(CASES):
+            if fmts[j]:
+                ws.cell(n, 9 + j).number_format = fmts[j]
             s = cell_sev.get(rk + (c,), -1)
             if s in FILLS:
                 ws.cell(n, 9 + j).fill = FILLS[s]
@@ -570,45 +581,12 @@ def build_workbook(results, issues, out):
     wb = Workbook()
     ws = wb.active
     ws.title = "Process Conditions"
-    write_conditions(ws, [r for f, vs in results for r in pivot(f, vs, {"condition", "design"})],
+    write_conditions(ws, [r for f, vs in results for r in pivot(f, vs, {"condition", "design", "calculated"})],
                      cell_sev, row_sev)
-
-    ws2 = wb.create_sheet("Calculated (in table)")
-    write_conditions(ws2, [r for f, vs in results for r in pivot(f, vs, {"calculated"})],
-                     cell_sev, row_sev)
-
-    ws3 = wb.create_sheet("Sheet Info")
-    ws3.append(["Source File", "Valve", "Sheet Title", "Template / Vendor", "Item", "Service",
-                "Fluid", "Line No", "Project", "Pages", "Has Values", "Entries"])
-    for f, vs in results:
-        for v in vs:
-            ws3.append([f, v["_name"], v.get("sheet_title"), v.get("format_name"), v.get("item_no"),
-                        v.get("service"), v.get("fluid"), v.get("line_no"), v.get("project"),
-                        ", ".join(map(str, v.get("source_pages", []))),
-                        "yes" if v.get("has_values") else "no", len(v["entries"])])
-    style_sheet(ws3, [20, 18, 28, 22, 8, 24, 16, 14, 18, 10, 10, 8])
-
-    ws4 = wb.create_sheet("Long Format")
-    ws4.append(["Source File", "Valve", "Section", "Row #", "Parameter", "Canonical", "Kind",
-                "Case", "Column Header", "Value", "Unit", "Page"])
-    for f, vs in results:
-        for v in vs:
-            for e in v["entries"]:
-                ws4.append([f, v["_name"], e.get("section"), e.get("row_no"), e["parameter"],
-                            e["canonical"], e["kind"], e["case"], e.get("case_label"),
-                            cell_value(e.get("value")), e.get("unit"), e.get("page")])
-    style_sheet(ws4, [20, 18, 22, 7, 38, 20, 11, 10, 16, 16, 12, 6])
-
-    ws5 = wb.create_sheet("Review")
-    ws5.append(["Severity", "Source File", "Valve", "Section", "Parameter", "Column", "Issue"])
-    for i in sorted(issues, key=lambda x: -SEV[x["severity"]]):
-        ws5.append([i["severity"].upper(), i["file"], i["valve"], i.get("section"),
-                    i.get("parameter"), i.get("case"), i["issue"]])
-        if SEV[i["severity"]] in FILLS:
-            ws5.cell(ws5.max_row, 1).fill = FILLS[SEV[i["severity"]]]
-    if not issues:
-        ws5.append(["", "", "", "", "", "", "Nothing flagged (still spot-check against the source)."])
-    style_sheet(ws5, [10, 20, 18, 22, 34, 10, 90])
+    for row in ws.iter_rows():  # a typed or printed "=..." must stay text, never a formula
+        for c in row:
+            if c.data_type == "f":
+                c.data_type = "s"
     try:
         wb.save(out)
     except PermissionError:
