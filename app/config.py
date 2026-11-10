@@ -2,8 +2,9 @@ import os
 from pathlib import Path
 
 DATA_DIR = Path(os.environ.get("DATA_DIR", "data")).resolve()
-EXTRACTOR = os.environ.get("EXTRACTOR", "deepseek")  # deepseek | claude | stub
+EXTRACTOR = os.environ.get("EXTRACTOR", "deepseek")  # deepseek | ensemble | claude | stub
 CLAUDE_MODEL = os.environ.get("CLAUDE_MODEL", "claude-sonnet-5-5")
+LABEL_MAP = os.environ.get("LABEL_MAP", "0") == "1"  # LLM re-tags unknown row labels (needs ANTHROPIC_API_KEY)
 PASSES = max(1, min(2, int(os.environ.get("PASSES", "2"))))
 
 MAX_UPLOAD_MB = int(os.environ.get("MAX_UPLOAD_MB", "50"))

@@ -14,7 +14,13 @@ def get_extractor(name: str):
     if name == "claude":
         from .claude_vision import ClaudeVisionExtractor
         return ClaudeVisionExtractor()
-    if name == "deepseek":
+    if name in ("deepseek", "ensemble"):
+        from ..config import CLAUDE_MODEL, LABEL_MAP
         from .deepseek_ocr import DeepSeekExtractor
-        return DeepSeekExtractor()
-    raise ValueError(f"Unknown EXTRACTOR {name!r} (use 'deepseek', 'claude' or 'stub')")
+        from .labelmap import claude_proposer
+        ds = DeepSeekExtractor(label_proposer=claude_proposer(CLAUDE_MODEL) if LABEL_MAP else None)
+        if name == "deepseek":
+            return ds
+        from .ensemble import EnsembleExtractor
+        return EnsembleExtractor(primary=ds)
+    raise ValueError(f"Unknown EXTRACTOR {name!r} (use 'deepseek', 'ensemble', 'claude' or 'stub')")

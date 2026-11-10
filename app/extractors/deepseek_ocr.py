@@ -18,6 +18,7 @@ from pathlib import Path
 from ..consistency import apply_adjudication, find_disputes, issue, normalize
 from ..textutil import same_value, unit_norm
 from . import mdparse as mp
+from .labelmap import apply_label_map
 
 log = logging.getLogger("amdp")
 
@@ -27,6 +28,7 @@ QUANT_4BIT = os.environ.get("DEEPSEEK_4BIT", "1") != "0"  # 0 = bf16 (needs ~8 G
 PROMPT = "<image>\n<|grounding|>Convert the document to markdown. "
 TEXT_LAYER_MIN = 80
 BANDS = 3  # overlapping horizontal bands used as OCR evidence for scans
+TABLE_CROP = os.environ.get("TABLE_CROP", "0") == "1"  # Table Transformer crops instead of bands
 
 _LOCK = threading.Lock()  # one GPU, one inference at a time
 _MODEL = None
@@ -84,15 +86,26 @@ def bands(img, n=BANDS, overlap=0.15):
 class DeepSeekExtractor:
     name = "deepseek"
 
-    def __init__(self, read=ocr):
+    def __init__(self, read=ocr, splitter=None, label_proposer=None):
         self.read = read  # injectable for tests
+        self.splitter = splitter or (self._table_crops if TABLE_CROP else bands)
+        self.label_proposer = label_proposer  # labelmap.claude_proposer(...) or None
+
+    @staticmethod
+    def _table_crops(img):
+        from .tablecrop import detect_tables
+        try:
+            return detect_tables(img) or bands(img)
+        except Exception as e:  # detector unavailable: fall back, never fail the job
+            log.warning("table detection failed (%s); using bands", e)
+            return bands(img)
 
     def evidence(self, img, text, cache, page):
         if page not in cache:
             if len(text) >= TEXT_LAYER_MIN:
                 cache[page] = mp.numbers_in(text)
             else:
-                cache[page] = mp.numbers_in(" ".join(self.read(b, True) for b in bands(img)))
+                cache[page] = mp.numbers_in(" ".join(self.read(b, True) for b in self.splitter(img)))
         return cache[page]
 
     def extract(self, pages, plan, fname):
