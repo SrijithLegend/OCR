@@ -6,3 +6,5 @@ data/
 *.ocr.md
 process_conditions*.xlsx
 .claude.md
+samples/*
+!samples/README.txt
