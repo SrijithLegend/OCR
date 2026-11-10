@@ -1,28 +1,8 @@
-fastapi>=0.110
-uvicorn[standard]>=0.29
-python-multipart>=0.0.9
-pydantic>=2.6
+google-genai>=1.0
 pymupdf>=1.24
 pillow>=10.0
 openpyxl>=3.1
-anthropic>=0.40   # only for EXTRACTOR=claude
-google-genai>=1.0   # only for EXTRACTOR=gemini
-rapidocr-onnxruntime   # EXTRACTOR=text: OCR for scanned pages (optional)
-
-# DeepSeek-OCR-2 (EXTRACTOR=deepseek). Install torch first:
-#   pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
-transformers==4.46.3
-tokenizers==0.20.3
-accelerate
-bitsandbytes>=0.45,<0.46   # newer releases pull a CPU-only torch over the CUDA 12.4 build
-einops
-addict
-easydict
-
-# dev / tests
-pytest>=8.0
-httpx>=0.27
-# Only for TABLE_CROP=1. Do NOT plain-install timm/torchvision: they replace the CUDA torch with a CPU build.
-# Install the matching CUDA builds instead:
-#   pip install torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu124 --no-deps
-#   pip install timm --no-deps
+# web UI only
+fastapi>=0.110
+uvicorn[standard]>=0.29
+python-multipart>=0.0.9

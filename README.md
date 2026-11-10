@@ -1,192 +1,55 @@
 # Datasheet OCR
 
-Turn datasheets (PDF or image) into a clean Excel table of their **process / service conditions**: flow, pressures, temperatures and fluid properties for the minimum, normal and maximum cases.
+Reads valve datasheets (PDF, PNG, JPG) with the Gemini API and writes the **process / service conditions** (flow, pressures, temperatures, fluid properties; min / normal / max) to an Excel file. Files are sent to the Gemini API.
 
-It reads the sheets with **DeepSeek-OCR-2**, a free OCR model that runs on your own computer. Your files never leave your machine.
+## How it works
 
----
+1. Each page is rendered (300 dpi) with zoom bands and sent to Gemini with the PDF text layer, if there is one.
+2. With `--passes 2` (default) the file is read twice. Cells where the reads disagree get a targeted re-read, and the majority wins.
+3. Plain code checks the result: P1 - dP = P2, min <= normal <= max, units, plausible ranges, duplicates, unreadable cells.
+4. Values are copied as printed, never computed or guessed. Unclear cells are `UNREADABLE`.
+5. Excel output colours cells by severity (red = error, yellow = check). Review those first, then spot-check the rest.
 
-## What you get
-
-1. Upload one or more datasheets in your browser (click or drag and drop).
-2. The app reads them and shows one table per sheet.
-3. Cells that look wrong are coloured, with the reason on hover:
-   - **Red**: probably an error. Check it.
-   - **Yellow**: worth a second look.
-   - **Blue**: you edited it.
-   - **Green**: you marked it as reviewed.
-4. Fix any cell, press **OK** on rows you checked, then click **Export to Excel**.
-
----
-
-## How it stays accurate
-
-The OCR model is good but not perfect, so the app double-checks it with plain code:
-
-- **Two reads of every page.** If the two reads disagree on a value, the app decides using the PDF's own text (or a third read for scans). If it still cannot tell, it leaves the cell red for you instead of guessing.
-- **Every number must be real.** A number that does not appear in the page's text is flagged. If it is just one character off from a number that does appear, it is corrected and flagged.
-- **Sanity checks.** For example, inlet pressure minus pressure drop must equal outlet pressure, and minimum must not be bigger than maximum.
-- **Values are copied exactly as printed.** Nothing is rounded, converted or invented.
-
-No tool is 100% accurate. Always review the red and yellow cells, and spot-check the rest.
-
----
-
-## What you need
-
-| Requirement | Notes |
-|---|---|
-| Windows, Linux or macOS | The OCR model needs an NVIDIA GPU, so Windows or Linux in practice |
-| Python 3.11 or newer | https://www.python.org/downloads/ |
-| NVIDIA GPU, 6 GB or more | 4-bit mode is used by default so it fits small GPUs |
-| About 10 GB free disk | For Python packages and the model download |
-| 8 GB or more free RAM | The model needs room while it loads |
-
-No GPU? You can still try the app with demo data (see below).
-
----
-
-## Install
-
-Open a terminal in this folder, then:
+## Setup
 
 ```bash
-# 1. Create and activate a virtual environment
 python -m venv .venv
-.venv\Scripts\activate          # Windows
-# source .venv/bin/activate     # Linux / macOS
-
-# 2. Install PyTorch with GPU support (large download, about 2.5 GB)
-pip install torch==2.6.0 --index-url https://download.pytorch.org/whl/cu124
-
-# 3. Install everything else
+.venv\Scripts\activate          # Windows;  source .venv/bin/activate on Linux/macOS
 pip install -r requirements.txt
+copy .env.example .env          # then put your key in GENAI_API_KEY
 ```
-
-Check that your GPU is visible:
-
-```bash
-python -c "import torch; print(torch.cuda.is_available())"
-```
-
-It should print `True`.
-
----
 
 ## Run
 
-**Try it with demo data** (no GPU, no download):
+Web UI (upload, edit the table, export):
 
 ```bash
-# Windows PowerShell
-$env:EXTRACTOR="stub"; uvicorn app.main:app
-
-# Linux / macOS
-EXTRACTOR=stub uvicorn app.main:app
+uvicorn web:app --host 127.0.0.1 --port 8000
 ```
 
-**Real extraction** (uses the GPU):
+Open http://127.0.0.1:8000. Nothing is stored on the server. There is no login, so keep it on 127.0.0.1.
+
+Command line:
 
 ```bash
-# Windows PowerShell
-$env:EXTRACTOR="deepseek"; uvicorn app.main:app
-
-# Linux / macOS
-EXTRACTOR=deepseek uvicorn app.main:app
+python main.py sheet1.pdf sheet2.png -o process_conditions.xlsx
 ```
 
-Then open **http://127.0.0.1:8000** in your browser.
+With no files it processes every PDF/image next to `main.py`.
 
-The first real run downloads the model (several GB) and takes a few minutes to start. Later runs are faster.
-
-Tip: start with **one short PDF** and compare every extracted value with the page before processing a big batch.
-
----
-
-## Settings
-
-Set these as environment variables (see `.env.example` for the full list).
-
-| Variable | Default | What it does |
+| Option (CLI) | Default | Meaning |
 |---|---|---|
-| `EXTRACTOR` | `deepseek` | `deepseek` (local GPU), `stub` (demo data) or `claude` (needs an API key) |
-| `PASSES` | `2` | `2` = two reads and cross-checking (more accurate), `1` = one read (faster) |
-| `DEEPSEEK_4BIT` | `1` | `0` uses full precision, which needs about 8 GB of GPU memory |
-| `MODEL_DPI` | `300` | Resolution used to render PDF pages for the model |
-| `MAX_PAGES` | `40` | Page limit per file |
+| `--passes {1,2}` | 2 | 1 = one read (cheaper) |
+| `--dpi` | 300 | render resolution |
+| `--bands` | 3 | vertical zoom tiles per page |
+| `--cols` | 1 | horizontal zoom tiles per page |
+| `--model` | `GEMINI_MODEL` | Gemini model id |
 
----
+The web UI takes the same settings from the env vars `PASSES` (default 1), `DPI`, `BANDS` (default 0) and `COLS`.
 
-## Project layout
+Try one short PDF with `--passes 1` first and compare every cell with the page. Accuracy on your sheets has not been measured.
 
-```text
-app/
-  main.py              web server and API
-  pipeline.py          the job: read pages -> extract -> check -> results
-  consistency.py       accuracy checks (pressure balance, units, disagreements)
-  excel.py             Excel export
-  extractors/
-    deepseek_ocr.py    DeepSeek-OCR-2 reader (two reads + evidence checks)
-    mdparse.py         turns OCR tables into structured values
-    stub.py            demo data
-  static/              the web page
-tests/                 automated tests (no GPU needed)
-score.py               measure accuracy against hand-checked answers
-claude.md              detailed design guide
-```
+## Files
 
----
-
-## Test
-
-```bash
-pytest -q
-```
-
-The tests run without a GPU or an API key.
-
----
-
-## Measure your accuracy
-
-Do this before trusting the results for real work.
-
-1. Process 5 to 10 real datasheets.
-2. Check every cell in the page against the original, correct mistakes and press **OK**.
-3. Download `truth.csv` and `model-output.csv` from the job.
-4. Run:
-
-```bash
-python score.py truth.csv model-output.csv
-```
-
-The number to watch is **silent errors**: wrong values that were not flagged. The goal is zero.
-
----
-
-## Troubleshooting
-
-| Problem | Fix |
-|---|---|
-| `No module named 'torch'` | Run step 2 of the install, inside the virtual environment |
-| `torch.cuda.is_available()` is `False` | Install the NVIDIA driver, and use the CUDA build of PyTorch from the command above |
-| Out of GPU memory | Close other GPU programs, keep `DEEPSEEK_4BIT=1`, lower `MODEL_DPI` to `200` |
-| Download times out | Re-run the same `pip install` command; add `--default-timeout=300` |
-| A value is wrong or missing | Open the page link in the table and compare. Fix the cell by hand |
-
----
-
-## Privacy and security
-
-- With `EXTRACTOR=deepseek` everything runs locally.
-- The server listens on `127.0.0.1` only and has no login. If you expose it to a network, put it behind your own authentication first.
-- The OCR model's code is downloaded from Hugging Face and run on your machine. For stricter control, set `DEEPSEEK_REVISION` to a specific commit you have reviewed.
-
----
-
-## Limits
-
-- One sheet per page tag. Two different sheets on one page are merged.
-- Parameter names are matched by keyword rules. Unfamiliar labels are kept but marked as `other`.
-- Scanned pages with no text layer get weaker checking than PDFs, because there is less to compare against.
-- Accuracy on your own sheets has to be measured. See *Measure your accuracy*.
+- `main.py`: prompts, extraction, checks, Excel writer, CLI
+- `web.py`, `web.html`: web UI (`/extract`, `/export`)
