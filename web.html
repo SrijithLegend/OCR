@@ -132,7 +132,7 @@ async function upload(list){
 function prepare(){
  for(const r of data.results)for(const v of r.valves)for(const e of v.entries){
   e._issues=data.issues.filter(i=>i.file===r.file&&i.valve===v._name&&i.parameter&&norm(i.section)===norm(e.section)
-   &&norm(i.parameter)===norm(e.parameter)&&(!i.case||i.case===e.case))}
+   &&norm(i.parameter)===norm(e.parameter)&&(!i.case||(i.case===e.case&&norm(i.group)===norm(e.group))))}
 }
 const sev=e=>e._edited?"edited":e._issues.some(i=>i.severity==="error")?"error":e._issues.some(i=>i.severity==="warning")?"warning":"";
 function groups(v){const m=new Map();
@@ -143,19 +143,24 @@ function groups(v){const m=new Map();
 function flagsOf(g){return[...new Set(g.entries.filter(e=>!e._edited).flatMap(e=>e._issues.filter(i=>i.severity!=="info").map(i=>i.issue)))].join(" · ")}
 function tip(e){return e._issues.map(i=>i.severity.toUpperCase()+": "+i.issue).join("\n")+(e._edited?"\nEdited by you. Read as: "+(e._orig??"(empty)"):"")}
 
-function cellInput(v,g,flagEl,cn){
- const e=g.entries.find(x=>x.case===cn);
- const i=h("input",{class:"c"+(e&&sev(e)?" "+sev(e):""),type:"text","aria-label":TITLE[cn]});
+// one table row per (case/stream title, Min/Normal/Max...); the printed title is the row label
+function rowsOf(v){const gs=[];
+ for(const e of v.entries){const k=norm(e.group);let x=gs.find(y=>y.k===k);if(!x)gs.push(x={k,g:e.group||"",used:new Set()});x.used.add(e.case)}
+ return gs.flatMap(x=>CASES.filter(c=>x.used.has(c)||(!x.k&&["minimum","normal","maximum"].includes(c))).map(c=>
+  ({k:x.k,g:x.g,c,label:x.k?(c==="single"?x.g:x.g+" - "+TITLE[c]):TITLE[c]})))}
+function cellInput(v,g,flagEl,rw){const cn=rw.c;
+ const e=g.entries.find(x=>x.case===cn&&norm(x.group)===rw.k);
+ const i=h("input",{class:"c"+(e&&sev(e)?" "+sev(e):""),type:"text","aria-label":rw.label});
  i.value=e?e.value??"":"";if(e)i.title=tip(e);
- i.addEventListener("change",()=>{let t=g.entries.find(x=>x.case===cn);
+ i.addEventListener("change",()=>{let t=g.entries.find(x=>x.case===cn&&norm(x.group)===rw.k);
   if(!t){if(!i.value.trim())return;const r=g.entries[0];
-   t={section:r.section,row_no:r.row_no,parameter:r.parameter,canonical:r.canonical,kind:r.kind,case:cn,case_label:null,
+   t={section:r.section,row_no:r.row_no,parameter:r.parameter,canonical:r.canonical,kind:r.kind,case:cn,case_label:null,group:rw.g||null,
       value:null,unit:r.unit,page:r.page,_issues:[]};v.entries.push(t);g.entries.push(t)}
   if(!t._edited)t._orig=t.value;
   t.value=i.value.trim()===""?null:i.value;t._edited=true;i.className="c edited";i.title=tip(t);flagEl.textContent=flagsOf(g);summary()});
  return i}
 
-function colOf(v,g,fi,cols,k){
+function colOf(v,g,fi,rows,k){
  const flagEl=h("div",{class:"flag"},flagsOf(g)),rep=g.entries[0];
  const par=h("input",{class:"c p",type:"text","aria-label":"Parameter"});par.value=rep.parameter;
  par.addEventListener("change",()=>{g.entries.forEach(e=>{e.parameter=par.value;e._edited=true});par.className="c p edited";flagEl.textContent=flagsOf(g);summary()});
@@ -167,14 +172,14 @@ function colOf(v,g,fi,cols,k){
  return{th:h("th",d,h("div",{class:"ph"},rep.row_no!=null?"#"+rep.row_no:"",kind,
    h("button",{class:"small",type:"button",title:"Delete this column",onclick:()=>{
     if(!confirm("Delete this column?"))return;v.entries=v.entries.filter(e=>!g.entries.includes(e));render()}},"×")),par,un),
-  cells:cols.map(cn=>h("td",d,cellInput(v,g,flagEl,cn))),
+  cells:rows.map(rw=>h("td",d,cellInput(v,g,flagEl,rw))),
   pg:h("td",d,h("a",{class:"pg",tabindex:"0",role:"button",onclick:()=>openPage(fi,rep.page)},"p"+(rep.page??1))),
   fl:h("td",d,flagEl)}}
 
 function render(){
  const root=$("sheets");root.replaceChildren();
  data.results.forEach((r,fi)=>{for(const v of r.valves){
-  const gs=groups(v),used=new Set(v.entries.map(e=>e.case)),cols=CASES.filter(c=>["minimum","normal","maximum"].includes(c)||used.has(c));
+  const gs=groups(v),cols=rowsOf(v);
   const notes=data.issues.filter(i=>i.file===r.file&&i.valve===v._name&&!i.parameter);
   const cs=gs.map((g,k)=>colOf(v,g,fi,cols,k)),secs=[];
   gs.forEach(g=>{const l=secs[secs.length-1];if(l&&l.s===g.section)l.n++;else secs.push({s:g.section,n:1})});
@@ -189,7 +194,7 @@ function render(){
   else card.append(h("div",{class:"scroll"},h("table",{},
    h("thead",{},h("tr",{class:"secrow"},h("th",{}),secs.map(x=>h("th",{colspan:x.n,class:"sechd"},x.s))),
     h("tr",{},h("th",{class:"rowh"},"Value"),cs.map(c=>c.th))),
-   h("tbody",{},cols.map((cn,ci)=>h("tr",{},h("th",{class:"rowh"},TITLE[cn]),cs.map(c=>c.cells[ci]))),
+   h("tbody",{},cols.map((rw,ci)=>h("tr",{},h("th",{class:"rowh"},rw.label),cs.map(c=>c.cells[ci]))),
     h("tr",{},h("th",{class:"rowh"},"Page"),cs.map(c=>c.pg)),
     h("tr",{},h("th",{class:"rowh"},"Flags"),cs.map(c=>c.fl))))));
   root.append(card)}});
@@ -200,8 +205,8 @@ function summary(){let cells=0,err=0,warn=0,ed=0;
  $("sum").textContent=`${cells} cells · ${err} errors · ${warn} to check · ${ed} edited by you`;filter();accuracy()}
 // no ground truth: accuracy = share of values the code checks did not flag (error/warning), whether or not you since edited them
 function accuracy(){const T={rows:0,cols:0,vals:0,bad:0},R=[];
- for(const r of data.results)for(const v of r.valves){const gs=groups(v),used=new Set(v.entries.map(e=>e.case));
-  const x={name:v._name,rows:["minimum","normal","maximum"].concat(CASES.slice(3).filter(c=>used.has(c))).length,cols:gs.length,vals:0,bad:0};
+ for(const r of data.results)for(const v of r.valves){const gs=groups(v);
+  const x={name:v._name,rows:rowsOf(v).length,cols:gs.length,vals:0,bad:0};
   for(const e of v.entries){if(e.value==null||String(e.value).trim()==="")continue;x.vals++;if(e._issues.some(i=>i.severity!=="info"))x.bad++}
   R.push(x);for(const k in T)T[k]+=x[k]}
  const pc=x=>x.vals?(100*(x.vals-x.bad)/x.vals).toFixed(1)+"%":"-",row=(x,c)=>h("tr",{class:c},h("td",{},x.name),[x.rows,x.cols,x.vals,x.bad].map(n=>h("td",{class:"n"},n)),h("td",{class:"n"},pc(x)));

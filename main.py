@@ -90,7 +90,9 @@ TRANSCRIPTION RULES (accuracy matters more than completeness):
 10. TEXT LAYER (when supplied) is real text: use it for characters; the images decide which row/column a value belongs to. If they disagree on a digit, use "UNREADABLE". ZOOM tiles are overlapping crops of the same page for legibility; emit each cell once.
 11. Where the Min / Normal / Max labels are small cells beside the row label and the value cells have no header of their own, the value cells are POSITIONAL: left to right they are Min, Normal, Max, in the order the labels are printed. A blank cell stays blank: never shift a value left into it (a lone value under the Max slot is maximum, not normal; a value under the second slot is normal, not minimum).
 12. Values of one row belong to that row only. Never copy a value from the row above or below into it (e.g. a dP value into the Inlet Pressure Max row). A cell holds one value; ' | ' in the text layer is a column gap, never part of a value.
-13. Sheets with several CASE / STREAM columns (titles above the Tag row): emit EVERY row, spec rows included, once per case, with case_label = that case title (e.g. "CASE 2 (LS CRUDE)"). Do not keep only the first case when the cases print different values.
+13. Sheets with several CASE / STREAM columns (titles above the Tag row, e.g. "CASE 1 (BH CRUDE)", "STREAM-1"): emit every row once per case with group = that case/stream title exactly as printed, and case = the Min/Normal/Max header inside it (a single value column -> single). Never drop the title, never put two cases' values in one entry, never keep only the first case. On ordinary sheets group = null.
+14. A value belongs to the label of ITS OWN row (left) and the header of ITS OWN column (above). Check both before assigning. Never file a value under a neighbouring row's label (e.g. viscosity under "Flash %", dP under Inlet Pressure) or a neighbouring column's header. A state word such as LIQUID / GAS is the value of a State row, not of Fluid.
+15. Unit: only what the sheet prints for that row (Units column, label, or the column header such as "Flow (MT/D)"). If none is printed, unit = null. Never guess or convert a unit.
 
 Return only JSON matching the provided schema."""
 
@@ -111,6 +113,7 @@ ENTRY = {
         "kind": {"type": "string", "enum": KINDS},
         "case": {"type": "string", "enum": CASES},
         "case_label": STR,
+        "group": STR,
         "value": STR,
         "unit": STR,
         "page": {"type": "integer"},
@@ -333,7 +336,7 @@ def extract_once(client, model, shared):
 def keyed(v):
     out, seen = {}, {}
     for e in v["entries"]:
-        k = (norm(e.get("section")), norm(e["parameter"]), e["case"])
+        k = (norm(e.get("group")), norm(e.get("section")), norm(e["parameter"]), e["case"])
         n = seen.get(k, 0)
         seen[k] = n + 1
         out[k + (n,)] = e
@@ -368,7 +371,8 @@ def adjudicate(client, model, shared, disputes):
         ref = d["a"] or d["b"]
         lines.append(f'Q{d["id"]}: sheet "{d["valve"]["_name"]}", page {ref.get("page")}, '
                      f'section "{ref.get("section") or "-"}", row {ref.get("row_no") or "-"} '
-                     f'"{ref["parameter"]}", column "{ref.get("case_label") or ref["case"]}": '
+                     f'"{ref["parameter"]}", case/stream "{ref.get("group") or "-"}", '
+                     f'column "{ref.get("case_label") or ref["case"]}": '
                      f'value and unit as printed?')
     out = call_json(client, model, ADJ_SYSTEM, ANSWER_SCHEMA, shared + [
         "Re-read these cells. Use the question number as id.\n" + "\n".join(lines)])
@@ -380,7 +384,7 @@ def apply_adjudication(disputes, answers, fname, issues):
         a, b, v = d["a"], d["b"], d["valve"]
         ref = a or b
         base = {"file": fname, "valve": v["_name"], "section": ref.get("section") or "",
-                "parameter": ref["parameter"], "case": ref["case"]}
+                "parameter": ref["parameter"], "case": ref["case"], "group": ref.get("group") or ""}
         ans = answers.get(d["id"]) or {}
         av, bv = (a or {}).get("value"), (b or {}).get("value")
         ua, ub = (a or {}).get("unit"), (b or {}).get("unit")
@@ -425,7 +429,7 @@ def validate(valves, fname):
         issues.append({"file": fname, "valve": v["_name"],
                        "section": (e.get("section") if e else "") or "",
                        "parameter": e["parameter"] if e else "", "case": e["case"] if e else "",
-                       "severity": sev, "issue": msg})
+                       "group": (e.get("group") if e else "") or "", "severity": sev, "issue": msg})
 
     for v in valves:
         ents = v["entries"]
@@ -438,7 +442,7 @@ def validate(valves, fname):
 
         seen = set()
         for e in ents:
-            key = (norm(e.get("section")), norm(e["parameter"]), e["case"])
+            key = (norm(e.get("group")), norm(e.get("section")), norm(e["parameter"]), e["case"])
             if key in seen:
                 add(v, e, "warning", "Duplicate entry for the same row and column")
             seen.add(key)
@@ -470,10 +474,10 @@ def validate(valves, fname):
                 add(v, e, "warning", "Specific gravity outside 0.05-20")
 
         # P1 - dP = P2 per column (only when unambiguous and units compatible)
-        for case in CASES:
+        for grp, case in sorted({(norm(e.get("group")), e["case"]) for e in ents}):
             d, dup = {}, set()
             for e in ents:
-                if e["case"] == case and e["kind"] == "condition" and \
+                if (norm(e.get("group")), e["case"]) == (grp, case) and e["kind"] == "condition" and \
                         e["canonical"] in ("inlet_pressure", "outlet_pressure", "pressure_drop"):
                     if e["canonical"] in d:
                         dup.add(e["canonical"])
@@ -489,13 +493,15 @@ def validate(valves, fname):
 
         # ordering of flow / temperature across min <= normal <= max
         for canon in FLOW | TEMP:
-            by = {e["case"]: e for e in ents
-                  if e["canonical"] == canon and e["kind"] == "condition" and to_num(e["value"]) is not None}
-            if {"minimum", "normal", "maximum"} <= set(by) and \
-                    len({unit_norm(by[c].get("unit")) for c in by}) == 1:
-                lo, no, hi = (to_num(by[c]["value"]) for c in ("minimum", "normal", "maximum"))
-                if not (lo <= no <= hi):
-                    add(v, by["normal"], "warning", f"Min/Normal/Max not ordered: {lo}, {no}, {hi}")
+            for grp in {norm(e.get("group")) for e in ents}:
+                by = {e["case"]: e for e in ents
+                      if norm(e.get("group")) == grp and e["canonical"] == canon and e["kind"] == "condition"
+                      and to_num(e["value"]) is not None}
+                if {"minimum", "normal", "maximum"} <= set(by) and \
+                        len({unit_norm(by[c].get("unit")) for c in by}) == 1:
+                    lo, no, hi = (to_num(by[c]["value"]) for c in ("minimum", "normal", "maximum"))
+                    if not (lo <= no <= hi):
+                        add(v, by["normal"], "warning", f"Min/Normal/Max not ordered: {lo}, {no}, {hi}")
 
         # unit differs between columns of one row
         rows = {}
@@ -540,10 +546,12 @@ def pivot(fname, valves, kinds):
             g = groups.setdefault((norm(e.get("section")), norm(e["parameter"])), {
                 "file": fname, "valve": v["_name"], "section": e.get("section") or "",
                 "row_no": e.get("row_no"), "parameter": e["parameter"], "canonical": e["canonical"],
-                "kind": e["kind"], "units": [], "cells": {}, "page": e.get("page")})
+                "kind": e["kind"], "units": [], "cells": {}, "labels": {}, "page": e.get("page")})
             if e.get("unit") and e["unit"] not in g["units"]:
                 g["units"].append(e["unit"])
-            g["cells"].setdefault(e["case"], []).append(e.get("value"))
+            rk = (norm(e.get("group")), e["case"])
+            g["cells"].setdefault(rk, []).append(e.get("value"))
+            g["labels"].setdefault(rk, e.get("group") or "")
         rows.extend(groups.values())
     return rows
 
@@ -552,6 +560,7 @@ def write_conditions(ws, rows, cell_sev, row_sev):
     """Transposed: one column per parameter, one row per (file, valve, Min/Normal/Max/...)."""
     def key(r):  # same parameter with another unit gets its own column
         return (norm(r["section"]), norm(r["parameter"]), tuple(r["units"]))
+    cell_rows = {k[:4] for k in cell_sev}
     cols = {}
     for r in rows:
         cols.setdefault(key(r), r)
@@ -562,21 +571,29 @@ def write_conditions(ws, rows, cell_sev, row_sev):
     for r in rows:
         by.setdefault((r["file"], r["valve"]), []).append(r)
     for (f, vname), rs in by.items():
-        for c in CASES:
+        labels, first = {}, {}
+        for r in rs:
+            for ck in r["cells"]:
+                labels.setdefault(ck, r["labels"][ck])
+                first.setdefault(ck[0], len(first))
+        # one Excel row per (case/stream, Min/Normal/...): the printed case title is the row label
+        for ck in sorted(labels, key=lambda k: (first[k[0]], CASES.index(k[1]))):
+            c, grp = ck[1], labels[ck]
+            title = grp if grp and c == "single" else f"{grp} - {CASE_TITLES[c]}" if grp else CASE_TITLES[c]
             line = {}
             for r in rs:
-                xs = [x for x in r["cells"].get(c, []) if x not in (None, "")]
+                xs = [x for x in r["cells"].get(ck, []) if x not in (None, "")]
                 if not xs:
                     continue
                 rk = (f, vname, norm(r["section"]), norm(r["parameter"]))
-                s = cell_sev.get(rk + (c,), -1)
-                if s < 0 and not any(rk + (cc,) in cell_sev for cc in CASES):
+                s = cell_sev.get(rk + (ck,), -1)
+                if s < 0 and rk not in cell_rows:
                     s = row_sev.get(rk, -1)  # a row-level issue colours its cells
                 line[key(r)] = (cell_value(xs[0]) if len(xs) == 1 else " | ".join(map(str, xs)),
                                 decimals_format(xs[0]) if len(xs) == 1 else None, s)
             if not line:
                 continue
-            ws.append([f, vname, CASE_TITLES[c]] + [line[k][0] if k in line else None for k in keys])
+            ws.append([f, vname, title] + [line[k][0] if k in line else None for k in keys])
             for j, k in enumerate(keys):
                 if k in line:
                     cell = ws.cell(ws.max_row, 4 + j)
@@ -598,13 +615,13 @@ def build_workbook(results, issues, out):
         s = SEV[i["severity"]]
         row_sev[rk] = max(row_sev.get(rk, -1), s)
         if i.get("case"):
-            ck = rk + (i["case"],)
+            ck = rk + ((norm(i.get("group")), i["case"]),)
             cell_sev[ck] = max(cell_sev.get(ck, -1), s)
 
     wb = Workbook()
     ws = wb.active
     ws.title = "Datasheet Data"
-    write_conditions(ws, [r for f, vs in results for r in pivot(f, vs, {"condition", "design", "calculated", "spec"})],
+    write_conditions(ws, [r for f, vs in results for r in pivot(f, vs, {"condition", "design", "calculated"})],  # process conditions only; specs stay in the web view
                      cell_sev, row_sev)
     for row in ws.iter_rows():  # a typed or printed "=..." must stay text, never a formula
         for c in row:
