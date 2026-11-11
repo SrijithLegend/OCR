@@ -7,6 +7,7 @@ import os
 import re
 import sys
 import time
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 from google import genai
@@ -87,6 +88,9 @@ TRANSCRIPTION RULES (accuracy matters more than completeness):
 8. A sheet's title or tag can be on a different page from its table. Attach each table to the correct sheet using the tag/title, not page order; list the pages used in source_pages. One record per sheet.
 9. Sheets with nothing filled still get a record with has_values=false.
 10. TEXT LAYER (when supplied) is real text: use it for characters; the images decide which row/column a value belongs to. If they disagree on a digit, use "UNREADABLE". ZOOM tiles are overlapping crops of the same page for legibility; emit each cell once.
+11. Where the Min / Normal / Max labels are small cells beside the row label and the value cells have no header of their own, the value cells are POSITIONAL: left to right they are Min, Normal, Max, in the order the labels are printed. A blank cell stays blank: never shift a value left into it (a lone value under the Max slot is maximum, not normal; a value under the second slot is normal, not minimum).
+12. Values of one row belong to that row only. Never copy a value from the row above or below into it (e.g. a dP value into the Inlet Pressure Max row). A cell holds one value; ' | ' in the text layer is a column gap, never part of a value.
+13. Sheets with several CASE / STREAM columns (titles above the Tag row): emit EVERY row, spec rows included, once per case, with case_label = that case title (e.g. "CASE 2 (LS CRUDE)"). Do not keep only the first case when the cases print different values.
 
 Return only JSON matching the provided schema."""
 
@@ -445,6 +449,8 @@ def validate(valves, fname):
             if "UNREADABLE" in str(val).upper():
                 add(v, e, "error", "Model could not read this cell")
                 continue
+            if "|" in str(val):
+                add(v, e, "warning", f"Several values in one cell {val!r}; likely merged from another row/column")
             canon, un, num = e["canonical"], unit_norm(e.get("unit")), to_num(val)
             if canon not in NON_NUMERIC and num is None:
                 add(v, e, "warning", f"Non-numeric value {val!r}; confirm against the sheet")
@@ -543,29 +549,44 @@ def pivot(fname, valves, kinds):
 
 
 def write_conditions(ws, rows, cell_sev, row_sev):
-    ws.append(["Source File", "Valve", "Section", "Row #", "Parameter (as printed)", "Canonical",
-               "Kind", "Unit"] + [CASE_TITLES[c] for c in CASES] + ["Page", "Review"])
+    """Transposed: one column per parameter, one row per (file, valve, Min/Normal/Max/...)."""
+    def key(r):  # same parameter with another unit gets its own column
+        return (norm(r["section"]), norm(r["parameter"]), tuple(r["units"]))
+    cols = {}
     for r in rows:
-        rk = (r["file"], r["valve"], norm(r["section"]), norm(r["parameter"]))
-        vals, fmts = [], []
+        cols.setdefault(key(r), r)
+    keys = list(cols)
+    ws.append(["Source File", "Valve", "Value"] + ["\n".join(x for x in (
+        c["section"], c["parameter"], f"({' / '.join(c['units'])})" if c["units"] else "") if x) for c in cols.values()])
+    by = {}
+    for r in rows:
+        by.setdefault((r["file"], r["valve"]), []).append(r)
+    for (f, vname), rs in by.items():
         for c in CASES:
-            xs = [x for x in r["cells"].get(c, []) if x not in (None, "")]
-            vals.append(cell_value(xs[0]) if len(xs) == 1 else (" | ".join(map(str, xs)) or None))
-            fmts.append(decimals_format(xs[0]) if len(xs) == 1 else None)
-        sev = row_sev.get(rk, -1)
-        ws.append([r["file"], r["valve"], r["section"], r["row_no"], r["parameter"], r["canonical"],
-                   r["kind"], " / ".join(r["units"]) or None] + vals + [r["page"],
-                   {2: "ERROR", 1: "CHECK"}.get(sev, "")])
-        n = ws.max_row
-        for j, c in enumerate(CASES):
-            if fmts[j]:
-                ws.cell(n, 9 + j).number_format = fmts[j]
-            s = cell_sev.get(rk + (c,), -1)
-            if s in FILLS:
-                ws.cell(n, 9 + j).fill = FILLS[s]
-        if sev in FILLS:
-            ws.cell(n, 9 + len(CASES) + 1).fill = FILLS[sev]
-    style_sheet(ws, [20, 18, 22, 7, 38, 20, 11, 12, 14, 14, 14, 12, 12, 12, 6, 9])
+            line = {}
+            for r in rs:
+                xs = [x for x in r["cells"].get(c, []) if x not in (None, "")]
+                if not xs:
+                    continue
+                rk = (f, vname, norm(r["section"]), norm(r["parameter"]))
+                s = cell_sev.get(rk + (c,), -1)
+                if s < 0 and not any(rk + (cc,) in cell_sev for cc in CASES):
+                    s = row_sev.get(rk, -1)  # a row-level issue colours its cells
+                line[key(r)] = (cell_value(xs[0]) if len(xs) == 1 else " | ".join(map(str, xs)),
+                                decimals_format(xs[0]) if len(xs) == 1 else None, s)
+            if not line:
+                continue
+            ws.append([f, vname, CASE_TITLES[c]] + [line[k][0] if k in line else None for k in keys])
+            for j, k in enumerate(keys):
+                if k in line:
+                    cell = ws.cell(ws.max_row, 4 + j)
+                    if line[k][1]:
+                        cell.number_format = line[k][1]
+                    if line[k][2] in FILLS:
+                        cell.fill = FILLS[line[k][2]]
+    style_sheet(ws, [20, 18, 10] + [18] * len(keys))
+    ws.row_dimensions[1].height = 62
+    ws.freeze_panes = "D2"
 
 
 def build_workbook(results, issues, out):
@@ -601,7 +622,8 @@ def build_workbook(results, issues, out):
 def process_file(client, model, path, args):
     shared = build_content(path, args.dpi, args.bands, args.cols)
     issues = []
-    runs = [extract_once(client, model, shared) for _ in range(args.passes)]
+    with ThreadPoolExecutor(args.passes) as ex:  # passes are independent API calls, run together
+        runs = list(ex.map(lambda _: extract_once(client, model, shared), range(args.passes)))
     valves = runs[0]
     if len(runs) == 2:
         disputes = find_disputes(runs[0], runs[1], path.name, issues)
