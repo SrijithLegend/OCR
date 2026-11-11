@@ -55,11 +55,18 @@ tr.sec td{background:var(--bg);font-weight:600;font-size:12px;color:var(--muted)
 td.rn{color:var(--muted);text-align:right;width:30px}
 input.c{width:100%;min-width:96px;font:inherit;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 7px}
 input.c:focus{outline:2px solid var(--accent)}
-input.p{min-width:240px}input.u{min-width:80px;width:96px}
+input.p{min-width:170px}input.u{min-width:80px;width:100%;margin-top:4px}
+th .ph{display:flex;align-items:center;gap:4px;justify-content:space-between;min-height:22px}
+th.rowh{position:sticky;left:0;background:var(--bg);z-index:1;text-transform:none;font-size:12px}
+th.sechd{text-align:center;border-left:1px solid var(--line)}
+th input.c{text-transform:none;letter-spacing:0;color:var(--text);font-weight:600}
+td{border-left:1px solid var(--line)}
 input.c.error{background:var(--err);border-color:var(--err-b)}input.c.warning{background:var(--warn);border-color:var(--warn-b)}
 input.c.edited{background:var(--edit);border-color:var(--edit-b)}
 .kind{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:0 6px;margin-left:6px}
 .flag{font-size:12px;color:var(--muted);white-space:normal;max-width:300px}
+.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+#acc table{width:auto;min-width:420px;background:var(--panel)}#acc td.n{text-align:right;border-left:0}#acc tr.tot td{font-weight:600}
 a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
 </style></head><body>
 <header><h1>Datasheet extractor</h1>
@@ -73,15 +80,19 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
  <div id="busy" class="panel hidden"><div class="spin"></div><div><b>Extracting <span id="timer" class="muted"></span></b><div id="busytxt" class="muted"></div></div></div>
  <div id="err" class="panel err hidden" role="alert"></div>
  <section id="res" class="hidden">
+  <div class="tabs"><button id="tr" class="on" type="button">Review</button><button id="ta" type="button">Accuracy</button></div>
+  <div id="acc" class="hidden"></div>
+  <div id="rv">
   <div class="toolbar"><div class="bar"><div id="sum" class="sum"></div>
    <button id="nextbad" type="button">Next issue &darr;</button>
    <button id="toggle" type="button">Collapse all</button>
-   <label class="muted"><input id="only" type="checkbox"> Show only rows needing review</label>
+   <label class="muted"><input id="only" type="checkbox"> Show only columns needing review</label>
    <button id="export" class="primary" type="button">Export to Excel</button></div></div>
   <div class="legend"><span class="chip error">error</span><span class="chip warning">check</span>
    <span class="chip edited">edited by you</span>
    <span class="muted">Compare with the page (p1 link), fix any value, then export. Values are shown exactly as read.</span></div>
   <div id="sheets"></div>
+  </div>
  </section>
 </main>
 <script>
@@ -113,7 +124,7 @@ async function upload(list){
  view("busy",files.length+" file(s): "+files.map(f=>f.name).join(", ")+" - this can take a few minutes. Keep this tab open.");
  try{const r=await fetch("/extract",{method:"POST",body:fd});
   if(!r.ok)throw new Error(await errText(r));
-  data=await r.json();prepare();view("res");render()}
+  data=await r.json();prepare();view("res");tab(false);render()}
  catch(e){view("drop");fail("Extraction failed: "+e.message)}
 }
 
@@ -144,29 +155,29 @@ function cellInput(v,g,flagEl,cn){
   t.value=i.value.trim()===""?null:i.value;t._edited=true;i.className="c edited";i.title=tip(t);flagEl.textContent=flagsOf(g);summary()});
  return i}
 
-function rowTr(r,v,g,cols,fi){
+function colOf(v,g,fi,cols,k){
  const flagEl=h("div",{class:"flag"},flagsOf(g)),rep=g.entries[0];
  const par=h("input",{class:"c p",type:"text","aria-label":"Parameter"});par.value=rep.parameter;
  par.addEventListener("change",()=>{g.entries.forEach(e=>{e.parameter=par.value;e._edited=true});par.className="c p edited";flagEl.textContent=flagsOf(g);summary()});
  const units=[...new Set(g.entries.map(e=>e.unit).filter(Boolean))];
- const un=h("input",{class:"c u",type:"text","aria-label":"Unit"});un.value=units.join(" / ");
+ const un=h("input",{class:"c u",type:"text","aria-label":"Unit",placeholder:"unit"});un.value=units.join(" / ");
  un.addEventListener("change",()=>{g.entries.forEach(e=>{e.unit=un.value.trim()||null;e._edited=true});un.className="c u edited";flagEl.textContent=flagsOf(g);summary()});
  const kind=rep.kind==="calculated"||rep.kind==="spec"?h("span",{class:"kind"},rep.kind):null;
- return h("tr",{"data-row":"1"},h("td",{class:"rn"},rep.row_no??""),h("td",{},par,kind),h("td",{},un),
-  cols.map(cn=>h("td",{},cellInput(v,g,flagEl,cn))),
-  h("td",{},h("a",{class:"pg",tabindex:"0",role:"button",onclick:()=>openPage(fi,rep.page)},"p"+(rep.page??1))),
-  h("td",{},flagEl),
-  h("td",{},h("button",{class:"small",type:"button",title:"Delete this row",onclick:()=>{
-    if(!confirm("Delete this row?"))return;v.entries=v.entries.filter(e=>!g.entries.includes(e));render()}},"×")))}
+ const d={"data-g":k};
+ return{th:h("th",d,h("div",{class:"ph"},rep.row_no!=null?"#"+rep.row_no:"",kind,
+   h("button",{class:"small",type:"button",title:"Delete this column",onclick:()=>{
+    if(!confirm("Delete this column?"))return;v.entries=v.entries.filter(e=>!g.entries.includes(e));render()}},"×")),par,un),
+  cells:cols.map(cn=>h("td",d,cellInput(v,g,flagEl,cn))),
+  pg:h("td",d,h("a",{class:"pg",tabindex:"0",role:"button",onclick:()=>openPage(fi,rep.page)},"p"+(rep.page??1))),
+  fl:h("td",d,flagEl)}}
 
 function render(){
  const root=$("sheets");root.replaceChildren();
  data.results.forEach((r,fi)=>{for(const v of r.valves){
   const gs=groups(v),used=new Set(v.entries.map(e=>e.case)),cols=CASES.filter(c=>["minimum","normal","maximum"].includes(c)||used.has(c));
   const notes=data.issues.filter(i=>i.file===r.file&&i.valve===v._name&&!i.parameter);
-  const body=h("tbody");let last=null;
-  for(const g of gs){if(g.section!==last){last=g.section;if(g.section)body.append(h("tr",{class:"sec"},h("td",{colspan:6+cols.length},g.section)))}
-   body.append(rowTr(r,v,g,cols,fi))}
+  const cs=gs.map((g,k)=>colOf(v,g,fi,cols,k)),secs=[];
+  gs.forEach(g=>{const l=secs[secs.length-1];if(l&&l.s===g.section)l.n++;else secs.push({s:g.section,n:1})});
   const card=h("details",{class:"card",open:true},
    h("summary",{class:"card-head"},h("h2",{},v._name),
     h("span",{class:"muted"},[v.sheet_title&&v.tag?v.sheet_title:null,v.fluid?"Fluid: "+v.fluid:null,v.service?"Service: "+v.service:null,
@@ -175,21 +186,40 @@ function render(){
      return h("span",{class:"badge"},c.error?h("b",{class:"e"},c.error+" error"+(c.error>1?"s":"")):null,c.warning?h("b",{class:"w"},c.warning+" to check"):null)})()));
   if(notes.length)card.append(h("div",{class:"notes"},notes.map(i=>h("div",{class:i.severity},i.severity.toUpperCase()+": "+i.issue))));
   if(!gs.length)card.append(h("div",{class:"notes muted"},"No values found on this sheet."));
-  else card.append(h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{},"#"),h("th",{},"Parameter"),h("th",{},"Unit"),
-   cols.map(c=>h("th",{},TITLE[c])),h("th",{},"Page"),h("th",{},"Flags"),h("th",{}))),body)));
+  else card.append(h("div",{class:"scroll"},h("table",{},
+   h("thead",{},h("tr",{class:"secrow"},h("th",{}),secs.map(x=>h("th",{colspan:x.n,class:"sechd"},x.s))),
+    h("tr",{},h("th",{class:"rowh"},"Value"),cs.map(c=>c.th))),
+   h("tbody",{},cols.map((cn,ci)=>h("tr",{},h("th",{class:"rowh"},TITLE[cn]),cs.map(c=>c.cells[ci]))),
+    h("tr",{},h("th",{class:"rowh"},"Page"),cs.map(c=>c.pg)),
+    h("tr",{},h("th",{class:"rowh"},"Flags"),cs.map(c=>c.fl))))));
   root.append(card)}});
  summary()}
 
 function summary(){let cells=0,err=0,warn=0,ed=0;
  for(const r of data.results)for(const v of r.valves)for(const e of v.entries){cells++;const s=sev(e);if(s==="error")err++;else if(s==="warning")warn++;else if(s==="edited")ed++}
- $("sum").textContent=`${cells} cells · ${err} errors · ${warn} to check · ${ed} edited by you`;filter()}
+ $("sum").textContent=`${cells} cells · ${err} errors · ${warn} to check · ${ed} edited by you`;filter();accuracy()}
+// no ground truth: accuracy = share of values the code checks did not flag (error/warning), whether or not you since edited them
+function accuracy(){const T={rows:0,cols:0,vals:0,bad:0},R=[];
+ for(const r of data.results)for(const v of r.valves){const gs=groups(v),used=new Set(v.entries.map(e=>e.case));
+  const x={name:v._name,rows:["minimum","normal","maximum"].concat(CASES.slice(3).filter(c=>used.has(c))).length,cols:gs.length,vals:0,bad:0};
+  for(const e of v.entries){if(e.value==null||String(e.value).trim()==="")continue;x.vals++;if(e._issues.some(i=>i.severity!=="info"))x.bad++}
+  R.push(x);for(const k in T)T[k]+=x[k]}
+ const pc=x=>x.vals?(100*(x.vals-x.bad)/x.vals).toFixed(1)+"%":"-",row=(x,c)=>h("tr",{class:c},h("td",{},x.name),[x.rows,x.cols,x.vals,x.bad].map(n=>h("td",{class:"n"},n)),h("td",{class:"n"},pc(x)));
+ $("acc").replaceChildren(h("table",{},h("thead",{},h("tr",{},["Sheet","Rows","Columns","Values","Flagged","Accuracy"].map(t=>h("th",{},t)))),
+  h("tbody",{},R.map(x=>row(x)),row({name:"Total",...T},"tot"))),
+  h("p",{class:"muted hint"},"Rows = Min/Normal/Max etc.; columns = parameters; values = non-empty cells. Accuracy = values not flagged by the checks (an estimate, not compared to an answer key)."))}
+function tab(a){$("acc").classList.toggle("hidden",!a);$("rv").classList.toggle("hidden",a);$("ta").classList.toggle("on",a);$("tr").classList.toggle("on",!a)}
+$("tr").addEventListener("click",()=>tab(false));$("ta").addEventListener("click",()=>tab(true));
 let cur=-1;
-$("nextbad").addEventListener("click",()=>{const l=[...document.querySelectorAll("tr[data-row]:not(.hidden) input.error,tr[data-row]:not(.hidden) input.warning")];
+$("nextbad").addEventListener("click",()=>{const l=[...document.querySelectorAll("td:not(.hidden) input.error,td:not(.hidden) input.warning")];
  if(!l.length)return;cur=(cur+1)%l.length;const i=l[cur];i.closest("details").open=true;i.scrollIntoView({block:"center",behavior:"smooth"});i.focus()});
 $("toggle").addEventListener("click",()=>{const d=[...document.querySelectorAll("details.card")],open=d.some(x=>x.open);d.forEach(x=>x.open=!open);$("toggle").textContent=open?"Expand all":"Collapse all"});
 addEventListener("beforeunload",e=>{if(data&&data.results.some(r=>r.valves.some(v=>v.entries.some(x=>x._edited))))e.preventDefault()});
 function filter(){const only=$("only").checked;
- document.querySelectorAll("tr[data-row]").forEach(tr=>tr.classList.toggle("hidden",only&&!tr.querySelector("input.error,input.warning")))}
+ document.querySelectorAll("#sheets table").forEach(t=>{
+  const bad=new Set([...t.querySelectorAll("input.error,input.warning")].map(i=>i.closest("[data-g]").dataset.g));
+  t.querySelectorAll("[data-g]").forEach(x=>x.classList.toggle("hidden",only&&!bad.has(x.dataset.g)));
+  t.querySelectorAll(".secrow").forEach(x=>x.classList.toggle("hidden",only))})}
 
 function openPage(fi,page){const f=files[fi];if(!f)return;
  window.open(URL.createObjectURL(f)+(/\.pdf$/i.test(f.name)?"#page="+(page||1):""),"_blank")}
