@@ -26,6 +26,17 @@ button.small{padding:2px 9px;font-size:12px}
 @keyframes s{to{transform:rotate(360deg)}}
 .bar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
 .bar .sum{flex:1;min-width:260px;font-weight:600}
+.steps{display:flex;gap:6px;font-size:13px;color:var(--muted)}.steps span{padding:2px 10px;border-radius:12px}
+.steps .on{background:var(--accent);color:var(--accent-fg);font-weight:600}
+#drop svg{width:44px;height:44px;margin-bottom:8px;color:var(--accent)}
+.hint{margin-top:10px;font-size:12px}
+.toolbar{position:sticky;top:51px;z-index:4;background:var(--bg);padding:8px 0}
+button:disabled{opacity:.55;cursor:wait}
+button:focus-visible,a.pg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+details.card>summary{list-style:none;cursor:pointer}details.card>summary::-webkit-details-marker{display:none}
+details.card>summary h2:before{content:"BE ";color:var(--muted)}details.card:not([open])>summary h2:before{content:"B8 "}
+.badge{margin-left:auto;font-size:12px}.badge b{padding:1px 8px;border-radius:10px;margin-left:4px;border:1px solid transparent}
+.badge .e{background:var(--err);border-color:var(--err-b)}.badge .w{background:var(--warn);border-color:var(--warn-b)}
 .legend{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 16px}
 .chip{padding:1px 9px;border-radius:10px;font-size:12px;border:1px solid transparent}
 .chip.error{background:var(--err);border-color:var(--err-b)}.chip.warning{background:var(--warn);border-color:var(--warn-b)}
@@ -39,6 +50,7 @@ button.small{padding:2px 9px;font-size:12px}
 table{width:100%;border-collapse:collapse}
 th,td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
 th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:var(--bg)}
+tbody tr:not(.sec):hover td{background:var(--bg)}
 tr.sec td{background:var(--bg);font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase}
 td.rn{color:var(--muted);text-align:right;width:30px}
 input.c{width:100%;min-width:96px;font:inherit;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 7px}
@@ -51,17 +63,21 @@ input.c.edited{background:var(--edit);border-color:var(--edit-b)}
 a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
 </style></head><body>
 <header><h1>Datasheet extractor</h1>
+ <div class="steps"><span id="s1" class="on">1 Upload</span><span id="s2">2 Review</span><span id="s3">3 Export</span></div>
  <div><button id="new" class="hidden" type="button">New upload</button></div></header>
 <main>
- <div id="drop" tabindex="0" role="button"><b>Drop PDFs or images here</b>
+ <div id="drop" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><b>Drop PDFs or images here</b>
   <span class="muted">or click to choose &middot; PDF, PNG, JPG &middot; original files read far better than screenshots</span>
+  <div class="hint muted">Up to 50 MB per file. Files are sent to the Gemini API for reading.</div>
   <input id="pick" type="file" multiple accept=".pdf,.png,.jpg,.jpeg" hidden></div>
- <div id="busy" class="panel hidden"><div class="spin"></div><div><b>Extracting</b><div id="busytxt" class="muted"></div></div></div>
+ <div id="busy" class="panel hidden"><div class="spin"></div><div><b>Extracting <span id="timer" class="muted"></span></b><div id="busytxt" class="muted"></div></div></div>
  <div id="err" class="panel err hidden" role="alert"></div>
  <section id="res" class="hidden">
-  <div class="bar"><div id="sum" class="sum"></div>
+  <div class="toolbar"><div class="bar"><div id="sum" class="sum"></div>
+   <button id="nextbad" type="button">Next issue &darr;</button>
+   <button id="toggle" type="button">Collapse all</button>
    <label class="muted"><input id="only" type="checkbox"> Show only rows needing review</label>
-   <button id="export" class="primary" type="button">Export to Excel</button></div>
+   <button id="export" class="primary" type="button">Export to Excel</button></div></div>
   <div class="legend"><span class="chip error">error</span><span class="chip warning">check</span>
    <span class="chip edited">edited by you</span>
    <span class="muted">Compare with the page (p1 link), fix any value, then export. Values are shown exactly as read.</span></div>
@@ -81,15 +97,20 @@ function h(tag,props,...kids){const e=document.createElement(tag);
   else if(v!==null&&v!==undefined&&v!==false)e.setAttribute(k,v===true?"":v)}
  for(const k of kids.flat())if(k!==null&&k!==undefined)e.append(k.nodeType?k:document.createTextNode(String(k)));return e}
 
-function view(v,msg){$("drop").classList.toggle("hidden",v!=="drop");$("busy").classList.toggle("hidden",v!=="busy");
+let tm=null;
+function view(v,msg){clearInterval(tm);
+ if(v==="busy"){const t0=Date.now(),el=$("timer");el.textContent="0:00";tm=setInterval(()=>{const n=Math.floor((Date.now()-t0)/1e3);el.textContent=Math.floor(n/60)+":"+String(n%60).padStart(2,"0")},1e3)}
+ [["s1","drop"],["s2","res"]].forEach(([i,x])=>$(i).classList.toggle("on",v===x||(i==="s1"&&v==="busy")));$("drop").classList.toggle("hidden",v!=="drop");$("busy").classList.toggle("hidden",v!=="busy");
  $("res").classList.toggle("hidden",v!=="res");$("new").classList.toggle("hidden",v==="drop");if(msg)$("busytxt").textContent=msg}
 function fail(m){const e=$("err");e.textContent=m;e.classList.toggle("hidden",!m)}
 async function errText(r){let d=r.statusText;try{d=(await r.json()).detail}catch{}return typeof d==="string"?d:JSON.stringify(d)}
 
 async function upload(list){
  files=[...list];if(!files.length)return;fail("");
+ const bad=files.filter(f=>!/\.(pdf|png|jpe?g)$/i.test(f.name));
+ if(bad.length)return fail("Unsupported file: "+bad.map(f=>f.name).join(", ")+" (PDF, PNG, JPG only)");
  const fd=new FormData();files.forEach(f=>fd.append("files",f));
- view("busy",files.map(f=>f.name).join(", ")+" - this can take a few minutes");
+ view("busy",files.length+" file(s): "+files.map(f=>f.name).join(", ")+" - this can take a few minutes. Keep this tab open.");
  try{const r=await fetch("/extract",{method:"POST",body:fd});
   if(!r.ok)throw new Error(await errText(r));
   data=await r.json();prepare();view("res");render()}
@@ -146,10 +167,12 @@ function render(){
   const body=h("tbody");let last=null;
   for(const g of gs){if(g.section!==last){last=g.section;if(g.section)body.append(h("tr",{class:"sec"},h("td",{colspan:6+cols.length},g.section)))}
    body.append(rowTr(r,v,g,cols,fi))}
-  const card=h("div",{class:"card"},
-   h("div",{class:"card-head"},h("h2",{},v._name),
+  const card=h("details",{class:"card",open:true},
+   h("summary",{class:"card-head"},h("h2",{},v._name),
     h("span",{class:"muted"},[v.sheet_title&&v.tag?v.sheet_title:null,v.fluid?"Fluid: "+v.fluid:null,v.service?"Service: "+v.service:null,
-     r.file,"pages "+((v.source_pages||[]).join(", ")||"-")].filter(Boolean).join(" · "))));
+     r.file,"pages "+((v.source_pages||[]).join(", ")||"-")].filter(Boolean).join(" · ")),
+    (()=>{const c={error:0,warning:0};v.entries.forEach(e=>{const k=sev(e);if(c[k]!==undefined)c[k]++});
+     return h("span",{class:"badge"},c.error?h("b",{class:"e"},c.error+" error"+(c.error>1?"s":"")):null,c.warning?h("b",{class:"w"},c.warning+" to check"):null)})()));
   if(notes.length)card.append(h("div",{class:"notes"},notes.map(i=>h("div",{class:i.severity},i.severity.toUpperCase()+": "+i.issue))));
   if(!gs.length)card.append(h("div",{class:"notes muted"},"No values found on this sheet."));
   else card.append(h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},h("th",{},"#"),h("th",{},"Parameter"),h("th",{},"Unit"),
@@ -160,6 +183,11 @@ function render(){
 function summary(){let cells=0,err=0,warn=0,ed=0;
  for(const r of data.results)for(const v of r.valves)for(const e of v.entries){cells++;const s=sev(e);if(s==="error")err++;else if(s==="warning")warn++;else if(s==="edited")ed++}
  $("sum").textContent=`${cells} cells · ${err} errors · ${warn} to check · ${ed} edited by you`;filter()}
+let cur=-1;
+$("nextbad").addEventListener("click",()=>{const l=[...document.querySelectorAll("tr[data-row]:not(.hidden) input.error,tr[data-row]:not(.hidden) input.warning")];
+ if(!l.length)return;cur=(cur+1)%l.length;const i=l[cur];i.closest("details").open=true;i.scrollIntoView({block:"center",behavior:"smooth"});i.focus()});
+$("toggle").addEventListener("click",()=>{const d=[...document.querySelectorAll("details.card")],open=d.some(x=>x.open);d.forEach(x=>x.open=!open);$("toggle").textContent=open?"Expand all":"Collapse all"});
+addEventListener("beforeunload",e=>{if(data&&data.results.some(r=>r.valves.some(v=>v.entries.some(x=>x._edited))))e.preventDefault()});
 function filter(){const only=$("only").checked;
  document.querySelectorAll("tr[data-row]").forEach(tr=>tr.classList.toggle("hidden",only&&!tr.querySelector("input.error,input.warning")))}
 
@@ -172,10 +200,12 @@ function payload(){
  return JSON.stringify({results:data.results,issues:data.issues.filter(i=>!edited.has(i))},
   (k,v)=>k.startsWith("_")&&k!=="_name"&&k!=="_id"?undefined:v)}
 $("export").addEventListener("click",async()=>{
+ const b=$("export");b.disabled=true;b.textContent="Exporting...";
  try{const r=await fetch("/export",{method:"POST",headers:{"Content-Type":"application/json"},body:payload()});
   if(!r.ok)throw new Error(await errText(r));
-  const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());a.download="process_conditions.xlsx";a.click()}
- catch(e){fail("Export failed: "+e.message)}});
+  const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());a.download=(files[0]?files[0].name.replace(/\.[^.]+$/,""):"process_conditions")+".xlsx";a.click();$("s3").classList.add("on")}
+ catch(e){fail("Export failed: "+e.message)}
+ finally{b.disabled=false;b.textContent="Export to Excel"}});
 
 const drop=$("drop"),pick=$("pick");
 drop.addEventListener("click",()=>pick.click());
