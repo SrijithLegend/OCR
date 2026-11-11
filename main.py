@@ -310,7 +310,10 @@ def call_json(client, model, system, schema, content):
                 raise RuntimeError("Model returned no output (blocked or truncated).")
             return json.loads(resp.text)
         except Exception as e:
-            transient = any(c in str(e) for c in ("503", "429", "500", "disconnected", "timed out"))
+            msg = f"{type(e).__name__} {e}"  # dropped connections (SSL EOF, reset) are as transient as a 503
+            transient = any(c in msg for c in ("503", "429", "500", "disconnected", "timed out", "SSL", "EOF",
+                                               "ConnectError", "ConnectionError", "ReadError", "RemoteProtocol",
+                                               "Timeout", "reset"))
             if attempt == 5 or not transient:
                 raise
             time.sleep(10 * (attempt + 1))
@@ -335,7 +338,7 @@ def extract_once(client, model, pages):
             "Extract all filled content of every valve sheet on this page."])
         print(f"  page {i + 1}/{len(pages)} done", file=sys.stderr)
         return normalize(out.get("valves", []))
-    with ThreadPoolExecutor(min(8, len(pages))) as ex:
+    with ThreadPoolExecutor(min(4, len(pages))) as ex:
         per_page = list(ex.map(one, range(len(pages))))
     merged = {}
     for valves in per_page:
