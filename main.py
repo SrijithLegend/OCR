@@ -283,9 +283,9 @@ def build_content(path: Path, dpi=300, bands=3, cols=1):
     else:
         pages.append((Image.open(path).convert("RGB"), ""))
 
-    blocks = []
+    out = []  # one block list per page: pages are extracted in parallel
     for i, (img, text) in enumerate(pages, 1):
-        blocks.append(f"=== PAGE {i} of {len(pages)} ===")
+        blocks = [f"=== PAGE {i} of {len(pages)} ==="]
         blocks.append(img_block(fit(img)))
         if len(text) >= 80:
             blocks.append(f"TEXT LAYER of page {i} (real characters; ' | ' = column gap):\n{text}")
@@ -293,7 +293,8 @@ def build_content(path: Path, dpi=300, bands=3, cols=1):
             for ri, ci, t in tiles(img, max(bands, 1), max(cols, 1)):
                 blocks.append(f"ZOOM tile row {ri} col {ci} of page {i} (overlaps neighbours)")
                 blocks.append(img_block(fit(t)))
-    return blocks
+        out.append(blocks)
+    return out
 
 
 # ---------------------------------------------------------------------- API calls
@@ -326,10 +327,25 @@ def normalize(valves):
     return valves
 
 
-def extract_once(client, model, shared):
-    out = call_json(client, model, SYSTEM, RECORD_SCHEMA, shared + [
-        "Extract all filled content of every valve sheet in this document."])
-    return normalize(out.get("valves", []))
+def extract_once(client, model, pages):
+    """One API call per page, all pages at once (a single 20-page call is slow and can hit the output limit).
+    ponytail: a sheet whose tag is on another page than its table comes back as two records; merge by hand."""
+    def one(i):
+        out = call_json(client, model, SYSTEM, RECORD_SCHEMA, pages[i] + [
+            "Extract all filled content of every valve sheet on this page."])
+        print(f"  page {i + 1}/{len(pages)} done", file=sys.stderr)
+        return normalize(out.get("valves", []))
+    with ThreadPoolExecutor(min(8, len(pages))) as ex:
+        per_page = list(ex.map(one, range(len(pages))))
+    merged = {}
+    for valves in per_page:
+        for v in valves:
+            m = merged.setdefault(v["_id"], v)
+            if m is not v:
+                m["entries"] += v["entries"]
+                m["source_pages"] = sorted(set(m.get("source_pages") or []) | set(v.get("source_pages") or []))
+                m["has_values"] = m.get("has_values") or v.get("has_values")
+    return list(merged.values())
 
 
 # ------------------------------------------------------- reconcile two passes
@@ -637,10 +653,10 @@ def build_workbook(results, issues, out):
 
 # ------------------------------------------------------------------------ main
 def process_file(client, model, path, args):
-    shared = build_content(path, args.dpi, args.bands, args.cols)
+    pages = build_content(path, args.dpi, args.bands, args.cols)
+    shared = [b for p in pages for b in p]
     issues = []
-    with ThreadPoolExecutor(args.passes) as ex:  # passes are independent API calls, run together
-        runs = list(ex.map(lambda _: extract_once(client, model, shared), range(args.passes)))
+    runs = [extract_once(client, model, pages) for _ in range(args.passes)]
     valves = runs[0]
     if len(runs) == 2:
         disputes = find_disputes(runs[0], runs[1], path.name, issues)
@@ -667,7 +683,7 @@ def main():
         args.files = sorted(p for p in here.iterdir() if p.suffix.lower() in (".pdf", ".png", ".jpg", ".jpeg"))
         if not args.files:
             sys.exit("No image/PDF files found next to main.py.")
-    client = genai.Client(api_key=os.environ["GENAI_API_KEY"])
+    client = genai.Client(api_key=os.environ["GENAI_API_KEY"], http_options=types.HttpOptions(timeout=300_000))
     results, all_issues = [], []
     for f in args.files:
         print(f"[{f.name}] extracting...", file=sys.stderr)

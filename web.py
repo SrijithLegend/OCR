@@ -8,6 +8,7 @@ from pathlib import Path
 from fastapi import Body, FastAPI, File, HTTPException, UploadFile
 from fastapi.responses import FileResponse, HTMLResponse
 from google import genai
+from google.genai import types
 from starlette.background import BackgroundTask
 
 import main as ocr
@@ -40,7 +41,7 @@ def extract(files: list[UploadFile] = File(...)):
             p = Path(tmp) / (name if not (Path(tmp) / name).exists() else f"{i}_{name}")
             p.write_bytes(data)
             paths.append((name, p))
-        client = genai.Client(api_key=os.environ["GENAI_API_KEY"])
+        client = genai.Client(api_key=os.environ["GENAI_API_KEY"], http_options=types.HttpOptions(timeout=300_000))
         results, issues = [], []
         for name, p in paths:
             valves, iss = ocr.process_file(client, ocr.MODEL, p, ARGS)
