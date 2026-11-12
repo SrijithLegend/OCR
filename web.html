@@ -65,6 +65,7 @@ input.c.error{background:var(--err);border-color:var(--err-b)}input.c.warning{ba
 input.c.edited{background:var(--edit);border-color:var(--edit-b)}
 .kind{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:0 6px;margin-left:6px}
 .flag{font-size:12px;color:var(--muted);white-space:normal;max-width:300px}
+td.changed{background:var(--warn)}td.bad{background:var(--err)}
 .tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
 #acc table{width:auto;min-width:420px;background:var(--panel)}#acc td.n{text-align:right;border-left:0}#acc tr.tot td{font-weight:600}
 a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
@@ -264,7 +265,6 @@ $("mo").addEventListener("click",()=>setMode("ocr"));$("ms").addEventListener("c
 $("new").addEventListener("click",()=>setMode(mode));
 
 // ---- Standardize descriptions: Excel/CSV -> /standardize -> table (+ the finished workbook, so Export needs no second request)
-const BAD=["CONFLICT","UNRESOLVED","NO PART NO.","UNPARSED"],CHECK=["REVIEW","FILLED"];
 async function stdUpload(list){const f=list[0];if(!f)return;fail("");
  if(!/\.(xlsx|xlsm|csv)$/i.test(f.name))return fail("Unsupported file: "+f.name+" (XLSX, XLSM, CSV only)");
  const fd=new FormData();fd.append("file",f);files=[f];
@@ -273,14 +273,15 @@ async function stdUpload(list){const f=list[0];if(!f)return;fail("");
   if(!r.ok)throw new Error(await errText(r));
   std=await r.json();std.name=f.name;view("res");stdView(0)}
  catch(e){view("drop");fail("Standardizing failed: "+e.message)}}
-function stdView(i){const[head,...body]=std.sheets[i].rows,sc=i===0?std.status_col:-1;
+function stdView(i){const rows=std.sheets[i].rows,head=std.has_header||i?rows[0]:null,body=head?rows.slice(1):rows,m=i===0?std.marks:[];
  $("sres").replaceChildren(
   h("div",{class:"tabs"},std.sheets.map((x,j)=>h("button",{type:"button",class:j===i?"on":"",onclick:()=>stdView(j)},x.name)),
    h("button",{class:"primary",type:"button",style:"margin-left:auto",onclick:stdDownload},"Export to Excel")),
   h("div",{class:"sum",style:"margin-bottom:8px"},std.summary),
-  h("div",{class:"card"},h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},head.map(x=>h("th",{},x)))),
-   h("tbody",{},body.map(r=>h("tr",{},r.map((c,k)=>h("td",{class:head[k]==="Notes"?"flag":""},
-    k===sc&&c?h("span",{class:"chip "+(BAD.includes(c)?"error":CHECK.includes(c)?"warning":"")},c):(c??""))))))))))}
+  h("div",{class:"card"},h("div",{class:"scroll"},h("table",{},head?h("thead",{},h("tr",{},head.map(x=>h("th",{},x)))):null,
+   h("tbody",{},body.map((r,n)=>h("tr",{},r.map((c,k)=>h("td",{class:i===0&&k===std.desc_col?m[n]:""},c??""))))))))),
+  h("div",{class:"legend"},h("span",{class:"chip warning"},"description changed"),h("span",{class:"chip error"},"could not standardize (left as is)"),
+   h("span",{class:"muted"},"Same columns as your file; only the description column is rewritten, per part number."))}
 function stdDownload(){const a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([Uint8Array.from(atob(std.xlsx),c=>c.charCodeAt(0))],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
  a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}

@@ -266,14 +266,19 @@ FILL = {"OK": None, "FILLED": "FFEB9C", "REVIEW": "FFEB9C", "CONFLICT": "FFC7CE"
         "NO PART NO.": "FFC7CE", "UNPARSED": "FFC7CE"}
 
 
-def write(path, header, desc_i, recs, master_rows, replace=False):
+def write(path, header, desc_i, recs, master_rows, replace=False, like_input=False, header_row=True):
+    """like_input: sheet 1 has exactly the input columns, description replaced by the standard one
+    (yellow = changed, red = could not be standardized); the Part No. master sheet follows."""
+    replace = replace or like_input
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Standardized"
     head = list(header)
-    if replace:
+    if replace and not like_input:
         head[desc_i] = "Description (standardized)"
-    ws.append(head + COLS + (["Original Description"] if replace else []))
+    extra = [] if like_input else COLS + (["Original Description"] if replace else [])
+    if header_row:
+        ws.append(head + extra)
     for x in recs:
         r, t = x["row"], x["out"]
         std = x["std"]
@@ -284,10 +289,14 @@ def write(path, header, desc_i, recs, master_rows, replace=False):
         orig = row[desc_i]
         if replace and std:
             row[desc_i] = std
-        ws.append(row + terms + ([orig] if replace else []))
-        color = FILL[x["status"]]
-        if color:
+        ws.append(row + ([] if like_input else terms + ([orig] if replace else [])))
+        if like_input:
+            color = "FFC7CE" if not std else "FFEB9C" if str(std) != str(orig) else None
+            cell = ws.cell(ws.max_row, desc_i + 1)
+        else:
+            color = FILL[x["status"]]
             cell = ws.cell(ws.max_row, len(head) + COLS.index("Status") + 1)
+        if color:
             cell.fill = PatternFill("solid", fgColor=color)
     m = wb.create_sheet("Part No. master")
     m.append(["Part No.", "Standard Description", "Item", "Modifier", "Size", "Size Unit", "Class", "End",

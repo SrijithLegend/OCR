@@ -73,7 +73,7 @@ def export(payload: dict = Body(...)):
 
 @app.post("/standardize")
 def standardize(file: UploadFile = File(...)):
-    """Excel/CSV of valve descriptions -> {sheets, status_col, summary, xlsx (base64)}. Local only, nothing stored."""
+    """Excel/CSV of valve descriptions -> {sheets, desc_col, marks, summary, xlsx (base64)}. Local only, nothing stored."""
     name = Path(file.filename or "file").name[:120]
     ext = Path(name).suffix.lower()
     if ext not in {".xlsx", ".xlsm", ".csv"}:
@@ -88,8 +88,8 @@ def standardize(file: UploadFile = File(...)):
             rows = sv.load_table(src)
             if not rows:
                 raise HTTPException(422, f"{name}: empty")
-            header, desc_i, recs, master_rows, _ = sv.run(rows)
-            sv.write(out, header, desc_i, recs, master_rows)
+            header, desc_i, recs, master_rows, has_header = sv.run(rows)
+            sv.write(out, header, desc_i, recs, master_rows, like_input=True, header_row=has_header)
         except HTTPException:
             raise
         except SystemExit as e:  # standard_valve reports user errors this way
@@ -99,7 +99,8 @@ def standardize(file: UploadFile = File(...)):
         wb = openpyxl.load_workbook(out)
         sheets = [{"name": ws.title, "rows": [list(r) for r in ws.iter_rows(values_only=True)]} for ws in wb]
         xlsx = base64.b64encode(out.read_bytes()).decode()
+    marks = ["bad" if not x["std"] else "changed" if str(x["std"]) != str(x["row"][desc_i]) else "" for x in recs]
     counts = collections.Counter(x["status"] for x in recs)
     summary = f"{len(recs)} rows, {len(master_rows)} part numbers · " + " · ".join(
         f"{s} {counts[s]}" for s in sv.SEVERITY if counts[s])
-    return {"sheets": sheets, "status_col": len(header) + sv.COLS.index("Status"), "summary": summary, "xlsx": xlsx}
+    return {"sheets": sheets, "desc_col": desc_i, "has_header": has_header, "marks": marks, "summary": summary, "xlsx": xlsx}
