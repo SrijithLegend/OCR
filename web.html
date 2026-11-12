@@ -70,6 +70,7 @@ input.c.edited{background:var(--edit);border-color:var(--edit-b)}
 a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
 </style></head><body>
 <header><h1>Datasheet extractor</h1>
+ <div class="tabs" style="margin:0"><button id="mo" class="on" type="button">OCR</button><button id="ms" type="button">Standardize descriptions</button></div>
  <div class="steps"><span id="s1" class="on">1 Upload</span><span id="s2">2 Review</span><span id="s3">3 Export</span></div>
  <div><button id="new" class="hidden" type="button">New upload</button></div></header>
 <main>
@@ -77,8 +78,13 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
   <span class="muted">or click to choose &middot; PDF, PNG, JPG &middot; original files read far better than screenshots</span>
   <div class="hint muted">Up to 50 MB per file. Files are sent to the Gemini API for reading.</div>
   <input id="pick" type="file" multiple accept=".pdf,.png,.jpg,.jpeg" hidden></div>
- <div id="busy" class="panel hidden"><div class="spin"></div><div><b>Extracting <span id="timer" class="muted"></span></b><div id="busytxt" class="muted"></div></div></div>
+ <div id="sdrop" class="hidden" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><b>Drop an Excel or CSV file here</b>
+  <span class="muted">or click to choose &middot; XLSX, XLSM, CSV &middot; one description per row, e.g. VALVE BODY, RTJ ~ 4 IN, CL300 W/END TAP 59A3655</span>
+  <div class="hint muted">Up to 50 MB. Handled locally; nothing is sent to an AI service. Your file is never modified.</div>
+  <input id="spick" type="file" accept=".xlsx,.xlsm,.csv" hidden></div>
+ <div id="busy" class="panel hidden"><div class="spin"></div><div><b><span id="busyh">Extracting</span> <span id="timer" class="muted"></span></b><div id="busytxt" class="muted"></div></div></div>
  <div id="err" class="panel err hidden" role="alert"></div>
+ <section id="sres" class="hidden"></section>
  <section id="res" class="hidden">
   <div class="tabs"><button id="tr" class="on" type="button">Review</button><button id="ta" type="button">Accuracy</button></div>
   <div id="acc" class="hidden"></div>
@@ -101,7 +107,7 @@ const $=id=>document.getElementById(id);
 const CASES=["minimum","normal","maximum","design","single","other"];
 const TITLE={minimum:"Min",normal:"Normal",maximum:"Max",design:"Design",single:"Single",other:"Other"};
 const norm=s=>String(s??"").replace(/\s+/g," ").trim().toLowerCase();
-let files=[],data=null;
+let files=[],data=null,std=null,mode="ocr";
 
 function h(tag,props,...kids){const e=document.createElement(tag);
  for(const[k,v]of Object.entries(props||{})){if(k==="class")e.className=v;else if(k.startsWith("on"))e.addEventListener(k.slice(2),v);
@@ -111,8 +117,9 @@ function h(tag,props,...kids){const e=document.createElement(tag);
 let tm=null;
 function view(v,msg){clearInterval(tm);
  if(v==="busy"){const t0=Date.now(),el=$("timer");el.textContent="0:00";tm=setInterval(()=>{const n=Math.floor((Date.now()-t0)/1e3);el.textContent=Math.floor(n/60)+":"+String(n%60).padStart(2,"0")},1e3)}
- [["s1","drop"],["s2","res"]].forEach(([i,x])=>$(i).classList.toggle("on",v===x||(i==="s1"&&v==="busy")));$("drop").classList.toggle("hidden",v!=="drop");$("busy").classList.toggle("hidden",v!=="busy");
- $("res").classList.toggle("hidden",v!=="res");$("new").classList.toggle("hidden",v==="drop");if(msg)$("busytxt").textContent=msg}
+ [["s1","drop"],["s2","res"]].forEach(([i,x])=>$(i).classList.toggle("on",v===x||(i==="s1"&&v==="busy")));$("drop").classList.toggle("hidden",v!=="drop"||mode!=="ocr");$("sdrop").classList.toggle("hidden",v!=="drop"||mode!=="std");$("busy").classList.toggle("hidden",v!=="busy");
+ $("res").classList.toggle("hidden",v!=="res"||mode!=="ocr");$("sres").classList.toggle("hidden",v!=="res"||mode!=="std");$("new").classList.toggle("hidden",v==="drop");
+ $("mo").disabled=$("ms").disabled=v==="busy";if(msg)$("busytxt").textContent=msg}
 function fail(m){const e=$("err");e.textContent=m;e.classList.toggle("hidden",!m)}
 async function errText(r){let d=r.statusText;try{d=(await r.json()).detail}catch{}return typeof d==="string"?d:JSON.stringify(d)}
 
@@ -121,7 +128,7 @@ async function upload(list){
  const bad=files.filter(f=>!/\.(pdf|png|jpe?g)$/i.test(f.name));
  if(bad.length)return fail("Unsupported file: "+bad.map(f=>f.name).join(", ")+" (PDF, PNG, JPG only)");
  const fd=new FormData();files.forEach(f=>fd.append("files",f));
- view("busy",files.length+" file(s): "+files.map(f=>f.name).join(", ")+" - this can take a few minutes. Keep this tab open.");
+ $("busyh").textContent="Extracting";view("busy",files.length+" file(s): "+files.map(f=>f.name).join(", ")+" - this can take a few minutes. Keep this tab open.");
  try{const r=await fetch("/extract",{method:"POST",body:fd});
   if(!r.ok)throw new Error(await errText(r));
   data=await r.json();prepare();view("res");tab(false);render()}
@@ -242,14 +249,39 @@ $("export").addEventListener("click",async()=>{
  catch(e){fail("Export failed: "+e.message)}
  finally{b.disabled=false;b.textContent="Export to Excel"}});
 
-const drop=$("drop"),pick=$("pick");
-drop.addEventListener("click",()=>pick.click());
-drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick.click()}});
-pick.addEventListener("change",()=>{upload(pick.files);pick.value=""});
-["dragenter","dragover"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("over")}));
-["dragleave","drop"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove("over")}));
-drop.addEventListener("drop",e=>upload(e.dataTransfer.files));
+function wire(drop,pick,fn){
+ drop.addEventListener("click",()=>pick.click());
+ drop.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();pick.click()}});
+ pick.addEventListener("change",()=>{fn(pick.files);pick.value=""});
+ ["dragenter","dragover"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add("over")}));
+ ["dragleave","drop"].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove("over")}));
+ drop.addEventListener("drop",e=>fn(e.dataTransfer.files))}
+wire($("drop"),$("pick"),upload);wire($("sdrop"),$("spick"),stdUpload);
 ["dragover","drop"].forEach(t=>window.addEventListener(t,e=>e.preventDefault()));
 $("only").addEventListener("change",filter);
-$("new").addEventListener("click",()=>{data=null;files=[];fail("");view("drop")});
+function setMode(m){mode=m;data=null;std=null;files=[];fail("");$("mo").classList.toggle("on",m==="ocr");$("ms").classList.toggle("on",m==="std");view("drop")}
+$("mo").addEventListener("click",()=>setMode("ocr"));$("ms").addEventListener("click",()=>setMode("std"));
+$("new").addEventListener("click",()=>setMode(mode));
+
+// ---- Standardize descriptions: Excel/CSV -> /standardize -> table (+ the finished workbook, so Export needs no second request)
+const BAD=["CONFLICT","UNRESOLVED","NO PART NO.","UNPARSED"],CHECK=["REVIEW","FILLED"];
+async function stdUpload(list){const f=list[0];if(!f)return;fail("");
+ if(!/\.(xlsx|xlsm|csv)$/i.test(f.name))return fail("Unsupported file: "+f.name+" (XLSX, XLSM, CSV only)");
+ const fd=new FormData();fd.append("file",f);files=[f];
+ $("busyh").textContent="Standardizing";view("busy",f.name);
+ try{const r=await fetch("/standardize",{method:"POST",body:fd});
+  if(!r.ok)throw new Error(await errText(r));
+  std=await r.json();std.name=f.name;view("res");stdView(0)}
+ catch(e){view("drop");fail("Standardizing failed: "+e.message)}}
+function stdView(i){const[head,...body]=std.sheets[i].rows,sc=i===0?std.status_col:-1;
+ $("sres").replaceChildren(
+  h("div",{class:"tabs"},std.sheets.map((x,j)=>h("button",{type:"button",class:j===i?"on":"",onclick:()=>stdView(j)},x.name)),
+   h("button",{class:"primary",type:"button",style:"margin-left:auto",onclick:stdDownload},"Export to Excel")),
+  h("div",{class:"sum",style:"margin-bottom:8px"},std.summary),
+  h("div",{class:"card"},h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},head.map(x=>h("th",{},x)))),
+   h("tbody",{},body.map(r=>h("tr",{},r.map((c,k)=>h("td",{class:head[k]==="Notes"?"flag":""},
+    k===sc&&c?h("span",{class:"chip "+(BAD.includes(c)?"error":CHECK.includes(c)?"warning":"")},c):(c??""))))))))))}
+function stdDownload(){const a=document.createElement("a");
+ a.href=URL.createObjectURL(new Blob([Uint8Array.from(atob(std.xlsx),c=>c.charCodeAt(0))],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
+ a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}
 </script></body></html>

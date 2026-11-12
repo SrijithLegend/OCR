@@ -1,6 +1,6 @@
 # Datasheet OCR
 
-Reads valve datasheets (PDF, PNG, JPG) with the Gemini API and writes everything printed on them to one Excel sheet: process / service conditions (min / normal / max), body, trim, actuator, materials, dimensions, notes, revision tables and header fields. Each row has a `Kind` (condition, design, calculated, spec) for filtering.
+Reads valve datasheets (PDF, PNG, JPG) with the Gemini API and writes everything printed on them to one Excel sheet: process / service conditions (min / normal / max), body, trim, actuator, materials, dimensions, notes, revision tables and header fields. Parameters are columns (header: section, parameter, unit); each row is one valve's Min / Normal / Max / Design / Single value set.
 
 > Files are sent to the Gemini API. Do not upload anything you are not allowed to share with it.
 
@@ -19,8 +19,10 @@ Open http://127.0.0.1:8000 and drop in your files.
 ## Using the web UI
 
 1. **Upload** PDFs or images (up to 50 MB each). Original PDFs read far better than screenshots. A few minutes per file is normal; keep the tab open.
-2. **Review.** Every value is an editable cell. Red = error, yellow = check, blue = edited by you. Use *Next issue* to jump between flagged cells, *Show only rows needing review* to filter, and the `p1` link to open the source page.
+2. **Review.** Parameters are columns and Min / Normal / Max are rows; every value is an editable cell. Red = error, yellow = check, blue = edited by you. Use *Next issue* to jump between flagged cells, *Show only columns needing review* to filter, and the `p1` link to open the source page.
 3. **Export to Excel.** Your edits are included; flags on cells you fixed are dropped.
+
+**Standardize descriptions** (second tab): upload an .xlsx/.csv of valve descriptions (`ITEM ~ SIZE, CLASS ... PARTNO`). Each part number gets one standard description (`ITEM, MODIFIER, SIZE UNIT, CLASS, END, VARIANT`) by majority vote; disagreements are flagged, never guessed. Runs locally (no Gemini call); *Export to Excel* downloads the result. Also a CLI: `python standard_valve.py in.xlsx -o out.xlsx`.
 
 Nothing is stored on the server. There is no login, so keep it bound to 127.0.0.1.
 
@@ -66,4 +68,5 @@ Not measured on your sheets. Try one short PDF with `--passes 1` and compare eve
 ## Files
 
 - `main.py`: prompts, extraction, checks, Excel writer, CLI
-- `web.py`, `web.html`: web UI (`/extract`, `/export`)
+- `web.py`, `web.html`: web UI (`/extract`, `/export`, `/standardize`)
+- `standard_valve.py`: description standardizer (used by the web tab and the CLI)

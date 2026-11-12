@@ -1,5 +1,7 @@
 """Web UI for main.py: upload PDFs/images -> review and edit the extracted table -> export Excel.
 Run: uvicorn web:app --host 127.0.0.1 --port 8000   (needs GENAI_API_KEY, e.g. in .env)"""
+import base64
+import collections
 import os
 import tempfile
 from argparse import Namespace
@@ -12,6 +14,8 @@ from google.genai import types
 from starlette.background import BackgroundTask
 
 import main as ocr
+import openpyxl
+import standard_valve as sv
 
 ALLOWED = {".pdf", ".png", ".jpg", ".jpeg"}
 MAX_MB = 50
@@ -65,3 +69,37 @@ def export(payload: dict = Body(...)):
         raise HTTPException(422, f"Bad table data: {e}")
     return FileResponse(out, filename="process_conditions.xlsx", background=BackgroundTask(tmp.cleanup),
                         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+
+@app.post("/standardize")
+def standardize(file: UploadFile = File(...)):
+    """Excel/CSV of valve descriptions -> {sheets, status_col, summary, xlsx (base64)}. Local only, nothing stored."""
+    name = Path(file.filename or "file").name[:120]
+    ext = Path(name).suffix.lower()
+    if ext not in {".xlsx", ".xlsm", ".csv"}:
+        raise HTTPException(415, f"{name}: unsupported type (XLSX, XLSM, CSV only)")
+    data = file.file.read(MAX_MB * 1024 * 1024 + 1)
+    if not data or len(data) > MAX_MB * 1024 * 1024:
+        raise HTTPException(413 if data else 422, f"{name}: empty or larger than {MAX_MB} MB")
+    with tempfile.TemporaryDirectory() as tmp:
+        src, out = Path(tmp) / ("in" + ext), Path(tmp) / "out.xlsx"
+        src.write_bytes(data)
+        try:
+            rows = sv.load_table(src)
+            if not rows:
+                raise HTTPException(422, f"{name}: empty")
+            header, desc_i, recs, master_rows, _ = sv.run(rows)
+            sv.write(out, header, desc_i, recs, master_rows)
+        except HTTPException:
+            raise
+        except SystemExit as e:  # standard_valve reports user errors this way
+            raise HTTPException(422, str(e))
+        except Exception as e:
+            raise HTTPException(422, f"{name}: could not read ({e})")
+        wb = openpyxl.load_workbook(out)
+        sheets = [{"name": ws.title, "rows": [list(r) for r in ws.iter_rows(values_only=True)]} for ws in wb]
+        xlsx = base64.b64encode(out.read_bytes()).decode()
+    counts = collections.Counter(x["status"] for x in recs)
+    summary = f"{len(recs)} rows, {len(master_rows)} part numbers · " + " · ".join(
+        f"{s} {counts[s]}" for s in sv.SEVERITY if counts[s])
+    return {"sheets": sheets, "status_col": len(header) + sv.COLS.index("Status"), "summary": summary, "xlsx": xlsx}
