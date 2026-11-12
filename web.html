@@ -271,17 +271,15 @@ async function stdUpload(list){const f=list[0];if(!f)return;fail("");
  $("busyh").textContent="Standardizing";view("busy",f.name);
  try{const r=await fetch("/standardize",{method:"POST",body:fd});
   if(!r.ok)throw new Error(await errText(r));
-  std=await r.json();std.name=f.name;view("res");stdView(0)}
+  std=await r.json();std.name=f.name;view("res");stdView()}
  catch(e){view("drop");fail("Standardizing failed: "+e.message)}}
-function stdView(i){const rows=std.sheets[i].rows,head=std.has_header||i?rows[0]:null,body=head?rows.slice(1):rows,m=i===0?std.marks:[];
+function stdView(){const[head,...body]=std.sheets[0].rows,m=std.marks;
  $("sres").replaceChildren(
-  h("div",{class:"tabs"},std.sheets.map((x,j)=>h("button",{type:"button",class:j===i?"on":"",onclick:()=>stdView(j)},x.name)),
-   h("button",{class:"primary",type:"button",style:"margin-left:auto",onclick:stdDownload},"Export to Excel")),
-  h("div",{class:"sum",style:"margin-bottom:8px"},std.summary),
-  h("div",{class:"card"},h("div",{class:"scroll"},h("table",{},head?h("thead",{},h("tr",{},head.map(x=>h("th",{},x)))):null,
-   h("tbody",{},body.map((r,n)=>h("tr",{},r.map((c,k)=>h("td",{class:i===0&&k===std.desc_col?m[n]:""},c??""))))))))),
-  h("div",{class:"legend"},h("span",{class:"chip warning"},"description changed"),h("span",{class:"chip error"},"could not standardize (left as is)"),
-   h("span",{class:"muted"},"Same columns as your file; only the description column is rewritten, per part number."))}
+  h("div",{class:"bar"},h("div",{class:"sum"},std.summary),h("button",{class:"primary",type:"button",onclick:stdDownload},"Export to Excel")),
+  h("div",{class:"legend"},h("span",{class:"chip error"},"no standard description (rows disagree, no majority)"),h("span",{class:"chip warning"},"some rows disagree with the majority"),
+   h("span",{class:"muted"},"One row per part number.")),
+  h("div",{class:"card"},h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},head.map(x=>h("th",{},x)))),
+   h("tbody",{},body.map((r,n)=>h("tr",{},r.map((c,k)=>h("td",{class:k===1&&m[n]==="bad"?"bad":k===3?(m[n]==="changed"?"changed ":"")+"flag":""},c??""))))))))))}
 function stdDownload(){const a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([Uint8Array.from(atob(std.xlsx),c=>c.charCodeAt(0))],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
  a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}

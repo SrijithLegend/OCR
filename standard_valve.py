@@ -6,7 +6,7 @@ import sys
 from pathlib import Path
 
 import openpyxl
-from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
+from openpyxl.styles import Font, PatternFill
 from openpyxl.utils import get_column_letter, column_index_from_string
 
 # ----------------------------------------------------------------------------- configuration
@@ -262,60 +262,24 @@ def run(rows, desc_spec=None, pn_spec=None, header_mode="auto", master=None, pn_
 
 
 # ----------------------------------------------------------------------------- output
-FILL = {"OK": None, "FILLED": "FFEB9C", "REVIEW": "FFEB9C", "CONFLICT": "FFC7CE", "UNRESOLVED": "FFC7CE",
-        "NO PART NO.": "FFC7CE", "UNPARSED": "FFC7CE"}
-
-
-def write(path, header, desc_i, recs, master_rows, replace=False, like_input=False, header_row=True):
-    """like_input: sheet 1 has exactly the input columns, description replaced by the standard one
-    (yellow = changed, red = could not be standardized); the Part No. master sheet follows."""
-    replace = replace or like_input
+def write_summary(path, master_rows):
+    """One row per part number: Part No., Standard Description, Rows, Disagreeing values."""
     wb = openpyxl.Workbook()
     ws = wb.active
-    ws.title = "Standardized"
-    head = list(header)
-    if replace and not like_input:
-        head[desc_i] = "Description (standardized)"
-    extra = [] if like_input else COLS + (["Original Description"] if replace else [])
-    if header_row:
-        ws.append(head + extra)
-    for x in recs:
-        r, t = x["row"], x["out"]
-        std = x["std"]
-        terms = [x["pn"], t and t["item"], t and t["modifier"], t and t["size"],
-                 t and (t["unit"] or "IN"), t and t["cls"], t and t["end"], t and t["variant"],
-                 x["t"] and x["t"]["extra"], std, x["status"], "; ".join(x["notes"]) or None]
-        row = list(r)
-        orig = row[desc_i]
-        if replace and std:
-            row[desc_i] = std
-        ws.append(row + ([] if like_input else terms + ([orig] if replace else [])))
-        if like_input:
-            color = "FFC7CE" if not std else "FFEB9C" if str(std) != str(orig) else None
-            cell = ws.cell(ws.max_row, desc_i + 1)
-        else:
-            color = FILL[x["status"]]
-            cell = ws.cell(ws.max_row, len(head) + COLS.index("Status") + 1)
-        if color:
-            cell.fill = PatternFill("solid", fgColor=color)
-    m = wb.create_sheet("Part No. master")
-    m.append(["Part No.", "Standard Description", "Item", "Modifier", "Size", "Size Unit", "Class", "End",
-              "Variant", "Rows", "Disagreeing values", "Source"])
+    ws.title = "Standard descriptions"
+    ws.append(["Part No.", "Standard Description", "Rows", "Disagreeing values"])
     for r in master_rows:
-        m.append(r)
-    hf, th = PatternFill("solid", fgColor="1F3864"), Side(style="thin", color="BFBFBF")
-    for sh in (ws, m):
-        for c in sh[1]:
-            c.fill, c.font = hf, Font(bold=True, color="FFFFFF")
-            c.alignment = Alignment(horizontal="center", wrap_text=True)
-        for row in sh.iter_rows():
-            for c in row:
-                c.border = Border(left=th, right=th, top=th, bottom=th)
-        for i in range(1, sh.max_column + 1):
-            width = max((len(str(c.value)) for c in sh[get_column_letter(i)] if c.value is not None), default=8)
-            sh.column_dimensions[get_column_letter(i)].width = min(max(width + 2, 8), 60)
-        sh.freeze_panes = "A2"
-        sh.auto_filter.ref = sh.dimensions
+        ws.append([r[0], r[1], r[9], r[10]])
+        if not r[1]:
+            ws.cell(ws.max_row, 2).fill = PatternFill("solid", fgColor="FFC7CE")
+        elif r[10]:
+            ws.cell(ws.max_row, 4).fill = PatternFill("solid", fgColor="FFEB9C")
+    for c in ws[1]:
+        c.fill, c.font = PatternFill("solid", fgColor="1F3864"), Font(bold=True, color="FFFFFF")
+    for i in range(1, 5):
+        w = max((len(str(c.value)) for c in ws[get_column_letter(i)] if c.value is not None), default=8)
+        ws.column_dimensions[get_column_letter(i)].width = min(max(w + 2, 8), 70)
+    ws.freeze_panes = "A2"
     wb.save(path)
 
 
@@ -329,7 +293,6 @@ def main(argv=None):
     ap.add_argument("--master", help="xlsx/csv with 'Part No.' and 'Standard Description' that overrides the vote")
     ap.add_argument("--pn-regex", default=DEFAULT_PN_REGEX)
     ap.add_argument("--size-unit", default="IN", help="unit to assume when the source has none (default IN)")
-    ap.add_argument("--replace", action="store_true", help="overwrite the description column in the OUTPUT")
     a = ap.parse_args(argv)
     if Path(a.output).resolve() == Path(a.input).resolve():
         raise SystemExit("Output must differ from input; the input is never modified.")
@@ -339,14 +302,14 @@ def main(argv=None):
     master = load_master(a.master, re.compile(a.pn_regex)) if a.master else None
     header, desc_i, recs, master_rows, has_header = run(
         rows, a.desc_col, a.pn_col, a.header, master, a.pn_regex, a.size_unit.upper())
-    write(a.output, header, desc_i, recs, master_rows, a.replace)
+    write_summary(a.output, master_rows)
     counts = collections.Counter(x["status"] for x in recs)
     print(f"{len(recs)} rows, {len(master_rows)} part numbers -> {a.output}")
     print("  description column:", header[desc_i], "| header row:", "yes" if has_header else "no")
     for s in SEVERITY:
         if counts[s]:
             print(f"  {s:<12} {counts[s]}")
-    print(f"  Assumptions: size unit = {a.size_unit.upper()} when absent; TAP read as TP. Check the Notes column.")
+    print(f"  Assumptions: size unit = {a.size_unit.upper()} when absent; TAP read as TP.")
 
 
 if __name__ == "__main__":
