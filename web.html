@@ -279,7 +279,7 @@ function stdView(){const[head,...body]=std.sheets[0].rows,m=std.marks;
   h("div",{class:"legend"},h("span",{class:"chip error"},"no standard description (rows disagree, no majority)"),h("span",{class:"chip warning"},"some rows disagree with the majority"),
    h("span",{class:"muted"},"One row per part number.")),
   h("div",{class:"card"},h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},head.map(x=>h("th",{},x)))),
-   h("tbody",{},body.map((r,n)=>h("tr",{},r.map((c,k)=>h("td",{class:k===1&&m[n]==="bad"?"bad":k===3?(m[n]==="changed"?"changed ":"")+"flag":""},c??""))))))))))}
+   h("tbody",{},body.map((r,n)=>h("tr",{},r.map((c,k)=>h("td",{class:k===1&&m[n]==="bad"?"bad":k===3?(m[n]==="changed"?"changed ":"")+"flag":""},c??"")))))))))}
 function stdDownload(){const a=document.createElement("a");
  a.href=URL.createObjectURL(new Blob([Uint8Array.from(atob(std.xlsx),c=>c.charCodeAt(0))],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
  a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}
