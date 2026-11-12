@@ -1,124 +1,26 @@
+"""Standard description per part number, for any valve datasheet export.
+
+Groups rows by part number and takes the most common description (ignoring case/spacing) as the standard.
+Output: Part No., Standard Description, Rows, Disagreeing values. Nothing about the description's format is assumed.
+"""
 import argparse
 import collections
 import csv
 import re
-import sys
 from pathlib import Path
 
 import openpyxl
 from openpyxl.styles import Font, PatternFill
 from openpyxl.utils import get_column_letter, column_index_from_string
 
-# ----------------------------------------------------------------------------- configuration
-DEFAULT_PN_REGEX = r"\b\d{2}[A-Z]\d{4}\b"           # 59A3655, 50B2638. Change with --pn-regex
-# known variant spellings -> standard spelling. UNCONFIRMED aliases are flagged in Notes.
-VARIANTS = {"DP PG": "DP PG", "TAP": "TP", "TP": "TP"}
-UNCONFIRMED_ALIASES = {"TAP": "TP"}                  # TAP -> TP is an assumption, not a fact
-END_TOKEN = "W/END"
-UNIT_MAP = {"IN": "IN", "INCH": "IN", '"': "IN", "MM": "MM"}
-TERM_KEYS = ("item", "modifier", "size", "unit", "cls", "end", "variant")
-COLS = ["Part No.", "Item", "Modifier", "Size", "Size Unit", "Class", "End", "Variant", "Extra (unparsed)",
-        "Standard Description", "Status", "Notes"]
-SEVERITY = ["UNPARSED", "NO PART NO.", "UNRESOLVED", "CONFLICT", "REVIEW", "FILLED", "OK"]
-
-LINE_RE = re.compile(
-    r"""^\s*(?P<left>[^~]+?)\s*~\s*
-        (?P<size>\d+(?:\.\d+)?)\s*(?P<unit>INCH\b|IN\b|"|MM\b)?\s*,\s*
-        (?P<cls>CL\s*\d+)\s*(?P<rest>.*?)\s*$""",
-    re.I | re.X)
+PN_HEAD = re.compile(r"part|p/?n|material|item\s*(no|code|#)|code", re.I)
+DESC_HEAD = re.compile(r"desc", re.I)
 
 
-# ----------------------------------------------------------------------------- parsing
-def num(x):
-    f = float(x)
-    return int(f) if f == int(f) else f
+def norm(s):
+    return " ".join(str(s).upper().split())
 
 
-STD_SIZE_RE = re.compile(r"^(\d+(?:\.\d+)?)\s*(IN|INCH|MM)$", re.I)
-
-
-def parse_standard(text, pn_re):
-    """Parse the OUTPUT syntax: ITEM[, MODIFIER...], SIZE UNIT, CLASS[, END][, VARIANT]."""
-    toks = [t.strip().upper() for t in pn_re.sub(" ", text).split(",") if t.strip()]
-    for i, tok in enumerate(toks):
-        sm = STD_SIZE_RE.match(tok)
-        if sm and i >= 1 and i + 1 < len(toks) and re.fullmatch(r"CL\s*\d+", toks[i + 1]):
-            break
-    else:
-        return None
-    rest = toks[i + 2:]
-    extra = [x for x in rest if x != END_TOKEN and x not in VARIANTS]
-    variant = next((VARIANTS[x] for x in rest if x in VARIANTS), None)
-    return {"item": toks[0], "modifier": ", ".join(toks[1:i]) or None, "size": num(sm[1]),
-            "unit": UNIT_MAP.get(sm[2].upper()), "cls": re.sub(r"\s+", "", toks[i + 1]),
-            "end": END_TOKEN if END_TOKEN in rest else None, "variant": variant,
-            "extra": " ".join(extra) or None, "notes": []}
-
-
-def parse(text, pn_re):
-    """-> dict of terms, or None if the text does not fit either syntax."""
-    if not isinstance(text, str):
-        return None
-    m = LINE_RE.match(text.strip())
-    if not m:
-        return parse_standard(text, pn_re)
-    left = [p.strip().upper() for p in m["left"].split(",") if p.strip()]
-    rest = pn_re.sub(" ", m["rest"].upper())
-    notes = []
-    end = None
-    e = re.search(r"\bW/END\b", rest)
-    if e:
-        end, rest = END_TOKEN, rest[:e.start()] + " " + rest[e.end():]
-    variant = None
-    for raw in sorted(VARIANTS, key=len, reverse=True):
-        v = re.search(r"(?:&\s*)?\b" + re.escape(raw).replace(r"\ ", r"\s+") + r"\b", rest)
-        if v:
-            variant, rest = VARIANTS[raw], rest[:v.start()] + " " + rest[v.end():]
-            if raw in UNCONFIRMED_ALIASES:
-                notes.append(f"'{raw}' read as '{UNCONFIRMED_ALIASES[raw]}' (assumed alias)")
-            break
-    extra = re.sub(r"[\s&,]+", " ", rest).strip() or None
-    unit = m["unit"].upper() if m["unit"] else None
-    return {
-        "item": left[0] if left else None,
-        "modifier": ", ".join(left[1:]) or None,
-        "size": num(m["size"]),
-        "unit": UNIT_MAP.get(unit) if unit else None,
-        "cls": re.sub(r"\s+", "", m["cls"].upper()),
-        "end": end, "variant": variant, "extra": extra, "notes": notes,
-    }
-
-
-def build(t, default_unit):
-    unit = t["unit"] or default_unit
-    parts = [t["item"]] + ([t["modifier"]] if t["modifier"] else []) + [f"{t['size']} {unit}", t["cls"]]
-    if t["end"]:
-        parts.append(t["end"])
-    if t["variant"]:
-        parts.append(t["variant"])
-    return ", ".join(parts)
-
-
-def consensus(rows):
-    """Plurality vote per term. blank-vs-one-value tie -> the value; any other tie -> unresolved."""
-    out, ties = {}, []
-    for k in TERM_KEYS:
-        c = collections.Counter(r[k] for r in rows)
-        ranked = c.most_common()
-        top, n = ranked[0]
-        tied = [v for v, cnt in ranked if cnt == n]
-        if len(tied) > 1:
-            nonblank = [v for v in tied if v is not None]
-            if len(tied) == 2 and len(nonblank) == 1:
-                top = nonblank[0]
-            else:
-                top = None
-                ties.append(k)
-        out[k] = top
-    return out, ties
-
-
-# ----------------------------------------------------------------------------- input
 def load_table(path):
     path = Path(path)
     if path.suffix.lower() in (".xlsx", ".xlsm"):
@@ -129,136 +31,71 @@ def load_table(path):
 
 
 def find_col(spec, header, ncols):
-    if spec is None:
-        return None
-    if header:
-        for i, h in enumerate(header):
-            if h is not None and str(h).strip().lower() == spec.strip().lower():
-                return i
-    if spec.isalpha():
-        i = column_index_from_string(spec.upper()) - 1
-        if i < ncols:
+    for i, h in enumerate(header or []):
+        if h is not None and str(h).strip().lower() == spec.strip().lower():
             return i
+    if spec.isalpha() and column_index_from_string(spec.upper()) <= ncols:
+        return column_index_from_string(spec.upper()) - 1
     raise SystemExit(f"Column '{spec}' not found")
 
 
-def load_master(path, pn_re):
-    path = Path(path)
-    if path.suffix.lower() in (".xlsx", ".xlsm"):
-        wb = openpyxl.load_workbook(path, data_only=True)
-        ws = wb["Part No. master"] if "Part No. master" in wb.sheetnames else wb.active
-        rows = [list(r) for r in ws.iter_rows(values_only=True)]
-    else:
-        rows = load_table(path)
+def load_master(path):
+    """xlsx/csv with 'Part No.' and 'Standard Description' -> {part no.: description}."""
+    rows = load_table(path)
     head = [str(h or "").strip().lower() for h in rows[0]]
     ip, idesc = head.index("part no."), head.index("standard description")
-    out = {}
-    for r in rows[1:]:
-        if r[ip] and r[idesc]:
-            t = parse(str(r[idesc]), pn_re)
-            if t is None:
-                raise SystemExit(f"Master entry for {r[ip]} does not fit the syntax: {r[idesc]!r}")
-            out[str(r[ip]).strip().upper()] = t
-    return out
+    return {str(r[ip]).strip().upper(): " ".join(str(r[idesc]).split()) for r in rows[1:] if r[ip] and r[idesc]}
 
 
-# ----------------------------------------------------------------------------- main logic
-def run(rows, desc_spec=None, pn_spec=None, header_mode="auto", master=None, pn_regex=DEFAULT_PN_REGEX,
-        default_unit="IN"):
-    pn_re = re.compile(pn_regex)
+def run(rows, desc_spec=None, pn_spec=None, header_mode="auto", master=None, pn_regex=None):
+    """-> (rows read, [[part no., standard description or None, row count, disagreeing values or None], ...])"""
     ncols = max(len(r) for r in rows)
     rows = [r + [None] * (ncols - len(r)) for r in rows]
+    first = [str(c or "") for c in rows[0]]
+    has_header = header_mode == "yes" or (header_mode == "auto" and any(PN_HEAD.search(c) or DESC_HEAD.search(c) for c in first))
+    head = first if has_header else None
+    body = [r for r in (rows[1:] if has_header else rows) if any(c not in (None, "") for c in r)]
+    pn_re = re.compile(pn_regex) if pn_regex else None
 
-    # description column
-    if desc_spec is None:
-        score = [sum(1 for r in rows if parse(r[c], pn_re)) for c in range(ncols)]
-        desc_i = max(range(ncols), key=lambda c: score[c])
-        if score[desc_i] == 0:
-            raise SystemExit("No column looks like 'ITEM ~ SIZE,CLASS ...'. Pass --desc-col.")
-    else:
-        header_probe = rows[0] if header_mode != "no" else None
-        desc_i = find_col(desc_spec, header_probe, ncols)
-    # header row?
-    if header_mode == "yes":
-        has_header = True
-    elif header_mode == "no":
-        has_header = False
-    else:
-        has_header = parse(rows[0][desc_i], pn_re) is None and any(parse(r[desc_i], pn_re) for r in rows[1:])
-    header = [str(h) if h is not None else f"Col {get_column_letter(i + 1)}" for i, h in enumerate(rows[0])] \
-        if has_header else [f"Col {get_column_letter(i + 1)}" for i in range(ncols)]
-    pn_i = find_col(pn_spec, rows[0] if has_header else None, ncols)
-    body = rows[1:] if has_header else rows
-    body = [r for r in body if any(c not in (None, "") for c in r)]
+    def guess(rx):
+        return next((i for i, h in enumerate(first) if has_header and rx.search(h)), None)
 
-    # parse every row
-    recs = []
+    desc_i = find_col(desc_spec, head, ncols) if desc_spec else guess(DESC_HEAD)
+    if desc_i is None:  # no header to go by: the column with the longest text
+        desc_i = max(range(ncols), key=lambda c: sum(len(str(r[c])) for r in body if isinstance(r[c], str)))
+    pn_i = find_col(pn_spec, head, ncols) if pn_spec else (None if pn_re else guess(PN_HEAD))
+    if pn_i is None and not pn_re:
+        raise SystemExit("Could not find the part number column. Pass --pn-col (letter or header name) or --pn-regex.")
+
+    groups = collections.defaultdict(lambda: collections.defaultdict(list))  # pn -> normalized desc -> originals
     for r in body:
         text = r[desc_i]
-        t = parse(text, pn_re)
-        pn = None
-        if pn_i is not None and r[pn_i] not in (None, ""):
-            pn = str(r[pn_i]).strip().upper()
-        elif isinstance(text, str):
+        if text in (None, ""):
+            continue
+        text = " ".join(str(text).split())
+        if pn_i is not None:
+            pn = str(r[pn_i]).strip().upper() if r[pn_i] not in (None, "") else None
+        else:
             m = pn_re.search(text.upper())
             pn = m.group(0) if m else None
-        recs.append({"row": r, "t": t, "pn": pn})
+            text = text.strip(" ,;") if not m else (text[:m.start()] + " " + text[m.end():]).strip(" ,;")
+        if pn:
+            groups[pn][norm(text)].append(text)
 
-    # vote per part number
-    groups = collections.defaultdict(list)
-    for x in recs:
-        if x["t"] and x["pn"]:
-            groups[x["pn"]].append(x["t"])
-    cons, ties, source = {}, {}, {}
-    for pn, ts in groups.items():
-        cons[pn], ties[pn] = consensus(ts)
-        source[pn] = "vote"
-    for pn, t in (master or {}).items():
-        cons[pn], ties[pn], source[pn] = {k: t[k] for k in TERM_KEYS}, [], "master"
-
-    # classify rows
-    for x in recs:
-        t, pn, notes = x["t"], x["pn"], []
-        if t is None:
-            x.update(status="UNPARSED", out=None, std=None, notes=["Does not fit 'ITEM ~ SIZE,CLASS ...'; left as is"])
+    out = []
+    for pn in sorted(set(groups) | set(master or {})):
+        votes = sorted(groups.get(pn, {}).values(), key=len, reverse=True)
+        n = sum(len(v) for v in votes)
+        if master and pn in master:
+            std, others = master[pn], [v for v in votes if norm(v[0]) != norm(master[pn])]
+        elif not votes:
             continue
-        notes += t["notes"]
-        if pn is None:
-            x.update(status="NO PART NO.", out=t, std=None, notes=notes + ["No part number found"])
-            continue
-        c = cons.get(pn)
-        if c is None:  # part number only in master but not in this row's group: cannot happen for parsed rows
-            c = {k: t[k] for k in TERM_KEYS}
-        if ties.get(pn):
-            names = ", ".join(ties[pn])
-            x.update(status="UNRESOLVED", out=t, std=None,
-                     notes=notes + [f"Rows for {pn} disagree with no majority on: {names}"])
-            continue
-        fills = [k for k in TERM_KEYS if t[k] is None and c[k] is not None and k != "unit"]
-        conflicts = [k for k in TERM_KEYS if t[k] is not None and c[k] != t[k]]
-        for k in conflicts:
-            notes.append(f"This row says {k}={t[k]!r}; part no. {pn} ({source[pn]}) says {c[k]!r}")
-        for k in fills:
-            notes.append(f"{k} missing here; filled with {c[k]!r} from part no. {pn}")
-        if t["extra"]:
-            notes.append(f"Unrecognised text kept in Extra: {t['extra']!r}")
-        if c["variant"] is None:
-            notes.append("No variant stated for this part no.")
-        if source[pn] == "vote" and len(groups[pn]) == 1:
-            notes.append("Only one row for this part no.; nothing to cross-check")
-        status = "CONFLICT" if conflicts else "REVIEW" if t["extra"] else "FILLED" if fills else "OK"
-        x.update(status=status, out=c, std=build(c, default_unit), notes=notes)
-
-    master_rows = []
-    for pn in sorted(cons):
-        c = cons[pn]
-        n = len(groups.get(pn, []))
-        conf = sorted({f"{k}: {t[k]!r}" for t in groups.get(pn, []) for k in TERM_KEYS
-                       if t[k] is not None and c[k] is not None and t[k] != c[k]})
-        master_rows.append([pn, build(c, default_unit) if not ties.get(pn) else None, c["item"], c["modifier"],
-                            c["size"], c["unit"] or default_unit, c["cls"], c["end"], c["variant"], n,
-                            "; ".join(conf) or None, source[pn]])
-    return header, desc_i, recs, master_rows, has_header
+        elif len(votes) > 1 and len(votes[0]) == len(votes[1]):
+            std, others = None, votes  # tie: no majority, a person decides
+        else:
+            std, others = votes[0][0], votes[1:]
+        out.append([pn, std, n, "; ".join(f"{v[0]} (x{len(v)})" for v in others) or None])
+    return len(body), out
 
 
 # ----------------------------------------------------------------------------- output
@@ -269,10 +106,10 @@ def write_summary(path, master_rows):
     ws.title = "Standard descriptions"
     ws.append(["Part No.", "Standard Description", "Rows", "Disagreeing values"])
     for r in master_rows:
-        ws.append([r[0], r[1], r[9], r[10]])
+        ws.append(r)
         if not r[1]:
             ws.cell(ws.max_row, 2).fill = PatternFill("solid", fgColor="FFC7CE")
-        elif r[10]:
+        elif r[3]:
             ws.cell(ws.max_row, 4).fill = PatternFill("solid", fgColor="FFEB9C")
     for c in ws[1]:
         c.fill, c.font = PatternFill("solid", fgColor="1F3864"), Font(bold=True, color="FFFFFF")
@@ -287,29 +124,21 @@ def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("input")
     ap.add_argument("-o", "--output", required=True)
-    ap.add_argument("--desc-col", help="description column: letter (B) or header name. Default: auto-detect")
-    ap.add_argument("--pn-col", help="part number column. Default: extracted from the description")
+    ap.add_argument("--desc-col", help="description column: letter (B) or header name. Default: header containing 'desc', else the longest-text column")
+    ap.add_argument("--pn-col", help="part number column: letter or header name. Default: header containing 'part'/'material'/'code'")
+    ap.add_argument("--pn-regex", help="no part number column? pull it out of the description with this regex")
     ap.add_argument("--header", choices=["auto", "yes", "no"], default="auto")
     ap.add_argument("--master", help="xlsx/csv with 'Part No.' and 'Standard Description' that overrides the vote")
-    ap.add_argument("--pn-regex", default=DEFAULT_PN_REGEX)
-    ap.add_argument("--size-unit", default="IN", help="unit to assume when the source has none (default IN)")
     a = ap.parse_args(argv)
     if Path(a.output).resolve() == Path(a.input).resolve():
         raise SystemExit("Output must differ from input; the input is never modified.")
     rows = load_table(a.input)
     if not rows:
         raise SystemExit("Input is empty.")
-    master = load_master(a.master, re.compile(a.pn_regex)) if a.master else None
-    header, desc_i, recs, master_rows, has_header = run(
-        rows, a.desc_col, a.pn_col, a.header, master, a.pn_regex, a.size_unit.upper())
+    n, master_rows = run(rows, a.desc_col, a.pn_col, a.header, load_master(a.master) if a.master else None, a.pn_regex)
     write_summary(a.output, master_rows)
-    counts = collections.Counter(x["status"] for x in recs)
-    print(f"{len(recs)} rows, {len(master_rows)} part numbers -> {a.output}")
-    print("  description column:", header[desc_i], "| header row:", "yes" if has_header else "no")
-    for s in SEVERITY:
-        if counts[s]:
-            print(f"  {s:<12} {counts[s]}")
-    print(f"  Assumptions: size unit = {a.size_unit.upper()} when absent; TAP read as TP.")
+    print(f"{n} rows, {len(master_rows)} part numbers -> {a.output}")
+    print(f"  no majority: {sum(1 for r in master_rows if not r[1])} | with disagreements: {sum(1 for r in master_rows if r[1] and r[3])}")
 
 
 if __name__ == "__main__":

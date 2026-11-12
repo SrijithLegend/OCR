@@ -277,10 +277,13 @@ function stdView(){const[head,...body]=std.sheets[0].rows,m=std.marks;
  $("sres").replaceChildren(
   h("div",{class:"bar"},h("div",{class:"sum"},std.summary),h("button",{class:"primary",type:"button",onclick:stdDownload},"Export to Excel")),
   h("div",{class:"legend"},h("span",{class:"chip error"},"no standard description (rows disagree, no majority)"),h("span",{class:"chip warning"},"some rows disagree with the majority"),
-   h("span",{class:"muted"},"One row per part number.")),
+   h("span",{class:"muted"},"One row per part number. Click any cell to edit; Export saves your edits.")),
   h("div",{class:"card"},h("div",{class:"scroll"},h("table",{},h("thead",{},h("tr",{},head.map(x=>h("th",{},x)))),
-   h("tbody",{},body.map((r,n)=>h("tr",{},r.map((c,k)=>h("td",{class:k===1&&m[n]==="bad"?"bad":k===3?(m[n]==="changed"?"changed ":"")+"flag":""},c??"")))))))))}
-function stdDownload(){const a=document.createElement("a");
- a.href=URL.createObjectURL(new Blob([Uint8Array.from(atob(std.xlsx),c=>c.charCodeAt(0))],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}));
- a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}
+   h("tbody",{},body.map((r,n)=>h("tr",{},r.map((c,k)=>h("td",{contenteditable:"true",class:k===1&&m[n]==="bad"?"bad":k===3?(m[n]==="changed"?"changed ":"")+"flag":"",oninput:e=>{std.sheets[0].rows[n+1][k]=e.target.textContent}},c??"")))))))))}
+async function stdDownload(){fail("");
+ try{const r=await fetch("/standardize/export",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({rows:std.sheets[0].rows})});
+  if(!r.ok)throw new Error(await errText(r));
+  const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());
+  a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}
+ catch(e){fail("Export failed: "+e.message)}}
 </script></body></html>

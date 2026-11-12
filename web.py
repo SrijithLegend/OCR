@@ -1,6 +1,5 @@
 """Web UI for main.py: upload PDFs/images -> review and edit the extracted table -> export Excel.
 Run: uvicorn web:app --host 127.0.0.1 --port 8000   (needs GENAI_API_KEY, e.g. in .env)"""
-import base64
 import collections
 import os
 import tempfile
@@ -71,9 +70,25 @@ def export(payload: dict = Body(...)):
                         media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
 
 
+@app.post("/standardize/export")
+def standardize_export(payload: dict = Body(...)):
+    """The (edited) table from the page -> xlsx."""
+    tmp = tempfile.TemporaryDirectory()
+    out = Path(tmp.name) / "standardized.xlsx"
+    try:
+        rows = [[(int(c) if i == 2 and str(c).strip().isdigit() else (c or None)) for i, c in enumerate(r)]
+                for r in payload["rows"][1:]]
+        sv.write_summary(out, rows)
+    except (KeyError, TypeError, ValueError) as e:
+        tmp.cleanup()
+        raise HTTPException(422, f"Bad table data: {e}")
+    return FileResponse(out, filename="standardized.xlsx", background=BackgroundTask(tmp.cleanup),
+                        media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")
+
+
 @app.post("/standardize")
 def standardize(file: UploadFile = File(...)):
-    """Excel/CSV of valve descriptions -> {sheets, marks, summary, xlsx (base64)}. Local only, nothing stored."""
+    """Excel/CSV of valve descriptions -> {sheets, marks, summary}. Local only, nothing stored."""
     name = Path(file.filename or "file").name[:120]
     ext = Path(name).suffix.lower()
     if ext not in {".xlsx", ".xlsm", ".csv"}:
@@ -88,7 +103,7 @@ def standardize(file: UploadFile = File(...)):
             rows = sv.load_table(src)
             if not rows:
                 raise HTTPException(422, f"{name}: empty")
-            header, desc_i, recs, master_rows, _ = sv.run(rows)
+            nrows, master_rows = sv.run(rows)
             sv.write_summary(out, master_rows)
         except HTTPException:
             raise
@@ -98,9 +113,6 @@ def standardize(file: UploadFile = File(...)):
             raise HTTPException(422, f"{name}: could not read ({e})")
         wb = openpyxl.load_workbook(out)
         sheets = [{"name": ws.title, "rows": [list(r) for r in ws.iter_rows(values_only=True)]} for ws in wb]
-        xlsx = base64.b64encode(out.read_bytes()).decode()
-    marks = ["bad" if not r[1] else "changed" if r[10] else "" for r in master_rows]
-    counts = collections.Counter(x["status"] for x in recs)
-    summary = f"{len(recs)} rows, {len(master_rows)} part numbers · " + " · ".join(
-        f"{s} {counts[s]}" for s in sv.SEVERITY if counts[s])
-    return {"sheets": sheets, "marks": marks, "summary": summary, "xlsx": xlsx}
+    marks = ["bad" if not r[1] else "changed" if r[3] else "" for r in master_rows]
+    summary = f"{nrows} rows, {len(master_rows)} part numbers · no majority {marks.count('bad')} · disagreements {marks.count('changed')}"
+    return {"sheets": sheets, "marks": marks, "summary": summary}
