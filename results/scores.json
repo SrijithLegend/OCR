@@ -1,0 +1,726 @@
+{
+ "test/p1": {
+  "n_files": 4,
+  "overall": {
+   "cell_accuracy": 0.5118110236220472,
+   "cell_accuracy_ignoring_unit": 0.7007874015748031,
+   "cell_accuracy_0.5pct": 0.5118110236220472,
+   "accuracy_non_unreadable": 0.5118110236220472,
+   "unreadable_rate": 0.0,
+   "extraction_recall": 0.7244094488188977,
+   "extraction_precision": 0.7244094488188977,
+   "error_recall": 0.3709677419354839,
+   "flag_precision": 1.0,
+   "silent_error_rate": 0.30708661417322836
+  },
+  "counts": {
+   "gt": 127,
+   "unreadable": 0,
+   "ok": 65,
+   "ok_tol": 65,
+   "ok_value": 89,
+   "ok_readable": 65,
+   "gt_readable": 127,
+   "wrong": 62,
+   "wrong_flagged": 23,
+   "tool_cells": 127,
+   "tool_matched": 92,
+   "flagged": 23,
+   "flagged_wrong": 23,
+   "missing": 35,
+   "spurious": 35
+  },
+  "ci95_bootstrap_files": {
+   "cell_accuracy": [
+    0.38461538461538464,
+    0.6451612903225806
+   ],
+   "cell_accuracy_ignoring_unit": [
+    0.46153846153846156,
+    0.8266666666666667
+   ],
+   "cell_accuracy_0.5pct": [
+    0.38461538461538464,
+    0.6451612903225806
+   ],
+   "accuracy_non_unreadable": [
+    0.38461538461538464,
+    0.6451612903225806
+   ],
+   "unreadable_rate": [
+    0.0,
+    0.0
+   ],
+   "extraction_recall": [
+    0.46153846153846156,
+    0.8409090909090909
+   ],
+   "extraction_precision": [
+    0.46153846153846156,
+    0.8611111111111112
+   ],
+   "error_recall": [
+    0.0,
+    0.5609756097560976
+   ],
+   "flag_precision": [
+    1.0,
+    1.0
+   ],
+   "silent_error_rate": [
+    0.17333333333333334,
+    0.5384615384615384
+   ]
+  },
+  "by_param_type": {
+   "other/text": {
+    "cells": 76,
+    "accuracy": 0.5657894736842105
+   },
+   "flow": {
+    "cells": 33,
+    "accuracy": 0.45454545454545453
+   },
+   "temperature": {
+    "cells": 12,
+    "accuracy": 0.5833333333333334
+   },
+   "pressure": {
+    "cells": 6,
+    "accuracy": 0.0
+   }
+  },
+  "per_file": {
+   "tender_p15.pdf": {
+    "cell_accuracy": 0.6818181818181818,
+    "cell_accuracy_ignoring_unit": 0.8636363636363636,
+    "cell_accuracy_0.5pct": 0.6818181818181818,
+    "accuracy_non_unreadable": 0.6818181818181818,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.8636363636363636,
+    "extraction_precision": 0.9047619047619048,
+    "error_recall": 0.5714285714285714,
+    "flag_precision": 1.0,
+    "silent_error_rate": 0.13636363636363635,
+    "counts": {
+     "gt": 44,
+     "unreadable": 0,
+     "ok": 30,
+     "ok_tol": 30,
+     "ok_value": 38,
+     "ok_readable": 30,
+     "gt_readable": 44,
+     "wrong": 14,
+     "wrong_flagged": 8,
+     "tool_cells": 42,
+     "tool_matched": 38,
+     "flagged": 8,
+     "flagged_wrong": 8,
+     "missing": 6,
+     "spurious": 4
+    }
+   },
+   "tender_p16.pdf": {
+    "cell_accuracy": 0.38636363636363635,
+    "cell_accuracy_ignoring_unit": 0.75,
+    "cell_accuracy_0.5pct": 0.38636363636363635,
+    "accuracy_non_unreadable": 0.38636363636363635,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.8181818181818182,
+    "extraction_precision": 0.782608695652174,
+    "error_recall": 0.5555555555555556,
+    "flag_precision": 1.0,
+    "silent_error_rate": 0.2727272727272727,
+    "counts": {
+     "gt": 44,
+     "unreadable": 0,
+     "ok": 17,
+     "ok_tol": 17,
+     "ok_value": 33,
+     "ok_readable": 17,
+     "gt_readable": 44,
+     "wrong": 27,
+     "wrong_flagged": 15,
+     "tool_cells": 46,
+     "tool_matched": 36,
+     "flagged": 15,
+     "flagged_wrong": 15,
+     "missing": 8,
+     "spurious": 10
+    }
+   },
+   "tender_p18.pdf": {
+    "cell_accuracy": 0.38095238095238093,
+    "cell_accuracy_ignoring_unit": 0.38095238095238093,
+    "cell_accuracy_0.5pct": 0.38095238095238093,
+    "accuracy_non_unreadable": 0.38095238095238093,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.38095238095238093,
+    "extraction_precision": 0.38095238095238093,
+    "error_recall": 0.0,
+    "flag_precision": null,
+    "silent_error_rate": 0.6190476190476191,
+    "counts": {
+     "gt": 21,
+     "unreadable": 0,
+     "ok": 8,
+     "ok_tol": 8,
+     "ok_value": 8,
+     "ok_readable": 8,
+     "gt_readable": 21,
+     "wrong": 13,
+     "wrong_flagged": 0,
+     "tool_cells": 21,
+     "tool_matched": 8,
+     "flagged": 0,
+     "flagged_wrong": 0,
+     "missing": 13,
+     "spurious": 13
+    }
+   },
+   "tender_p20.pdf": {
+    "cell_accuracy": 0.5555555555555556,
+    "cell_accuracy_ignoring_unit": 0.5555555555555556,
+    "cell_accuracy_0.5pct": 0.5555555555555556,
+    "accuracy_non_unreadable": 0.5555555555555556,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.5555555555555556,
+    "extraction_precision": 0.5555555555555556,
+    "error_recall": 0.0,
+    "flag_precision": null,
+    "silent_error_rate": 0.4444444444444444,
+    "counts": {
+     "gt": 18,
+     "unreadable": 0,
+     "ok": 10,
+     "ok_tol": 10,
+     "ok_value": 10,
+     "ok_readable": 10,
+     "gt_readable": 18,
+     "wrong": 8,
+     "wrong_flagged": 0,
+     "tool_cells": 18,
+     "tool_matched": 10,
+     "flagged": 0,
+     "flagged_wrong": 0,
+     "missing": 8,
+     "spurious": 8
+    }
+   }
+  }
+ },
+ "test/p2": {
+  "n_files": 4,
+  "overall": {
+   "cell_accuracy": 0.6929133858267716,
+   "cell_accuracy_ignoring_unit": 0.9133858267716536,
+   "cell_accuracy_0.5pct": 0.6929133858267716,
+   "accuracy_non_unreadable": 0.6929133858267716,
+   "unreadable_rate": 0.0,
+   "extraction_recall": 0.9133858267716536,
+   "extraction_precision": 0.7837837837837838,
+   "error_recall": 0.717948717948718,
+   "flag_precision": 0.6901408450704225,
+   "silent_error_rate": 0.08661417322834646
+  },
+  "counts": {
+   "gt": 127,
+   "unreadable": 0,
+   "ok": 88,
+   "ok_tol": 88,
+   "ok_value": 116,
+   "ok_readable": 88,
+   "gt_readable": 127,
+   "wrong": 39,
+   "wrong_flagged": 28,
+   "tool_cells": 148,
+   "tool_matched": 116,
+   "flagged": 71,
+   "flagged_wrong": 49,
+   "missing": 11,
+   "spurious": 32
+  },
+  "ci95_bootstrap_files": {
+   "cell_accuracy": [
+    0.5816326530612245,
+    0.8691588785046729
+   ],
+   "cell_accuracy_ignoring_unit": [
+    0.7040816326530612,
+    1.0
+   ],
+   "cell_accuracy_0.5pct": [
+    0.5816326530612245,
+    0.8691588785046729
+   ],
+   "accuracy_non_unreadable": [
+    0.5816326530612245,
+    0.8691588785046729
+   ],
+   "unreadable_rate": [
+    0.0,
+    0.0
+   ],
+   "extraction_recall": [
+    0.7040816326530612,
+    1.0
+   ],
+   "extraction_precision": [
+    0.5555555555555556,
+    0.9148936170212766
+   ],
+   "error_recall": [
+    0.0,
+    1.0
+   ],
+   "flag_precision": [
+    0.569620253164557,
+    0.7659574468085106
+   ],
+   "silent_error_rate": [
+    0.0,
+    0.29591836734693877
+   ]
+  },
+  "by_param_type": {
+   "other/text": {
+    "cells": 76,
+    "accuracy": 0.8026315789473685
+   },
+   "flow": {
+    "cells": 33,
+    "accuracy": 0.6363636363636364
+   },
+   "temperature": {
+    "cells": 12,
+    "accuracy": 0.3333333333333333
+   },
+   "pressure": {
+    "cells": 6,
+    "accuracy": 0.3333333333333333
+   }
+  },
+  "per_file": {
+   "tender_p15.pdf": {
+    "cell_accuracy": 0.6818181818181818,
+    "cell_accuracy_ignoring_unit": 0.9545454545454546,
+    "cell_accuracy_0.5pct": 0.6818181818181818,
+    "accuracy_non_unreadable": 0.6818181818181818,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.9545454545454546,
+    "extraction_precision": 0.9545454545454546,
+    "error_recall": 0.8571428571428571,
+    "flag_precision": 0.75,
+    "silent_error_rate": 0.045454545454545456,
+    "counts": {
+     "gt": 44,
+     "unreadable": 0,
+     "ok": 30,
+     "ok_tol": 30,
+     "ok_value": 42,
+     "ok_readable": 30,
+     "gt_readable": 44,
+     "wrong": 14,
+     "wrong_flagged": 12,
+     "tool_cells": 44,
+     "tool_matched": 42,
+     "flagged": 16,
+     "flagged_wrong": 12,
+     "missing": 2,
+     "spurious": 2
+    }
+   },
+   "tender_p16.pdf": {
+    "cell_accuracy": 0.6363636363636364,
+    "cell_accuracy_ignoring_unit": 1.0,
+    "cell_accuracy_0.5pct": 0.6363636363636364,
+    "accuracy_non_unreadable": 0.6363636363636364,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 1.0,
+    "extraction_precision": 0.88,
+    "error_recall": 1.0,
+    "flag_precision": 0.7692307692307693,
+    "silent_error_rate": 0.0,
+    "counts": {
+     "gt": 44,
+     "unreadable": 0,
+     "ok": 28,
+     "ok_tol": 28,
+     "ok_value": 44,
+     "ok_readable": 28,
+     "gt_readable": 44,
+     "wrong": 16,
+     "wrong_flagged": 16,
+     "tool_cells": 50,
+     "tool_matched": 44,
+     "flagged": 26,
+     "flagged_wrong": 20,
+     "missing": 0,
+     "spurious": 6
+    }
+   },
+   "tender_p18.pdf": {
+    "cell_accuracy": 1.0,
+    "cell_accuracy_ignoring_unit": 1.0,
+    "cell_accuracy_0.5pct": 1.0,
+    "accuracy_non_unreadable": 1.0,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 1.0,
+    "extraction_precision": 0.65625,
+    "error_recall": null,
+    "flag_precision": 0.5238095238095238,
+    "silent_error_rate": 0.0,
+    "counts": {
+     "gt": 21,
+     "unreadable": 0,
+     "ok": 21,
+     "ok_tol": 21,
+     "ok_value": 21,
+     "ok_readable": 21,
+     "gt_readable": 21,
+     "wrong": 0,
+     "wrong_flagged": 0,
+     "tool_cells": 32,
+     "tool_matched": 21,
+     "flagged": 21,
+     "flagged_wrong": 11,
+     "missing": 0,
+     "spurious": 11
+    }
+   },
+   "tender_p20.pdf": {
+    "cell_accuracy": 0.5,
+    "cell_accuracy_ignoring_unit": 0.5,
+    "cell_accuracy_0.5pct": 0.5,
+    "accuracy_non_unreadable": 0.5,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.5,
+    "extraction_precision": 0.4090909090909091,
+    "error_recall": 0.0,
+    "flag_precision": 0.75,
+    "silent_error_rate": 0.5,
+    "counts": {
+     "gt": 18,
+     "unreadable": 0,
+     "ok": 9,
+     "ok_tol": 9,
+     "ok_value": 9,
+     "ok_readable": 9,
+     "gt_readable": 18,
+     "wrong": 9,
+     "wrong_flagged": 0,
+     "tool_cells": 22,
+     "tool_matched": 9,
+     "flagged": 8,
+     "flagged_wrong": 6,
+     "missing": 9,
+     "spurious": 13
+    }
+   }
+  }
+ },
+ "dev/p1": {
+  "n_files": 2,
+  "overall": {
+   "cell_accuracy": 0.8090909090909091,
+   "cell_accuracy_ignoring_unit": 0.8727272727272727,
+   "cell_accuracy_0.5pct": 0.8090909090909091,
+   "accuracy_non_unreadable": 0.8090909090909091,
+   "unreadable_rate": 0.0,
+   "extraction_recall": 0.8727272727272727,
+   "extraction_precision": 0.8347826086956521,
+   "error_recall": 0.047619047619047616,
+   "flag_precision": 0.25,
+   "silent_error_rate": 0.18181818181818182
+  },
+  "counts": {
+   "gt": 110,
+   "unreadable": 0,
+   "ok": 89,
+   "ok_tol": 89,
+   "ok_value": 96,
+   "ok_readable": 89,
+   "gt_readable": 110,
+   "wrong": 21,
+   "wrong_flagged": 1,
+   "tool_cells": 115,
+   "tool_matched": 96,
+   "flagged": 4,
+   "flagged_wrong": 1,
+   "missing": 14,
+   "spurious": 19
+  },
+  "ci95_bootstrap_files": {
+   "cell_accuracy": [
+    0.7333333333333333,
+    0.8615384615384616
+   ],
+   "cell_accuracy_ignoring_unit": [
+    0.8222222222222222,
+    0.9076923076923077
+   ],
+   "cell_accuracy_0.5pct": [
+    0.7333333333333333,
+    0.8615384615384616
+   ],
+   "accuracy_non_unreadable": [
+    0.7333333333333333,
+    0.8615384615384616
+   ],
+   "unreadable_rate": [
+    0.0,
+    0.0
+   ],
+   "extraction_recall": [
+    0.8222222222222222,
+    0.9076923076923077
+   ],
+   "extraction_precision": [
+    0.7872340425531915,
+    0.8676470588235294
+   ],
+   "error_recall": [
+    0.0,
+    0.1111111111111111
+   ],
+   "silent_error_rate": [
+    0.12307692307692308,
+    0.26666666666666666
+   ],
+   "flag_precision": [
+    0.25,
+    0.25
+   ]
+  },
+  "by_param_type": {
+   "other/text": {
+    "cells": 71,
+    "accuracy": 0.7746478873239436
+   },
+   "flow": {
+    "cells": 24,
+    "accuracy": 1.0
+   },
+   "temperature": {
+    "cells": 10,
+    "accuracy": 0.5
+   },
+   "pressure": {
+    "cells": 5,
+    "accuracy": 1.0
+   }
+  },
+  "per_file": {
+   "tender_p17.pdf": {
+    "cell_accuracy": 0.8615384615384616,
+    "cell_accuracy_ignoring_unit": 0.9076923076923077,
+    "cell_accuracy_0.5pct": 0.8615384615384616,
+    "accuracy_non_unreadable": 0.8615384615384616,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.9076923076923077,
+    "extraction_precision": 0.8676470588235294,
+    "error_recall": 0.1111111111111111,
+    "flag_precision": 0.25,
+    "silent_error_rate": 0.12307692307692308,
+    "counts": {
+     "gt": 65,
+     "unreadable": 0,
+     "ok": 56,
+     "ok_tol": 56,
+     "ok_value": 59,
+     "ok_readable": 56,
+     "gt_readable": 65,
+     "wrong": 9,
+     "wrong_flagged": 1,
+     "tool_cells": 68,
+     "tool_matched": 59,
+     "flagged": 4,
+     "flagged_wrong": 1,
+     "missing": 6,
+     "spurious": 9
+    }
+   },
+   "tender_p19.pdf": {
+    "cell_accuracy": 0.7333333333333333,
+    "cell_accuracy_ignoring_unit": 0.8222222222222222,
+    "cell_accuracy_0.5pct": 0.7333333333333333,
+    "accuracy_non_unreadable": 0.7333333333333333,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.8222222222222222,
+    "extraction_precision": 0.7872340425531915,
+    "error_recall": 0.0,
+    "flag_precision": null,
+    "silent_error_rate": 0.26666666666666666,
+    "counts": {
+     "gt": 45,
+     "unreadable": 0,
+     "ok": 33,
+     "ok_tol": 33,
+     "ok_value": 37,
+     "ok_readable": 33,
+     "gt_readable": 45,
+     "wrong": 12,
+     "wrong_flagged": 0,
+     "tool_cells": 47,
+     "tool_matched": 37,
+     "flagged": 0,
+     "flagged_wrong": 0,
+     "missing": 8,
+     "spurious": 10
+    }
+   }
+  }
+ },
+ "dev/p2": {
+  "n_files": 2,
+  "overall": {
+   "cell_accuracy": 0.7545454545454545,
+   "cell_accuracy_ignoring_unit": 0.8363636363636363,
+   "cell_accuracy_0.5pct": 0.7545454545454545,
+   "accuracy_non_unreadable": 0.7545454545454545,
+   "unreadable_rate": 0.0,
+   "extraction_recall": 0.8363636363636363,
+   "extraction_precision": 0.5644171779141104,
+   "error_recall": 0.25925925925925924,
+   "flag_precision": 0.6428571428571429,
+   "silent_error_rate": 0.18181818181818182
+  },
+  "counts": {
+   "gt": 110,
+   "unreadable": 0,
+   "ok": 83,
+   "ok_tol": 83,
+   "ok_value": 92,
+   "ok_readable": 83,
+   "gt_readable": 110,
+   "wrong": 27,
+   "wrong_flagged": 7,
+   "tool_cells": 163,
+   "tool_matched": 92,
+   "flagged": 112,
+   "flagged_wrong": 72,
+   "missing": 18,
+   "spurious": 71
+  },
+  "ci95_bootstrap_files": {
+   "cell_accuracy": [
+    0.6,
+    0.8615384615384616
+   ],
+   "cell_accuracy_ignoring_unit": [
+    0.7333333333333333,
+    0.9076923076923077
+   ],
+   "cell_accuracy_0.5pct": [
+    0.6,
+    0.8615384615384616
+   ],
+   "accuracy_non_unreadable": [
+    0.6,
+    0.8615384615384616
+   ],
+   "unreadable_rate": [
+    0.0,
+    0.0
+   ],
+   "extraction_recall": [
+    0.7333333333333333,
+    0.9076923076923077
+   ],
+   "extraction_precision": [
+    0.4647887323943662,
+    0.6413043478260869
+   ],
+   "error_recall": [
+    0.2222222222222222,
+    0.3333333333333333
+   ],
+   "flag_precision": [
+    0.6346153846153846,
+    0.65
+   ],
+   "silent_error_rate": [
+    0.09230769230769231,
+    0.3111111111111111
+   ]
+  },
+  "by_param_type": {
+   "other/text": {
+    "cells": 71,
+    "accuracy": 0.8873239436619719
+   },
+   "flow": {
+    "cells": 24,
+    "accuracy": 0.8333333333333334
+   },
+   "temperature": {
+    "cells": 10,
+    "accuracy": 0.0
+   },
+   "pressure": {
+    "cells": 5,
+    "accuracy": 0.0
+   }
+  },
+  "per_file": {
+   "tender_p17.pdf": {
+    "cell_accuracy": 0.8615384615384616,
+    "cell_accuracy_ignoring_unit": 0.9076923076923077,
+    "cell_accuracy_0.5pct": 0.8615384615384616,
+    "accuracy_non_unreadable": 0.8615384615384616,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.9076923076923077,
+    "extraction_precision": 0.6413043478260869,
+    "error_recall": 0.3333333333333333,
+    "flag_precision": 0.6346153846153846,
+    "silent_error_rate": 0.09230769230769231,
+    "counts": {
+     "gt": 65,
+     "unreadable": 0,
+     "ok": 56,
+     "ok_tol": 56,
+     "ok_value": 59,
+     "ok_readable": 56,
+     "gt_readable": 65,
+     "wrong": 9,
+     "wrong_flagged": 3,
+     "tool_cells": 92,
+     "tool_matched": 59,
+     "flagged": 52,
+     "flagged_wrong": 33,
+     "missing": 6,
+     "spurious": 33
+    }
+   },
+   "tender_p19.pdf": {
+    "cell_accuracy": 0.6,
+    "cell_accuracy_ignoring_unit": 0.7333333333333333,
+    "cell_accuracy_0.5pct": 0.6,
+    "accuracy_non_unreadable": 0.6,
+    "unreadable_rate": 0.0,
+    "extraction_recall": 0.7333333333333333,
+    "extraction_precision": 0.4647887323943662,
+    "error_recall": 0.2222222222222222,
+    "flag_precision": 0.65,
+    "silent_error_rate": 0.3111111111111111,
+    "counts": {
+     "gt": 45,
+     "unreadable": 0,
+     "ok": 27,
+     "ok_tol": 27,
+     "ok_value": 33,
+     "ok_readable": 27,
+     "gt_readable": 45,
+     "wrong": 18,
+     "wrong_flagged": 4,
+     "tool_cells": 71,
+     "tool_matched": 33,
+     "flagged": 60,
+     "flagged_wrong": 39,
+     "missing": 12,
+     "spurious": 38
+    }
+   }
+  }
+ }
+}
