@@ -1,0 +1,162 @@
+{
+ "tender_p16.pdf": {
+  "seconds": 29.22,
+  "passes": 1,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 1,
+  "prompt_tokens": 7092,
+  "output_tokens": 13827,
+  "issues": [
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr.kg/cm2A",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr.kg/cm2A",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Flow Liq-Min",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Min/Normal/Max not ordered: 14.4, 4.5, 12.0"
+   }
+  ]
+ }
+}

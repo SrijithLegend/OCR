@@ -48,13 +48,15 @@ def load_master(path):
 
 
 def run(rows, desc_spec=None, pn_spec=None, header_mode="auto", master=None, pn_regex=None):
-    """-> (rows read, [[part no., standard description or None, row count, disagreeing values or None], ...])"""
+    """-> (rows read, [[part no., standard description or None, row count, disagreeing values or None], ...],
+    [[sheet row no., reason, row text], ...] for rows that were left out of the vote)"""
     ncols = max(len(r) for r in rows)
     rows = [r + [None] * (ncols - len(r)) for r in rows]
     first = [str(c or "") for c in rows[0]]
     has_header = header_mode == "yes" or (header_mode == "auto" and any(PN_HEAD.search(c) or DESC_HEAD.search(c) for c in first))
     head = first if has_header else None
-    body = [r for r in (rows[1:] if has_header else rows) if any(c not in (None, "") for c in r)]
+    start = 2 if has_header else 1  # sheet row number of the first body row
+    body = [(i, r) for i, r in enumerate(rows[start - 1:], start) if any(c not in (None, "") for c in r)]
     pn_re = re.compile(pn_regex) if pn_regex else None
 
     def guess(rx):
@@ -62,15 +64,17 @@ def run(rows, desc_spec=None, pn_spec=None, header_mode="auto", master=None, pn_
 
     desc_i = find_col(desc_spec, head, ncols) if desc_spec else guess(DESC_HEAD)
     if desc_i is None:  # no header to go by: the column with the longest text
-        desc_i = max(range(ncols), key=lambda c: sum(len(str(r[c])) for r in body if isinstance(r[c], str)))
+        desc_i = max(range(ncols), key=lambda c: sum(len(str(r[c])) for _, r in body if isinstance(r[c], str)))
     pn_i = find_col(pn_spec, head, ncols) if pn_spec else (None if pn_re else guess(PN_HEAD))
     if pn_i is None and not pn_re:
         raise SystemExit("Could not find the part number column. Pass --pn-col (letter or header name) or --pn-regex.")
 
     groups = collections.defaultdict(lambda: collections.defaultdict(list))  # pn -> normalized desc -> originals
-    for r in body:
+    excluded = []
+    for rn, r in body:
         text = r[desc_i]
         if text in (None, ""):
+            excluded.append([rn, "no description", " | ".join(str(c) for c in r if c not in (None, ""))])
             continue
         text = " ".join(str(text).split())
         if pn_i is not None:
@@ -81,6 +85,8 @@ def run(rows, desc_spec=None, pn_spec=None, header_mode="auto", master=None, pn_
             text = text.strip(" ,;") if not m else (text[:m.start()] + " " + text[m.end():]).strip(" ,;")
         if pn:
             groups[pn][norm(text)].append(text)
+        else:
+            excluded.append([rn, "no part number", " | ".join(str(c) for c in r if c not in (None, ""))])
 
     out = []
     for pn in sorted(set(groups) | set(master or {})):
@@ -95,11 +101,11 @@ def run(rows, desc_spec=None, pn_spec=None, header_mode="auto", master=None, pn_
         else:
             std, others = votes[0][0], votes[1:]
         out.append([pn, std, n, "; ".join(f"{v[0]} (x{len(v)})" for v in others) or None])
-    return len(body), out
+    return len(body), out, excluded
 
 
 # ----------------------------------------------------------------------------- output
-def write_summary(path, master_rows):
+def write_summary(path, master_rows, excluded=()):
     """One row per part number: Part No., Standard Description, Rows, Disagreeing values."""
     wb = openpyxl.Workbook()
     ws = wb.active
@@ -117,6 +123,14 @@ def write_summary(path, master_rows):
         w = max((len(str(c.value)) for c in ws[get_column_letter(i)] if c.value is not None), default=8)
         ws.column_dimensions[get_column_letter(i)].width = min(max(w + 2, 8), 70)
     ws.freeze_panes = "A2"
+    if excluded:
+        ex = wb.create_sheet("Excluded rows")
+        ex.append(["Sheet row", "Reason", "Row contents"])
+        for r in excluded:
+            ex.append(r)
+        for c in ex[1]:
+            c.fill, c.font = PatternFill("solid", fgColor="1F3864"), Font(bold=True, color="FFFFFF")
+        ex.column_dimensions["B"].width, ex.column_dimensions["C"].width = 18, 90
     wb.save(path)
 
 
@@ -135,9 +149,11 @@ def main(argv=None):
     rows = load_table(a.input)
     if not rows:
         raise SystemExit("Input is empty.")
-    n, master_rows = run(rows, a.desc_col, a.pn_col, a.header, load_master(a.master) if a.master else None, a.pn_regex)
-    write_summary(a.output, master_rows)
-    print(f"{n} rows, {len(master_rows)} part numbers -> {a.output}")
+    n, master_rows, excluded = run(rows, a.desc_col, a.pn_col, a.header, load_master(a.master) if a.master else None, a.pn_regex)
+    write_summary(a.output, master_rows, excluded)
+    print(f"{n} rows, {len(master_rows)} part numbers, {len(excluded)} excluded -> {a.output}")
+    for rn, why, txt in excluded:
+        print(f"  excluded row {rn} ({why}): {txt[:80]}")
     print(f"  no majority: {sum(1 for r in master_rows if not r[1])} | with disagreements: {sum(1 for r in master_rows if r[1] and r[3])}")
 
 

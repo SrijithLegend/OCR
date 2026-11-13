@@ -1,0 +1,10 @@
+﻿python.exe : [tender_p19.pdf] extracting...
+At line:3 char:2
++  & $py main.py eval/sheets/$f --passes $p -o results/p$p/$f.xlsx --st ...
++  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ([tender_p19.pdf] extracting...:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+  page 1/1 done
+  1 sheet(s), 124 cells, 0 error(s), 0 other flag(s)
+Wrote results/p1/tender_p19.pdf.xlsx. Review the 'Review' sheet first.

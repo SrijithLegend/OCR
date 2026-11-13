@@ -103,8 +103,8 @@ def standardize(file: UploadFile = File(...)):
             rows = sv.load_table(src)
             if not rows:
                 raise HTTPException(422, f"{name}: empty")
-            nrows, master_rows = sv.run(rows)
-            sv.write_summary(out, master_rows)
+            nrows, master_rows, excluded = sv.run(rows)
+            sv.write_summary(out, master_rows, excluded)
         except HTTPException:
             raise
         except SystemExit as e:  # standard_valve reports user errors this way
@@ -114,5 +114,5 @@ def standardize(file: UploadFile = File(...)):
         wb = openpyxl.load_workbook(out)
         sheets = [{"name": ws.title, "rows": [list(r) for r in ws.iter_rows(values_only=True)]} for ws in wb]
     marks = ["bad" if not r[1] else "changed" if r[3] else "" for r in master_rows]
-    summary = f"{nrows} rows, {len(master_rows)} part numbers · no majority {marks.count('bad')} · disagreements {marks.count('changed')}"
+    summary = f"{nrows} rows, {len(master_rows)} part numbers · excluded {len(excluded)} · no majority {marks.count('bad')} · disagreements {marks.count('changed')}"
     return {"sheets": sheets, "marks": marks, "summary": summary}

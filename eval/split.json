@@ -1,0 +1,13 @@
+{
+ "seed": 0,
+ "dev": [
+  "tender_p17.pdf",
+  "tender_p19.pdf"
+ ],
+ "test": [
+  "tender_p15.pdf",
+  "tender_p16.pdf",
+  "tender_p18.pdf",
+  "tender_p20.pdf"
+ ]
+}

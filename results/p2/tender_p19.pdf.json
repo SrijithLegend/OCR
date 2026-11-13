@@ -1,0 +1,1832 @@
+{
+ "tender_p19.pdf": {
+  "seconds": 62.29,
+  "passes": 2,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 3,
+  "prompt_tokens": 28152,
+  "output_tokens": 30029,
+  "issues": [
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "",
+    "parameter": "REV.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '0'); re-read decided '0'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Body material",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'ASTM A216 WCB', 2: None); re-read decided 'ASTM A216 WCB'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Air Failure Position",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'shut', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Air Failure Position",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'shut', 2: None); re-read decided 'shut'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Close At",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Close At",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Open At",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Open At",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Body material",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'ASTM A216 WCB'); re-read decided 'ASTM A216 WCB'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Body Size",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Bonnet Type",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Bonnet Type",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Guiding",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Isol. Valve",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Isol. Valve",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Lubricator",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Lubricator",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "No. of Ports",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Packing Material",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Packing Material",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Port Size",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Seat Ring Gasket Material",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Seat Ring Gasket Material",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Inlet line I.D",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Line Size",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '8\"', re-read '8'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '8\"', 2: None); re-read decided '8\"'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Outlet Line I.D",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Schedule",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '40', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '40', 2: None); re-read decided '40'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Service",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Aqueous Amine (40% Conc)', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Service",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Aqueous Amine (40% Conc)', 2: None); re-read decided 'Aqueous Amine (40% Conc)'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Actuator",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Positioner",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Not required', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Not required', 2: None); re-read decided 'Not required'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Valve",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Options",
+    "parameter": "Body/Bonnet Gasket Material",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Options",
+    "parameter": "Body/Bonnet Gasket Material",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Bypass",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Not Required', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Bypass",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Not Required', 2: None); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Gauge",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Required 2nos.', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Gauge",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Required 2nos.', 2: None); re-read decided 'Required 2nos.'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Input",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '4-20mA', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Input",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '4-20mA', 2: None); re-read decided '4-20mA'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Output",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Output",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off (KG/CM2A)",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '16.1', 2: '16.1'); re-read decided '16.1'; unit differed ('kg/cm\u00b2g' vs 'KG/CM2A') -> 'KG/CM2A'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Flow Liq-Min",
+    "case": "maximum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '3000', pass 2 None, re-read '2300'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Flow Liq-Min",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '2300', pass 2 None, re-read '700'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '11.8', 2: '3000'); re-read decided '11.8'; unit differed ('kg/cm\u00b2g' vs 'MT/D') -> 'kg/cm\u00b2g'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '0.75', pass 2 '11.8', re-read '1.67'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '0.75', re-read '1.67'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Mol. Wt.",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '27.52', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Mol. Wt.",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '27.52', 2: None); re-read decided '27.52'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Normal",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1.67', pass 2 '2300', re-read '10.04'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Normal",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1.67', re-read '2.8'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Specific gravity @ 20.c",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1.038', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Specific gravity @ 20.c",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.038', 2: None); re-read decided '1.038'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "State",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'LIQUID', 2: None); re-read decided 'LIQUID'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '77', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '77', 2: None); re-read decided '77'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr. (pa@ 20.c)",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr. (pa@ 20.c)",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1', 2: None); re-read decided '1'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)@ 20.c",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1.01', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)@ 20.c",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.01', 2: None); re-read decided '1.01'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Max.",
+    "case": "maximum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Max.",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Min.",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Min.",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "other",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Selected Cv",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "minimum",
+    "group": "STREAM-1",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Air Failure Position",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'open', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Air Failure Position",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'open', 2: None); re-read decided 'open'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Close At",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Close At",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Open At",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Actuator",
+    "parameter": "Open At",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Body Size",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Bonnet Type",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Bonnet Type",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Guiding",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Isol. Valve",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Isol. Valve",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Lubricator",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Lubricator",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "No. of Ports",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Packing Material",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Packing Material",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Port Size",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Seat Ring Gasket Material",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Body",
+    "parameter": "Seat Ring Gasket Material",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Inlet line I.D",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Line Size",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '10\"', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '10\"', 2: None); re-read decided '10\"'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Outlet Line I.D",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Schedule",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '40', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '40', 2: None); re-read decided '40'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Service",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Aqueous Amine (40%conc)', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "General",
+    "parameter": "Service",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Aqueous Amine (40%conc)', 2: None); re-read decided 'Aqueous Amine (40%conc)'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Actuator",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Positioner",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read 'Not required'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Not required', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Not required', 2: None); re-read decided 'Not required'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Valve",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Options",
+    "parameter": "Body/Bonnet Gasket Material",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Options",
+    "parameter": "Body/Bonnet Gasket Material",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Bypass",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Not Required', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Bypass",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Not Required', 2: None); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Gauge",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Required 2nos.', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Gauge",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Required 2nos.', 2: None); re-read decided 'Required 2nos.'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Input",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '4-20mA', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Input",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '4-20mA', 2: None); re-read decided '4-20mA'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Output",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Positioner",
+    "parameter": "Output",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off (KG/CM2A)",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '31.6', 2: '31.6'); re-read decided '31.6'; unit differed ('kg/cm\u00b2g' vs 'KG/CM2A') -> 'kg/cm\u00b2g'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Flow Liq-Min",
+    "case": "maximum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '5800', pass 2 None, re-read '3444'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Flow Liq-Min",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '3444', pass 2 None, re-read '1400'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Fluid",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'LIQUID', 2: None); re-read decided 'LIQUID'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '13.2', 2: '5800'); re-read decided '13.2'; unit differed ('kg/cm\u00b2g' vs 'MT/D') -> 'kg/cm\u00b2g'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1.8', pass 2 '13.2', re-read '3.2'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1.8', re-read '3.2'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Mol. Wt.",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '27.52', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Mol. Wt.",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '27.52', 2: None); re-read decided '27.52'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Normal",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '3.2', pass 2 '3444', re-read '12.2'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Normal",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '3.2', re-read '4.2'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Specific gravity @ 20.c",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1.038', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Specific gravity @ 20.c",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.038', 2: None); re-read decided '1.038'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '40'); re-read decided '40'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '40', pass 2 None, re-read '65'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr. (pa@ 20.c)",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr. (pa@ 20.c)",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1', 2: None); re-read decided '1'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)@ 20.c",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1.01', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)@ 20.c",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.01', 2: None); re-read decided '1.01'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Max.",
+    "case": "maximum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Max.",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Min.",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Min.",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "other",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Selected Cv",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "minimum",
+    "group": "STREAM-2",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr. (pa@ 20.c)",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr. (pa@ 20.c)",
+    "case": "single",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Normal",
+    "case": "normal",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "Normal",
+    "case": "normal",
+    "group": "STREAM-2",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p19.pdf",
+    "valve": "STV722",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off (KG/CM2A)",
+    "case": "single",
+    "group": "STREAM-1",
+    "severity": "warning",
+    "issue": "Different units across columns of the same row"
+   }
+  ]
+ }
+}

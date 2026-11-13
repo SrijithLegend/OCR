@@ -1,0 +1,14 @@
+{
+ "model": "gemini-3.5-flash-lite",
+ "dpi": 300,
+ "bands": 3,
+ "cols": 1,
+ "passes": [
+  1,
+  2
+ ],
+ "date": "2026-11-13",
+ "git_commit": "97bc267daf534e9fcc40a444ff7a7fc298dbb367",
+ "n_dev": 2,
+ "n_test": 4
+}

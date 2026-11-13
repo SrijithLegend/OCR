@@ -1,0 +1,412 @@
+{
+ "tender_p16.pdf": {
+  "seconds": 89.49,
+  "passes": 2,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 3,
+  "prompt_tokens": 20920,
+  "output_tokens": 29467,
+  "issues": [
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1. Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.', re-read 'Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '2. All the * mark vendor shall specify.', re-read 'All the * mark vendor shall specify.'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "",
+    "parameter": "OWNER",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'BPCL,REFINERY,MUMBAI.INDIA'); re-read decided 'BPCL,REFINERY,MUMBAI.INDIA'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "",
+    "parameter": "PLANT",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'CDU-4'); re-read decided 'CDU-4'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "",
+    "parameter": "REV.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '0'); re-read decided '0'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Cv Max.",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Cv Min.",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr.kg/cm2A",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.9', 2: '1.9'); re-read decided '1.9'; unit differed ('kg/cm2A' vs None) -> None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '0.7', 2: '0.7'); re-read decided '0.7'; unit differed ('cp' vs None) -> None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Valve Data",
+    "parameter": "Cv Max.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Valve Data",
+    "parameter": "Cv Min.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Valve Data",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'max 85', 2: 'max 85'); re-read decided 'max 85'; unit differed ('dBA' vs None) -> 'dBA'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1. Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.', re-read 'Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '2. All the * mark vendor shall specify.', re-read 'All the * mark vendor shall specify.'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "",
+    "parameter": "OWNER",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'BPCL,REFINERY,MUMBAI.INDIA'); re-read decided 'BPCL,REFINERY,MUMBAI.INDIA'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "",
+    "parameter": "PLANT",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'CDU-4'); re-read decided 'CDU-4'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "",
+    "parameter": "REV.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '0'); re-read decided '0'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Cv Max.",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Cv Min.",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr.kg/cm2A",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.9', 2: '1.9'); re-read decided '1.9'; unit differed ('kg/cm2A' vs None) -> None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '0.7', 2: '0.7'); re-read decided '0.7'; unit differed ('cp' vs None) -> None"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Valve Data",
+    "parameter": "Cv Max.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Valve Data",
+    "parameter": "Cv Min.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Valve Data",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'max 85', 2: 'max 85'); re-read decided 'max 85'; unit differed ('dBA' vs None) -> 'dBA'"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr.kg/cm2A",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158C",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "Service Conditions",
+    "parameter": "Vapour Pr.kg/cm2A",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p16.pdf",
+    "valve": "DFV-158D",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   }
+  ]
+ }
+}

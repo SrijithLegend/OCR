@@ -1,0 +1,22 @@
+{
+ "tender_p18.pdf": {
+  "seconds": 39.49,
+  "passes": 1,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 1,
+  "prompt_tokens": 6817,
+  "output_tokens": 7348,
+  "issues": [
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   }
+  ]
+ }
+}

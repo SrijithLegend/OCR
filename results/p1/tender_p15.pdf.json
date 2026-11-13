@@ -1,0 +1,112 @@
+{
+ "tender_p15.pdf": {
+  "seconds": 71.58,
+  "passes": 1,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 1,
+  "prompt_tokens": 7163,
+  "output_tokens": 13896,
+  "issues": [
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   }
+  ]
+ }
+}

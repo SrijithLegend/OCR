@@ -1,0 +1,355 @@
+file,valve_tag,section,parameter,case,unit,value,prefilled
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Critical Pr.,CASE 1 (BH CRUDE),Kg/cm2a,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Critical Pr.,CASE 3 (HS CRUDE),Kg/cm2a,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Cv Max.,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Cv Max.,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Cv Max.,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Cv Min.,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Cv Min.,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Cv Min.,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Flow Liq-Min,CASE 1 (BH CRUDE) - Maximum,m3/hr,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Flow Liq-Min,CASE 1 (BH CRUDE) - Normal,m3/hr,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Flow Liq-Min,CASE 2 (LS CRUDE) - Maximum,m3/hr,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Flow Liq-Min,CASE 2 (LS CRUDE) - Normal,m3/hr,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Flow Liq-Min,CASE 3 (HS CRUDE) - Maximum,m3/hr,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Flow Liq-Min,CASE 3 (HS CRUDE) - Normal,m3/hr,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Fluid,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Fluid,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Fluid,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Max,CASE 1 (BH CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Max,CASE 2 (LS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Max,CASE 3 (HS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Normal,CASE 1 (BH CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Normal,CASE 1 (BH CRUDE) - Normal,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Normal,CASE 2 (LS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Normal,CASE 2 (LS CRUDE) - Normal,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Normal,CASE 3 (HS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Inlet Pr. - Normal,CASE 3 (HS CRUDE) - Normal,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Max,CASE 1 (BH CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Max,CASE 2 (LS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Max,CASE 3 (HS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Max.,CASE 1 (BH CRUDE) - Maximum,° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Max.,CASE 2 (LS CRUDE) - Maximum,° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Max.,CASE 3 (HS CRUDE) - Maximum,° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Specific gravity,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Specific gravity,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Specific gravity,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,State,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,State,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,State,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 1 (BH CRUDE) - Maximum,°C / ° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 1 (BH CRUDE) - Minimum,°C / ° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 1 (BH CRUDE) - Normal,° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 2 (LS CRUDE) - Maximum,°C / ° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 2 (LS CRUDE) - Minimum,°C / ° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 2 (LS CRUDE) - Normal,° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 3 (HS CRUDE) - Maximum,°C / ° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 3 (HS CRUDE) - Minimum,°C / ° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper.,CASE 3 (HS CRUDE) - Normal,° C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper. Max.,CASE 1 (BH CRUDE) - Maximum,°C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper. Max.,CASE 2 (LS CRUDE) - Maximum,°C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Temp. Oper. Max.,CASE 3 (HS CRUDE) - Maximum,°C,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Vapour Pr.kg/cm2A,CASE 1 (BH CRUDE),Kg/cm2a,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Vapour Pr.kg/cm2A,CASE 2 (LS CRUDE),Kg/cm2a,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Vapour Pr.kg/cm2A,CASE 3 (HS CRUDE),Kg/cm2a,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Viscosity (cp),CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Viscosity (cp),CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,Viscosity (cp),CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dP @FlowRateMin,CASE 1 (BH CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dP @FlowRateMin,CASE 1 (BH CRUDE) - Normal,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dP @FlowRateMin,CASE 2 (LS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dP @FlowRateMin,CASE 2 (LS CRUDE) - Normal,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dP @FlowRateMin,CASE 3 (HS CRUDE) - Maximum,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dP @FlowRateMin,CASE 3 (HS CRUDE) - Normal,Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dPPressure Shut Off,CASE 1 (BH CRUDE),Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dPPressure Shut Off,CASE 2 (LS CRUDE),Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dPPressure Shut Off,CASE 3 (HS CRUDE),Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dPressure Shut Off,CASE 1 (BH CRUDE),Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dPressure Shut Off,CASE 2 (LS CRUDE),Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Service Conditions,dPressure Shut Off,CASE 3 (HS CRUDE),Kg/cm2g,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Cv Nor.,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Cv Nor.,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Cv Nor.,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Inlet,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Inlet,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Inlet,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Outlet,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Outlet,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Outlet,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Predicted Sound Level dBA,CASE 1 (BH CRUDE),dBA,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Predicted Sound Level dBA,CASE 2 (LS CRUDE),dBA,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Predicted Sound Level dBA,CASE 3 (HS CRUDE),dBA,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Selected Cv,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Selected Cv,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Selected Cv,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Velocity,CASE 1 (BH CRUDE),m/s,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Velocity,CASE 2 (LS CRUDE),m/s,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data,Velocity,CASE 3 (HS CRUDE),m/s,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Cv Nor.,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Cv Nor.,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Cv Nor.,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Inlet,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Inlet,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Inlet,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Outlet,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Outlet,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Outlet,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Predicted Sound Level dBA,CASE 1 (BH CRUDE),dBA,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Predicted Sound Level dBA,CASE 2 (LS CRUDE),dBA,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Predicted Sound Level dBA,CASE 3 (HS CRUDE),dBA,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Selected Cv,CASE 1 (BH CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Selected Cv,CASE 2 (LS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Selected Cv,CASE 3 (HS CRUDE),,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Velocity,CASE 1 (BH CRUDE),m/s,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Velocity,CASE 2 (LS CRUDE),m/s,,0
+tender_p17.pdf,UFV-124A & UFV-124B (2nos.),Valve Data Model No.,Velocity,CASE 3 (HS CRUDE),m/s,,0
+tender_p19.pdf,STV722,Service Conditions,Flow Liq-Min,STREAM-1 - Maximum,MT/D,,0
+tender_p19.pdf,STV722,Service Conditions,Flow Liq-Min,STREAM-1 - Minimum,MT/D,,0
+tender_p19.pdf,STV722,Service Conditions,Flow Liq-Min,STREAM-1 - Normal,MT/D,,0
+tender_p19.pdf,STV722,Service Conditions,Flow Liq-Min,STREAM-2 - Maximum,MT/D,,0
+tender_p19.pdf,STV722,Service Conditions,Flow Liq-Min,STREAM-2 - Minimum,MT/D,,0
+tender_p19.pdf,STV722,Service Conditions,Flow Liq-Min,STREAM-2 - Normal,MT/D,,0
+tender_p19.pdf,STV722,Service Conditions,Fluid,STREAM-1,,,0
+tender_p19.pdf,STV722,Service Conditions,Fluid,STREAM-2,,,0
+tender_p19.pdf,STV722,Service Conditions,Inlet Pr. - Normal (kg/cm2A),STREAM-1 - Maximum,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Inlet Pr. - Normal (kg/cm2A),STREAM-1 - Normal,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Inlet Pr. - Normal (kg/cm2A),STREAM-2 - Maximum,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Inlet Pr. - Normal (kg/cm2A),STREAM-2 - Normal,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Max,STREAM-1 - Maximum,kg/cm²g / kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Max,STREAM-2 - Maximum,kg/cm²g / kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Max.,STREAM-1 - Maximum,°C,,0
+tender_p19.pdf,STV722,Service Conditions,Max.,STREAM-2 - Maximum,°C,,0
+tender_p19.pdf,STV722,Service Conditions,Mol. Wt.,STREAM-1,,,0
+tender_p19.pdf,STV722,Service Conditions,Mol. Wt.,STREAM-1 - Normal,,,0
+tender_p19.pdf,STV722,Service Conditions,Mol. Wt.,STREAM-2,,,0
+tender_p19.pdf,STV722,Service Conditions,Mol. Wt.,STREAM-2 - Normal,,,0
+tender_p19.pdf,STV722,Service Conditions,Normal,STREAM-1 - Normal,kg/cm²g / kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Normal,STREAM-2 - Normal,kg/cm²g / kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,Specific gravity @ 20.c,STREAM-1,,,0
+tender_p19.pdf,STV722,Service Conditions,Specific gravity @ 20.c,STREAM-1 - Minimum,,,0
+tender_p19.pdf,STV722,Service Conditions,Specific gravity @ 20.c,STREAM-2,,,0
+tender_p19.pdf,STV722,Service Conditions,Specific gravity @ 20.c,STREAM-2 - Minimum,,,0
+tender_p19.pdf,STV722,Service Conditions,State,STREAM-1,,,0
+tender_p19.pdf,STV722,Service Conditions,State,STREAM-2,,,0
+tender_p19.pdf,STV722,Service Conditions,Temp. Oper.,STREAM-1 - Minimum,°C / ° C,,0
+tender_p19.pdf,STV722,Service Conditions,Temp. Oper.,STREAM-1 - Normal,°C,,0
+tender_p19.pdf,STV722,Service Conditions,Temp. Oper.,STREAM-2 - Minimum,°C / ° C,,0
+tender_p19.pdf,STV722,Service Conditions,Temp. Oper.,STREAM-2 - Normal,°C,,0
+tender_p19.pdf,STV722,Service Conditions,Vapour Pr. (pa@ 20.c),STREAM-1,Kg/cm2a,,0
+tender_p19.pdf,STV722,Service Conditions,Vapour Pr. (pa@ 20.c),STREAM-1 - Minimum,Kg/cm2a,,0
+tender_p19.pdf,STV722,Service Conditions,Vapour Pr. (pa@ 20.c),STREAM-2,Kg/cm2a,,0
+tender_p19.pdf,STV722,Service Conditions,Vapour Pr. (pa@ 20.c),STREAM-2 - Minimum,Kg/cm2a,,0
+tender_p19.pdf,STV722,Service Conditions,Viscosity (cp)@ 20.c,STREAM-1,cp,,0
+tender_p19.pdf,STV722,Service Conditions,Viscosity (cp)@ 20.c,STREAM-1 - Normal,cp,,0
+tender_p19.pdf,STV722,Service Conditions,Viscosity (cp)@ 20.c,STREAM-2,cp,,0
+tender_p19.pdf,STV722,Service Conditions,Viscosity (cp)@ 20.c,STREAM-2 - Normal,cp,,0
+tender_p19.pdf,STV722,Service Conditions,dP @FlowRateMin,STREAM-1 - Maximum,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,dP @FlowRateMin,STREAM-1 - Minimum,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,dP @FlowRateMin,STREAM-1 - Normal,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,dP @FlowRateMin,STREAM-2 - Maximum,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,dP @FlowRateMin,STREAM-2 - Minimum,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,dP @FlowRateMin,STREAM-2 - Normal,kg/cm2g,,0
+tender_p19.pdf,STV722,Service Conditions,dPressure Shut Off (KG/CM2A),STREAM-1,KG/CM2A,,0
+tender_p19.pdf,STV722,Service Conditions,dPressure Shut Off (KG/CM2A),STREAM-2,KG/CM2A,,0
+tender_p19.pdf,STV722,Valve Data,Cv Max.,STREAM-1,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Max.,STREAM-1 - Maximum,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Max.,STREAM-2,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Max.,STREAM-2 - Maximum,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Min.,STREAM-1,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Min.,STREAM-1 - Minimum,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Min.,STREAM-2,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Min.,STREAM-2 - Minimum,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Nor.,STREAM-1,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Nor.,STREAM-1 - Minimum,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Nor.,STREAM-2,,,0
+tender_p19.pdf,STV722,Valve Data,Cv Nor.,STREAM-2 - Minimum,,,0
+tender_p19.pdf,STV722,Valve Data,Inlet,STREAM-1,,,0
+tender_p19.pdf,STV722,Valve Data,Inlet,STREAM-1 - Normal,m/s,,0
+tender_p19.pdf,STV722,Valve Data,Inlet,STREAM-2,,,0
+tender_p19.pdf,STV722,Valve Data,Inlet,STREAM-2 - Normal,m/s,,0
+tender_p19.pdf,STV722,Valve Data,Outlet,STREAM-1,,,0
+tender_p19.pdf,STV722,Valve Data,Outlet,STREAM-1 - Other,m/s,,0
+tender_p19.pdf,STV722,Valve Data,Outlet,STREAM-2,,,0
+tender_p19.pdf,STV722,Valve Data,Outlet,STREAM-2 - Other,m/s,,0
+tender_p19.pdf,STV722,Valve Data,Predicted Sound Level dBA,Single,dBA,,0
+tender_p19.pdf,STV722,Valve Data,Selected Cv,STREAM-1,,,0
+tender_p19.pdf,STV722,Valve Data,Selected Cv,STREAM-1 - Normal,,,0
+tender_p19.pdf,STV722,Valve Data,Selected Cv,STREAM-2,,,0
+tender_p19.pdf,STV722,Valve Data,Selected Cv,STREAM-2 - Normal,,,0
+tender_p19.pdf,STV722,Valve Data,Velocity,STREAM-1,m/s,,0
+tender_p19.pdf,STV722,Valve Data,Velocity,STREAM-1 - Minimum,m/s,,0
+tender_p19.pdf,STV722,Valve Data,Velocity,STREAM-2,m/s,,0
+tender_p19.pdf,STV722,Valve Data,Velocity,STREAM-2 - Minimum,m/s,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Cv Max.,Single,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Cv Min.,Single,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Flow Liq-Min,Maximum,m3/hr,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Flow Liq-Min,Minimum,m3/hr,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Flow Liq-Min,Normal,m3/hr,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Fluid,Single,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Inlet Pr. - Normal,Normal,Kg/cm2,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Specific gravity,Single,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,State,Maximum,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,State,Single,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Temp. Oper.,Maximum,°C,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Temp. Oper.,Normal,°C,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Vapour Pr.kg/cm2A,Single,kg/cm2A,,0
+tender_p15.pdf,DFV-158A,Service Conditions,Viscosity (cp),Single,cp,,0
+tender_p15.pdf,DFV-158A,Service Conditions,dP @FlowRateMin,Maximum,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,dP @FlowRateMin,Minimum,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,dP @FlowRateMin,Normal,,,0
+tender_p15.pdf,DFV-158A,Service Conditions,dPressure Shut Off,Single,,,0
+tender_p15.pdf,DFV-158A,Valve Data,Cv Nor.,Single,,,0
+tender_p15.pdf,DFV-158A,Valve Data,Inlet,Single,,,0
+tender_p15.pdf,DFV-158A,Valve Data,Outlet,Single,,,0
+tender_p15.pdf,DFV-158A,Valve Data,Predicted Sound Level dBA,Single,dBA,,0
+tender_p15.pdf,DFV-158A,Valve Data,Selected Cv,Single,,,0
+tender_p15.pdf,DFV-158A,Valve Data,Velocity,Single,m/s,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Cv Max.,Single,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Cv Min.,Single,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Flow Liq-Min,Maximum,m3/hr,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Flow Liq-Min,Minimum,m3/hr,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Flow Liq-Min,Normal,m3/hr,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Fluid,Single,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Inlet Pr. - Normal,Normal,Kg/cm2,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Specific gravity,Single,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,State,Maximum,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,State,Single,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Temp. Oper.,Maximum,°C,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Temp. Oper.,Normal,°C,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Vapour Pr.kg/cm2A,Single,kg/cm2A,,0
+tender_p15.pdf,DFV-158B,Service Conditions,Viscosity (cp),Single,cp,,0
+tender_p15.pdf,DFV-158B,Service Conditions,dP @FlowRateMin,Maximum,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,dP @FlowRateMin,Minimum,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,dP @FlowRateMin,Normal,,,0
+tender_p15.pdf,DFV-158B,Service Conditions,dPressure Shut Off,Single,,,0
+tender_p15.pdf,DFV-158B,Valve Data,Cv Nor.,Single,,,0
+tender_p15.pdf,DFV-158B,Valve Data,Inlet,Single,,,0
+tender_p15.pdf,DFV-158B,Valve Data,Outlet,Single,,,0
+tender_p15.pdf,DFV-158B,Valve Data,Predicted Sound Level dBA,Single,dBA,,0
+tender_p15.pdf,DFV-158B,Valve Data,Selected Cv,Single,,,0
+tender_p15.pdf,DFV-158B,Valve Data,Velocity,Single,m/s,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Cv Max.,Single,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Cv Min.,Single,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Flow Liq-Min,Maximum,m3/hr,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Flow Liq-Min,Minimum,m3/hr,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Flow Liq-Min,Normal,m3/hr,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Fluid,Single,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Inlet Pr. - Normal,Normal,Kg/cm2,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Specific gravity,Single,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,State,Single,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Temp. Oper.,Maximum,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Temp. Oper.,Normal,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Vapour Pr.kg/cm2A,Single,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,Viscosity (cp),Single,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,dP @FlowRateMin,Maximum,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,dP @FlowRateMin,Minimum,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,dP @FlowRateMin,Normal,,,0
+tender_p16.pdf,DFV-158C,Service Conditions,dPressure Shut Off,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Cv Max.,Maximum,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Cv Max.,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Cv Min.,Minimum,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Cv Min.,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Cv Nor.,Normal,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Cv Nor.,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Inlet,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Outlet,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Predicted Sound Level dBA,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Selected Cv,Design,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Selected Cv,Single,,,0
+tender_p16.pdf,DFV-158C,Valve Data,Velocity,Single,m/s,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Cv Max.,Single,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Cv Min.,Single,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Flow Liq-Min,Maximum,m3/hr,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Flow Liq-Min,Minimum,m3/hr,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Flow Liq-Min,Normal,m3/hr,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Fluid,Single,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Inlet Pr. - Normal,Normal,Kg/cm2,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Specific gravity,Single,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,State,Single,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Temp. Oper.,Maximum,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Temp. Oper.,Normal,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Vapour Pr.kg/cm2A,Single,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,Viscosity (cp),Single,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,dP @FlowRateMin,Maximum,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,dP @FlowRateMin,Minimum,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,dP @FlowRateMin,Normal,,,0
+tender_p16.pdf,DFV-158D,Service Conditions,dPressure Shut Off,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Cv Max.,Maximum,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Cv Max.,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Cv Min.,Minimum,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Cv Min.,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Cv Nor.,Normal,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Cv Nor.,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Inlet,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Outlet,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Predicted Sound Level dBA,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Selected Cv,Design,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Selected Cv,Single,,,0
+tender_p16.pdf,DFV-158D,Valve Data,Velocity,Single,m/s,,0
+tender_p18.pdf,RPV-734A,Service Conditions,8Pressure Shut Off (KG/CM2),Single,KG/CM2,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Compress Factor,Maximum,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Compress Factor,Single,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Cp/Cv,Normal,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Cp/Cv,Single,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Cv Max.,Maximum,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Cv Max.,Single,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Cv Min.,Minimum,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Cv Min.,Single,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Flow Steam-Max,Maximum,MT/D,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Flow Steam-Min,Maximum,MT/D,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Flow Steam-Min,Minimum,MT/D,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Flow Steam-Min,Normal,MT/D,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Flow Steam-Normal,Normal,MT/D,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Fluid,Single,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Inlet Pr. - Max,Maximum,kg/cm2A,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Inlet Pr. - Normal (kg/cm2A),Maximum,kg/cm2A,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Inlet Pr. - Normal (kg/cm2A),Normal,kg/cm2A,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Inlet Pr. - Normal (kg/cm2A) Max,Maximum,kg/cm2A,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Inlet Pr. - Normal (kg/cm2A) Max,Normal,kg/cm2A,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Mol. Wt.,Single,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,State,Single,,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Temp. Oper.,Maximum,°C,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Temp. Oper.,Normal,°C,,0
+tender_p18.pdf,RPV-734A,Service Conditions,Temp. Oper. Max.,Maximum,°C,,0
+tender_p18.pdf,RPV-734A,Service Conditions,dP @FlowRateMin,Maximum,kg/cm2g,,0
+tender_p18.pdf,RPV-734A,Service Conditions,dP @FlowRateMin,Minimum,Kg/cm2g,,0
+tender_p18.pdf,RPV-734A,Service Conditions,dPressure Shut Off (KG/CM2),Single,KG/CM2,,0
+tender_p18.pdf,RPV-734A,Valve Data,Cv Max.,Maximum,,,0
+tender_p18.pdf,RPV-734A,Valve Data,Cv Min.,Minimum,,,0
+tender_p18.pdf,RPV-734A,Valve Data,Cv Nor.,Normal,,,0
+tender_p18.pdf,RPV-734A,Valve Data,Cv Nor.,Single,,,0
+tender_p18.pdf,RPV-734A,Valve Data,Inlet,Single,,,0
+tender_p18.pdf,RPV-734A,Valve Data,Outlet,Single,,,0
+tender_p18.pdf,RPV-734A,Valve Data,Predicted Sound Level dBA,Maximum,dBA,,0
+tender_p18.pdf,RPV-734A,Valve Data,Predicted Sound Level dBA,Single,dBA,,0
+tender_p18.pdf,RPV-734A,Valve Data,Selected Cv,Single,,,0
+tender_p18.pdf,RPV-734A,Valve Data,Velocity,Single,m/s,,0
+tender_p18.pdf,RPV-734A,Valve Data,Velocity Inlet,Single,m/s,,0
+tender_p18.pdf,RPV-734A,Valve Data,Velocity Outlet,Single,m/s,,0
+tender_p18.pdf,RPV-734A,Valve Data,Velocity m/s Inlet,Single,m/s,,0
+tender_p18.pdf,RPV-734A,Valve Data,Velocity m/s Outlet,Single,m/s,,0
+tender_p20.pdf,ULV5151,Service Conditions,Flow Liq-Min,Maximum,MT/D,,0
+tender_p20.pdf,ULV5151,Service Conditions,Flow Liq-Min,Minimum,MT/D,,0
+tender_p20.pdf,ULV5151,Service Conditions,Flow Liq-Min,Normal,MT/D,,0
+tender_p20.pdf,ULV5151,Service Conditions,Fluid,Minimum,,,0
+tender_p20.pdf,ULV5151,Service Conditions,Inlet Pr. - Max,Maximum,Kg/cm2g,,0
+tender_p20.pdf,ULV5151,Service Conditions,Inlet Pr. - Normal,Maximum,Kg/cm2g,,0
+tender_p20.pdf,ULV5151,Service Conditions,Inlet Pr. - Normal,Normal,Kg/cm2g,,0
+tender_p20.pdf,ULV5151,Service Conditions,Max,Maximum,Kg/cm2g,,0
+tender_p20.pdf,ULV5151,Service Conditions,Max.,Maximum,°C,,0
+tender_p20.pdf,ULV5151,Service Conditions,Normal,Normal,Kg/cm2g,,0
+tender_p20.pdf,ULV5151,Service Conditions,State,Normal,,,0
+tender_p20.pdf,ULV5151,Service Conditions,Temp. Oper.,Maximum,° C,,0
+tender_p20.pdf,ULV5151,Service Conditions,Temp. Oper.,Normal,° C,,0
+tender_p20.pdf,ULV5151,Service Conditions,dP @FlowRateMin,Minimum,Kg/cm2g,,0
+tender_p20.pdf,ULV5151,Service Conditions,dP @FlowRateMin,Normal,Kg/cm2g,,0
+tender_p20.pdf,ULV5151,Valve Data,Cv Max.,Normal,,,0
+tender_p20.pdf,ULV5151,Valve Data,Cv Min.,Minimum,,,0
+tender_p20.pdf,ULV5151,Valve Data,Cv Nor.,Minimum,,,0
+tender_p20.pdf,ULV5151,Valve Data,Inlet,Normal,,,0
+tender_p20.pdf,ULV5151,Valve Data,Outlet,Normal,m/s,,0
+tender_p20.pdf,ULV5151,Valve Data,Predicted Sound Level dBA,Single,dBA,,0
+tender_p20.pdf,ULV5151,Valve Data,Selected Cv,Normal,,,0
+tender_p20.pdf,ULV5151,Valve Data,Velocity,Minimum,m/s,,0
+tender_p20.pdf,ULV5151,Valve Data,Velocity m/s Inlet,Minimum,m/s,,0
+tender_p20.pdf,ULV5151,Valve Data,Velocity m/s Outlet,Normal,m/s,,0

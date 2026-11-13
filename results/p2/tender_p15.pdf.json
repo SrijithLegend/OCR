@@ -1,0 +1,272 @@
+{
+ "tender_p15.pdf": {
+  "seconds": 63.4,
+  "passes": 2,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 3,
+  "prompt_tokens": 20595,
+  "output_tokens": 28064,
+  "issues": [
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1. Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '2. All the * mark vendor shall specify.', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '150', pass 2 '150', re-read '96.7'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '96.7', pass 2 '96.7', re-read '150'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1. Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '2. All the * mark vendor shall specify.', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '150', pass 2 '150', re-read '96.7'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '96.7', pass 2 '96.7', re-read '150'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158A",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "dPressure Shut Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "No unit captured"
+   },
+   {
+    "file": "tender_p15.pdf",
+    "valve": "DFV-158B",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   }
+  ]
+ }
+}

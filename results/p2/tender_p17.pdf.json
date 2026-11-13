@@ -1,0 +1,1692 @@
+{
+ "tender_p17.pdf": {
+  "seconds": 96.81,
+  "passes": 2,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 3,
+  "prompt_tokens": 31711,
+  "output_tokens": 48432,
+  "issues": [
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1. Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '2. All the * mark vendor shall specify.', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Tag No.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'UFV-124A & UFV-124B (2nos.)'); re-read decided 'UFV-124A & UFV-124B (2nos.)'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "End conn. Flgd. & Rating",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '300#', 2: None); re-read decided '300#'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Facing & Finish",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'RF 125RAAH', 2: None); re-read decided 'RF 125RAAH'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '8\"', 2: None); re-read decided '8\"'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1', pass 2 None, re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'STD', 2: None); re-read decided 'STD'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Service",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'CRUDE', 2: None); re-read decided 'CRUDE'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Type of Body",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Globe', 2: None); re-read decided 'Globe'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Type",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'spring-diaphragm', 2: None); re-read decided 'spring-diaphragm'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Actuator",
+    "parameter": "Type",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'spring-diaphragm'); re-read decided 'spring-diaphragm'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "End conn. Flgd. & Rating",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '300#'); re-read decided '300#'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Facing & Finish",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'RF 125RAAH'); re-read decided 'RF 125RAAH'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1', re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Type of Body",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Globe'); re-read decided 'Globe'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '8\"'); re-read decided '8\"'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'STD'); re-read decided 'STD'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Service",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'CRUDE'); re-read decided 'CRUDE'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "IBR Certification",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Not Required'); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Not required', re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Positioner",
+    "parameter": "Air Supply Pressure",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '4.0', 2: '4.0 kg/cm2'); re-read decided '4.0'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Max",
+    "case": "maximum",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '11', 2: None); re-read decided '11'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Normal",
+    "case": "maximum",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '11', re-read '9.4'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper. Max.",
+    "case": "maximum",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '65', 2: None); re-read decided '65'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '65'); re-read decided '65'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "IBR Certification",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Not Required', 2: None); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'max 85', 2: None); re-read decided 'max 85'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Not required', pass 2 None, re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'max 85'); re-read decided 'max 85'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "End conn. Flgd. & Rating",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '300#', 2: None); re-read decided '300#'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Facing & Finish",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'RF 125RAAH', 2: None); re-read decided 'RF 125RAAH'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '8\"', 2: None); re-read decided '8\"'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1', pass 2 None, re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'STD', 2: None); re-read decided 'STD'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Service",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'CRUDE', 2: None); re-read decided 'CRUDE'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Type of Body",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Globe', 2: None); re-read decided 'Globe'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Type",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'spring-diaphragm', 2: None); re-read decided 'spring-diaphragm'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Actuator",
+    "parameter": "Type",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'spring-diaphragm'); re-read decided 'spring-diaphragm'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "End conn. Flgd. & Rating",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '300#'); re-read decided '300#'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Facing & Finish",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'RF 125RAAH'); re-read decided 'RF 125RAAH'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1', re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Type of Body",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Globe'); re-read decided 'Globe'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '8\"'); re-read decided '8\"'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'STD'); re-read decided 'STD'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Service",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'CRUDE'); re-read decided 'CRUDE'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "IBR Certification",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Not Required'); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read 'Not required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Not required', re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Positioner",
+    "parameter": "Air Supply Pressure",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '4.0', 2: '4.0 kg/cm2'); re-read decided '4.0'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Max",
+    "case": "maximum",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '11', 2: None); re-read decided '11'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Normal",
+    "case": "maximum",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '11', re-read '9.4'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper. Max.",
+    "case": "maximum",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '65', 2: None); re-read decided '65'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '65'); re-read decided '65'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '3.0 at 25 Deg C', 2: '3.0 at 25 Deg C'); re-read decided '3.0 at 25 Deg C'; unit differed (None vs 'cp') -> None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "IBR Certification",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Not Required', 2: None); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read 'Not required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'max 85', 2: None); re-read decided 'max 85'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Not required', pass 2 None, re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'max 85'); re-read decided 'max 85'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "End conn. Flgd. & Rating",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '300#', 2: None); re-read decided '300#'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Facing & Finish",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'RF 125RAAH', 2: None); re-read decided 'RF 125RAAH'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '8\"', 2: None); re-read decided '8\"'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '1', pass 2 None, re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'STD', 2: None); re-read decided 'STD'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Service",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'CRUDE', 2: None); re-read decided 'CRUDE'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Type of Body",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Globe', 2: None); re-read decided 'Globe'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Type",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'spring-diaphragm', 2: None); re-read decided 'spring-diaphragm'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Actuator",
+    "parameter": "Type",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'spring-diaphragm'); re-read decided 'spring-diaphragm'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Body Size",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "End conn. Flgd. & Rating",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '300#'); re-read decided '300#'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Facing & Finish",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'RF 125RAAH'); re-read decided 'RF 125RAAH'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Guiding",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read None"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "No. of Ports",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '1', re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Port Size",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Body",
+    "parameter": "Type of Body",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Globe'); re-read decided 'Globe'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Inlet line I.D",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Line Size",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '8\"'); re-read decided '8\"'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Outlet Line I.D",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Schedule",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'STD'); re-read decided 'STD'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "General",
+    "parameter": "Service",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'CRUDE'); re-read decided 'CRUDE'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "IBR Certification",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Not Required'); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '*', re-read 'Not required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Not required', re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Positioner",
+    "parameter": "Air Supply Pressure",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '4.0', 2: '4.0 kg/cm2'); re-read decided '4.0'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Max",
+    "case": "maximum",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '11', 2: None); re-read decided '11'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Normal",
+    "case": "maximum",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '11', re-read '9.4'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper. Max.",
+    "case": "maximum",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '65', 2: None); re-read decided '65'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '65'); re-read decided '65'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Actuator",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "IBR Certification",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Not Required', 2: None); re-read decided 'Not Required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Positioner",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '*', pass 2 None, re-read 'Not required'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'max 85', 2: None); re-read decided 'max 85'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Solenoid Valve",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Not required', pass 2 None, re-read '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Valve",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data Model No.",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'max 85'); re-read decided 'max 85'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Selected Cv",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "minimum",
+    "group": "CASE 1 (BH CRUDE)",
+    "severity": "warning",
+    "issue": "Non-numeric value '35-40'; confirm against the sheet"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "minimum",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Non-numeric value '35-40'; confirm against the sheet"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Viscosity (cp)",
+    "case": "single",
+    "group": "CASE 2 (LS CRUDE)",
+    "severity": "warning",
+    "issue": "Non-numeric value '3.0 at 25 Deg C'; confirm against the sheet"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "minimum",
+    "group": "CASE 3 (HS CRUDE)",
+    "severity": "warning",
+    "issue": "Non-numeric value '35-40'; confirm against the sheet"
+   },
+   {
+    "file": "tender_p17.pdf",
+    "valve": "UFV-124A & UFV-124B (2nos.)",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   }
+  ]
+ }
+}

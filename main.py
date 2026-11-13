@@ -6,6 +6,7 @@ import math
 import os
 import re
 import sys
+import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
@@ -298,6 +299,10 @@ def build_content(path: Path, dpi=300, bands=3, cols=1):
 
 
 # ---------------------------------------------------------------------- API calls
+STATS = {"calls": 0, "prompt_tokens": 0, "output_tokens": 0}  # eval logging only; behaviour unchanged
+_STATS_LOCK = threading.Lock()
+
+
 def call_json(client, model, system, schema, content):
     for attempt in range(6):
         try:
@@ -306,6 +311,11 @@ def call_json(client, model, system, schema, content):
                 config=types.GenerateContentConfig(
                     system_instruction=system, temperature=0,
                     response_mime_type="application/json", response_json_schema=schema))
+            u = resp.usage_metadata
+            with _STATS_LOCK:
+                STATS["calls"] += 1
+                STATS["prompt_tokens"] += getattr(u, "prompt_token_count", 0) or 0
+                STATS["output_tokens"] += getattr(u, "candidates_token_count", 0) or 0
             if not resp.text:
                 raise RuntimeError("Model returned no output (blocked or truncated).")
             return json.loads(resp.text)
@@ -679,6 +689,7 @@ def main():
     ap.add_argument("--bands", type=int, default=3)
     ap.add_argument("--cols", type=int, default=1)
     ap.add_argument("--model", default=MODEL)
+    ap.add_argument("--stats", type=Path, help="write per-file seconds, API calls, tokens and validator issues as JSON")
     args = ap.parse_args()
 
     if not args.files:
@@ -687,10 +698,13 @@ def main():
         if not args.files:
             sys.exit("No image/PDF files found next to main.py.")
     client = genai.Client(api_key=os.environ["GENAI_API_KEY"], http_options=types.HttpOptions(timeout=300_000))
-    results, all_issues = [], []
+    results, all_issues, stats = [], [], {}
     for f in args.files:
         print(f"[{f.name}] extracting...", file=sys.stderr)
+        before, t0 = dict(STATS), time.time()
         valves, issues = process_file(client, args.model, f, args)
+        stats[f.name] = {"seconds": round(time.time() - t0, 2), "passes": args.passes, "model": args.model,
+                         **{k: STATS[k] - before[k] for k in STATS}, "issues": issues}
         results.append((f.name, valves))
         all_issues += issues
         n_err = sum(1 for i in issues if i["severity"] == "error")
@@ -698,6 +712,9 @@ def main():
               f"{n_err} error(s), {len(issues) - n_err} other flag(s)", file=sys.stderr)
 
     build_workbook(results, all_issues, args.out)
+    if args.stats:
+        args.stats.parent.mkdir(parents=True, exist_ok=True)
+        args.stats.write_text(json.dumps(stats, indent=1, default=str), encoding="utf-8")
     print(f"Wrote {args.out}. Review the 'Review' sheet first.", file=sys.stderr)
 
 

@@ -1,0 +1,222 @@
+{
+ "tender_p18.pdf": {
+  "seconds": 70.3,
+  "passes": 2,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 3,
+  "prompt_tokens": 20046,
+  "output_tokens": 14207,
+  "issues": [
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Compress Factor",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1'); re-read decided '1'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Compress Factor",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1', 2: None); re-read decided '1'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Cp/Cv",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1.3'); re-read decided '1.3'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Cp/Cv",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.3', 2: None); re-read decided '1.3'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Cv Max.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Cv Max.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Cv Min.",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Cv Min.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Normal (kg/cm2A) Max",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '4.5', 2: None); re-read decided '4.5'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Normal (kg/cm2A) Max",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '3.9', 2: None); re-read decided '3.9'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Normal (kg/cm2A)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '4.5'); re-read decided '4.5'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Normal (kg/cm2A)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '3.9'); re-read decided '3.9'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Cv Nor.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '85', pass 2 None, re-read 'max 85'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Predicted Sound Level dBA",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'max 85'); re-read decided 'max 85'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Velocity m/s Inlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Velocity m/s Outlet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p18.pdf",
+    "valve": "RPV-734A",
+    "section": "Valve Data",
+    "parameter": "Velocity",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   }
+  ]
+ }
+}

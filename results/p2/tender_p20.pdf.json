@@ -1,0 +1,162 @@
+{
+ "tender_p20.pdf": {
+  "seconds": 34.96,
+  "passes": 2,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 3,
+  "prompt_tokens": 19682,
+  "output_tokens": 13933,
+  "issues": [
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1. Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.'); re-read decided '1. Vapour pressure and critical pressure shall be in Kg/cm2a. All other pressure values are in Kg/cm2g, unless otherwise specified.'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '2. All the * mark vendor shall specify.'); re-read decided '2. All the * mark vendor shall specify.'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "",
+    "parameter": "OWNER",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'BPCL,REFINERY,MUMBAI.INDIA'); re-read decided 'BPCL,REFINERY,MUMBAI.INDIA'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "",
+    "parameter": "PLANT",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'DHT'); re-read decided 'DHT'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "",
+    "parameter": "REV.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '0'); re-read decided '0'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "",
+    "parameter": "UNIT",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Cooling Tower'); re-read decided 'Cooling Tower'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Service Conditions",
+    "parameter": "dP @FlowRateMin",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '3', pass 2 None, re-read '4'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pr. - Max",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '4', pass 2 None, re-read '3'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Service Conditions",
+    "parameter": "Max",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '4'); re-read decided '4'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Service Conditions",
+    "parameter": "Max.",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '65'); re-read decided '65'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Service Conditions",
+    "parameter": "Normal",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '3', re-read '4'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Service Conditions",
+    "parameter": "Temp. Oper.",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '65', pass 2 None, re-read '35'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Valve Data",
+    "parameter": "Inlet",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '*'); re-read decided '*'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "Valve Data",
+    "parameter": "Outlet",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '*', 2: None); re-read decided '*'"
+   },
+   {
+    "file": "tender_p20.pdf",
+    "valve": "ULV5151",
+    "section": "",
+    "parameter": "Note",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   }
+  ]
+ }
+}
