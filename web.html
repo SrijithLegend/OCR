@@ -13,12 +13,12 @@ header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-betwee
  padding:12px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
 header h1{font-size:17px;margin:0}
 main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
-.layout{max-width:1640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:20px;align-items:start;padding-right:24px}
-.layout main{margin:0;max-width:none;min-width:0}
-aside#find{position:sticky;top:70px;margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
-aside#find h2{font-size:15px;margin:0 0 8px}
+.layout{max-width:1280px;margin:0 auto;padding:0 24px}
+.layout main{margin:0;max-width:none;min-width:0;padding:20px 0 60px}
+aside#find{margin:20px 0 60px;max-width:900px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px}
+#find h2{font-size:15px;margin:0 0 8px}
 #find form{display:flex;gap:6px}#find input{flex:1;min-width:0;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}
-#fres{margin-top:12px;max-height:65vh;overflow:auto}
+#fres{margin-top:12px}
 #fres .count{display:flex;align-items:baseline;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 #fres .count b{font-size:32px;line-height:1;color:var(--accent)}#fres .count span{font-size:15px}
 #fres .note{font-size:12px;color:var(--muted);margin:6px 2px}
@@ -27,7 +27,6 @@ aside#find h2{font-size:15px;margin:0 0 8px}
 #fres th{position:sticky;top:0;background:var(--panel);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--line)}
 #fres td{padding:6px 8px;border-left:0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
 #fres td.num{text-align:right;font-variant-numeric:tabular-nums}#fres tbody tr:hover{background:var(--bg)}
-@media(max-width:1100px){.layout{grid-template-columns:1fr;padding-right:0}aside#find{position:static;margin:0 24px 20px}}
 button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 14px}
 button:hover{border-color:var(--accent)}
 button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
@@ -86,8 +85,8 @@ td.changed{background:var(--warn)}td.bad{background:var(--err)}
 a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
 </style></head><body>
 <header><h1>Datasheet extractor</h1>
- <div class="tabs" style="margin:0"><button id="mo" class="on" type="button">OCR</button><button id="ms" type="button">Standardize descriptions</button></div>
- <div class="steps"><span id="s1" class="on">1 Upload</span><span id="s2">2 Review</span><span id="s3">3 Export</span></div>
+ <div class="tabs" style="margin:0"><button id="mo" class="on" type="button">OCR</button><button id="ms" type="button">Standardize descriptions</button><button id="mk" type="button">Search</button></div>
+ <div class="steps" id="steps"><span id="s1" class="on">1 Upload</span><span id="s2">2 Review</span><span id="s3">3 Export</span></div>
  <div><button id="new" class="hidden" type="button">New upload</button></div></header>
 <div class="layout">
 <main>
@@ -118,7 +117,7 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
   </div>
  </section>
 </main>
-<aside id="find"><h2>Search the shop data</h2>
+<aside id="find" class="hidden"><h2>Search the shop data</h2>
  <form id="fform"><input id="fq" type="search" placeholder="e.g. how many workspaces by dilla" aria-label="Search question" autocomplete="off"><button class="primary" type="submit">Search</button></form>
  <div class="muted" style="margin-top:6px;font-size:12px">Item/workspace IDs, "week 33", AP/MEA/EUR, "by dilla", "how many items…"</div>
  <div id="fres" aria-live="polite"></div></aside>
@@ -141,7 +140,7 @@ function view(v,msg){clearInterval(tm);
  if(v==="busy"){const t0=Date.now(),el=$("timer");el.textContent="0:00";tm=setInterval(()=>{const n=Math.floor((Date.now()-t0)/1e3);el.textContent=Math.floor(n/60)+":"+String(n%60).padStart(2,"0")},1e3)}
  [["s1","drop"],["s2","res"]].forEach(([i,x])=>$(i).classList.toggle("on",v===x||(i==="s1"&&v==="busy")));$("drop").classList.toggle("hidden",v!=="drop"||mode!=="ocr");$("sdrop").classList.toggle("hidden",v!=="drop"||mode!=="std");$("busy").classList.toggle("hidden",v!=="busy");
  $("res").classList.toggle("hidden",v!=="res"||mode!=="ocr");$("sres").classList.toggle("hidden",v!=="res"||mode!=="std");$("new").classList.toggle("hidden",v==="drop");
- $("mo").disabled=$("ms").disabled=v==="busy";if(msg)$("busytxt").textContent=msg}
+ $("mo").disabled=$("ms").disabled=$("mk").disabled=v==="busy";if(msg)$("busytxt").textContent=msg}
 function fail(m){const e=$("err");e.textContent=m;e.classList.toggle("hidden",!m)}
 async function errText(r){let d=r.statusText;try{d=(await r.json()).detail}catch{}return typeof d==="string"?d:JSON.stringify(d)}
 
@@ -281,8 +280,9 @@ function wire(drop,pick,fn){
 wire($("drop"),$("pick"),upload);wire($("sdrop"),$("spick"),stdUpload);
 ["dragover","drop"].forEach(t=>window.addEventListener(t,e=>e.preventDefault()));
 $("only").addEventListener("change",filter);
-function setMode(m){mode=m;data=null;std=null;files=[];fail("");$("mo").classList.toggle("on",m==="ocr");$("ms").classList.toggle("on",m==="std");view("drop")}
-$("mo").addEventListener("click",()=>setMode("ocr"));$("ms").addEventListener("click",()=>setMode("std"));
+function setMode(m){mode=m;data=null;std=null;files=[];fail("");$("mo").classList.toggle("on",m==="ocr");$("ms").classList.toggle("on",m==="std");$("mk").classList.toggle("on",m==="search");
+ $("find").classList.toggle("hidden",m!=="search");$("steps").classList.toggle("hidden",m==="search");view("drop");if(m==="search")$("fq").focus()}
+$("mo").addEventListener("click",()=>setMode("ocr"));$("ms").addEventListener("click",()=>setMode("std"));$("mk").addEventListener("click",()=>setMode("search"));
 $("new").addEventListener("click",()=>setMode(mode));
 
 // ---- Standardize descriptions: Excel/CSV -> /standardize -> table (+ the finished workbook, so Export needs no second request)
