@@ -1,5 +1,11 @@
 .venv/
 __pycache__/
+*.pyc
+.pytest_cache/
 .env
 process_conditions*.xlsx
+~$*.xlsx
 eval/sheets/
+shop.db
+vector_store/
+last_sync.txt
