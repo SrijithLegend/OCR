@@ -49,7 +49,16 @@ def search(query):
         if re.search(r"how many|number of|count|total", query, re.I):
             cond = " AND ".join(f"{k} = ?" for d in where for k in d) or "1=1"
             args = [v for d in where for v in d.values()]
-            if re.search(r"\bwor\w*ces?\b", query, re.I): unit, expr = "workspaces", "COUNT(DISTINCT WorkspaceId)"  # tolerates typos like 'worksapces'
+            # A column named in the question ("unique values in officeID column") beats the workspace/item shortcuts.
+            squashed = re.sub(r"[\s_]+", "", query.lower())
+            named = [c[1] for c in conn.execute("PRAGMA table_info(test_data)") if c[1] != "row_id" and c[1].lower().replace("_", "") in squashed]
+            if named:
+                colname = max(named, key=len)  # 'OfficeId' over 'Office'
+                if re.search(r"unique|distinct|different", query, re.I):
+                    unit, expr = f"distinct {colname} values", f"COUNT(DISTINCT {colname})"
+                else:
+                    unit, expr = f"{colname} values (non-empty)", f"COUNT({colname})"
+            elif re.search(r"\bwor\w*ces?\b", query, re.I): unit, expr = "workspaces", "COUNT(DISTINCT WorkspaceId)"  # tolerates typos like 'worksapces'
             elif re.search(r"\bitems?\b", query, re.I): unit, expr = "items", "COUNT(DISTINCT ItemId)"
             else: unit, expr = "rows", "COUNT(*)"
             n = conn.execute(f"SELECT {expr} FROM test_data WHERE {cond}", args).fetchone()[0]
