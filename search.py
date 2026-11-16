@@ -10,7 +10,7 @@ _lock, _model, _col = threading.Lock(), None, None
 
 # (regex, label, id column, extra column shown beside the id when listing)
 ENTITIES = [
-    (r"\bwor\w*ces?\b", "Workspaces", "WorkspaceId", "WorkspaceName"),  # tolerates typos like 'worksapces'
+    (r"\bwor\w*ces?\b", "Workspaces", "WorkspaceId", "WorkspaceName"),  
     (r"\bitems?\b", "Items", "ItemId", "ItemName"),
     (r"\boffices?\b", "Offices", "OfficeId", None),
     (r"\b(?:users?|creators?|authors?)\b", "Users", "WorkspaceCreatedBy", None),
@@ -25,7 +25,7 @@ GROUPBY = {"WorkspaceName": ["WorkspaceId", "WorkspaceName"], "WorkspaceId": ["W
            "ItemName": ["ItemId", "ItemName"], "ItemId": ["ItemId", "ItemName"]}
 NUMERIC = ["TotalConstructions", "NumOfCompleteCons", "NumOfInCompleteCons", "NumOfAlternates",
            "NumOfConsHavingSpecialConfig", "NumOfConsHavingSpecialPrice", "NumOfTags", "NumOfParts"]
-CATEGORY = ["WorldArea", "ConstructionType", "HighestRevision", "ProdYear"]  # small value sets, matched by the value itself
+CATEGORY = ["WorldArea", "ConstructionType", "HighestRevision", "ProdYear", "OfficeId"]  # small value sets, matched by the value itself
 PRICE = r"\b(?:prices?|pricing|costs?|revenue|worth)\b"
 DISTINCT = r"\b(?:unique|distinct|different)\b"
 COUNT = r"\b(?:how many|number of|count|total|sum)\b"
@@ -103,9 +103,10 @@ def _search(conn, query):
     if (w := re.search(r"\boffice\s*(?:id)?\s*#?(\d+)\b", query, re.I)):
         where.append(("Office", "=", int(w.group(1)))); query = _cut(query, w)
     for c in CATEGORY:  # whole-word value match: "AP", "Primary", "Rev A", 2026 (short values are case-sensitive)
-        for (v,) in conn.execute(f"SELECT DISTINCT {c} FROM test_data WHERE {c} IS NOT NULL").fetchall():
+        vals = sorted((r[0] for r in conn.execute(f"SELECT DISTINCT {c} FROM test_data WHERE {c} IS NOT NULL")), key=lambda v: -len(str(v)))
+        for v in vals:  # longest value first, so a full office name beats a shorter overlapping one
             fl = 0 if len(str(v)) <= 3 else re.I
-            if (w := re.search(rf"\b{re.escape(str(v))}\b", query, fl)):
+            if (w := re.search(rf"(?<!\w){re.escape(str(v).strip())}(?!\w)", query, fl)):
                 where.append((c, "=", v)); query = _cut(query, w)
                 break
     if (u := re.search(r"\b(?:created by|from user|by)\s+(\w+)", query, re.I)) and conn.execute(
@@ -127,7 +128,9 @@ def _search(conn, query):
     # 4) What to compute: a measure (sum/avg/min/max), else an entity / named column (count or distinct), else rows.
     distinct = re.search(DISTINCT, query, re.I)
     squashed = re.sub(r"[\s_]+", "", query.lower())
-    named = [c for c in schema if c.lower().replace("_", "") in squashed]
+    filtered = {c for c, _, _ in where}  # "how many <value> in the <column> column": that column is the filter, not the thing to count
+    hit = [c for c in schema if c.lower().replace("_", "") in squashed]
+    named = [c for c in hit if c not in filtered and not any(c != o and c.lower() in o.lower() for o in hit)]  # 'officeid' must not also hit 'Office'
     named_c = max(named, key=len) if named else None  # 'OfficeId' over 'Office'
     ent = min(((m.start(), e) for e in ENTITIES if (m := re.search(e[0], query, re.I))), default=(0, None))[1]
     agg = re.search(AGG, query, re.I)
