@@ -13,13 +13,20 @@ header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-betwee
  padding:12px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
 header h1{font-size:17px;margin:0}
 main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
-.layout{max-width:1640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start;padding-right:24px}
+.layout{max-width:1640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 440px;gap:20px;align-items:start;padding-right:24px}
 .layout main{margin:0;max-width:none;min-width:0}
 aside#find{position:sticky;top:70px;margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
 aside#find h2{font-size:15px;margin:0 0 8px}
 #find form{display:flex;gap:6px}#find input{flex:1;min-width:0;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}
-#fres{margin-top:12px;max-height:60vh;overflow:auto}#fres .big{font-size:20px;font-weight:700}
-#fres table{font-size:12px;width:100%}#fres td,#fres th{padding:3px 6px;text-align:left;border-left:0;white-space:nowrap}
+#fres{margin-top:12px;max-height:65vh;overflow:auto}
+#fres .count{display:flex;align-items:baseline;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+#fres .count b{font-size:32px;line-height:1;color:var(--accent)}#fres .count span{font-size:15px}
+#fres .note{font-size:12px;color:var(--muted);margin:6px 2px}
+#fres .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#fres .chips span{font-size:12px;padding:1px 9px;border-radius:12px;background:var(--edit);border:1px solid var(--edit-b)}
+#fres table{width:100%;border-collapse:collapse;font-size:13px}
+#fres th{position:sticky;top:0;background:var(--panel);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--line)}
+#fres td{padding:6px 8px;border-left:0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
+#fres td.num{text-align:right;font-variant-numeric:tabular-nums}#fres tbody tr:hover{background:var(--bg)}
 @media(max-width:1100px){.layout{grid-template-columns:1fr;padding-right:0}aside#find{position:static;margin:0 24px 20px}}
 button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 14px}
 button:hover{border-color:var(--accent)}
@@ -305,9 +312,16 @@ $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq"
  box.replaceChildren(h("div",{class:"muted"},"Searching..."));
  try{const r=await fetch("/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q})});
   if(!r.ok)throw new Error(await errText(r));const d=await r.json();
-  const out=[h("div",{class:d.kind==="count"?"big":"muted"},d.text)];
-  if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},d.columns.map(c=>h("th",{},c)))),
-   h("tbody",{},d.rows.map(row=>h("tr",{},row.map(c=>h("td",{},c??"")))))));
-  else if(d.kind!=="count")out.push(h("div",{class:"muted"},"No results"));
+  const NAMES={WorkspaceName:"Workspace",ItemName:"Item",ConstructionType:"Type",WorldArea:"Area",ConstructionPrice:"Price",Week_Label:"Week"};
+  const m=d.text.match(/^(.*?)(?:\s+\((.*)\))?$/),head=m?m[1]:d.text,filt=m&&m[2]?m[2].split(", "):[];
+  const out=[];
+  if(d.kind==="count"){const p=head.split(" ");out.push(h("div",{class:"count"},h("b",{},Number(p[0]).toLocaleString()),h("span",{},p.slice(1).join(" "))))}
+  else out.push(h("div",{class:"note"},head));
+  if(filt.length&&filt[0]!=="no filters")out.push(h("div",{class:"chips"},filt.map(f=>h("span",{},f.replace("Week_Label = ","").replace("WorkspaceCreatedBy = ","Created by: ").replace("WorldArea = ","Area: ")))));
+  const keep=d.columns.map((c,i)=>i).filter(i=>d.rows.some(r=>r[i]!==null&&r[i]!==""));
+  if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},keep.map(i=>h("th",{},NAMES[d.columns[i]]||d.columns[i])))),
+   h("tbody",{},d.rows.map(row=>h("tr",{},keep.map(i=>{const c=row[i],isPrice=d.columns[i]==="ConstructionPrice"&&c!==null;
+    return h("td",{class:isPrice?"num":""},c===null||c===""?"—":isPrice?Number(c).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):c)}))))));
+  else if(d.kind!=="count")out.push(h("div",{class:"note"},"No results"));
   box.replaceChildren(...out)}catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}});
 </script></body></html>
