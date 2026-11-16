@@ -14,7 +14,7 @@ from starlette.background import BackgroundTask
 
 import main as ocr
 import openpyxl
-import search as shop_search
+import nlsql
 import standard_valve as sv
 
 ALLOWED = {".pdf", ".png", ".jpg", ".jpeg"}
@@ -32,14 +32,11 @@ def index():
 
 @app.post("/search")
 def search(payload: dict = Body(...)):
-    """Plain-English question about shop.db -> {kind, text, columns, rows}."""
-    q = str(payload.get("query", "")).strip()[:300]
+    """Plain-English question about the database -> {kind, text, sql, columns, rows, truncated}. Read-only."""
+    q = str(payload.get("query", "")).strip()
     if not q:
         raise HTTPException(422, "Type a question first")
-    try:
-        return shop_search.search(q)
-    except Exception as e:  # missing shop.db / vector_store etc.
-        raise HTTPException(500, f"Search failed: {e}")
+    return nlsql.ask(q)
 
 
 @app.post("/extract")

@@ -21,6 +21,7 @@ aside#find{margin:20px 0 60px;max-width:900px;background:var(--panel);border:1px
 #fres{margin-top:12px}
 #fres .count{display:flex;align-items:baseline;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
 #fres .count b{font-size:32px;line-height:1;color:var(--accent)}#fres .count span{font-size:15px}
+#fres details.sql{margin-top:10px;font-size:12px;color:var(--muted)}#fres details.sql pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--text)}
 #fres .note{font-size:12px;color:var(--muted);margin:6px 2px}
 #fres .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#fres .chips span{font-size:12px;padding:1px 9px;border-radius:12px;background:var(--edit);border:1px solid var(--edit-b)}
 #fres table{width:100%;border-collapse:collapse;font-size:13px}
@@ -117,9 +118,9 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
   </div>
  </section>
 </main>
-<aside id="find" class="hidden"><h2>Search the shop data</h2>
- <form id="fform"><input id="fq" type="search" placeholder="e.g. how many workspaces by dilla" aria-label="Search question" autocomplete="off"><button class="primary" type="submit">Search</button></form>
- <div class="muted" style="margin-top:6px;font-size:12px">Item/workspace IDs, "week 33", AP/MEA/EUR, "by dilla", "how many items…"</div>
+<aside id="find" class="hidden"><h2>Ask the database</h2>
+ <form id="fform"><input id="fq" type="search" placeholder="e.g. how many rows per category?" aria-label="Search question" autocomplete="off"><button class="primary" type="submit">Search</button></form>
+ <div class="muted" style="margin-top:6px;font-size:12px">Ask in plain English. The answer is computed by a read-only SQL query, shown under "SQL used".</div>
  <div id="fres" aria-live="polite"></div></aside>
 </div>
 <script>
@@ -309,19 +310,18 @@ async function stdDownload(){fail("");
  catch(e){fail("Export failed: "+e.message)}}
 
 $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq").value.trim(),box=$("fres");if(!q)return;
- box.replaceChildren(h("div",{class:"muted"},"Searching..."));
+ box.replaceChildren(h("div",{class:"note"},"Thinking..."));
  try{const r=await fetch("/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q})});
   if(!r.ok)throw new Error(await errText(r));const d=await r.json();
-  const NAMES={WorkspaceName:"Workspace",ItemName:"Item",ConstructionType:"Type",WorldArea:"Area",ConstructionPrice:"Price",Week_Label:"Week"};
-  const m=d.text.match(/^(.*?)(?:\s+\((.*)\))?$/),head=m?m[1]:d.text,filt=m&&m[2]?m[2].split(", "):[];
-  const out=[];
-  if(d.kind==="count"){const p=head.split(" ");out.push(h("div",{class:"count"},h("b",{},Number(p[0]).toLocaleString()),h("span",{},p.slice(1).join(" "))))}
-  else out.push(h("div",{class:"note"},head));
-  if(filt.length&&filt[0]!=="no filters")out.push(h("div",{class:"chips"},filt.map(f=>h("span",{},f.replace("Week_Label = ","").replace("WorkspaceCreatedBy = ","Created by: ").replace("WorldArea = ","Area: ")))));
-  const keep=d.columns.map((c,i)=>i).filter(i=>d.rows.some(r=>r[i]!==null&&r[i]!==""));
-  if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},keep.map(i=>h("th",{},NAMES[d.columns[i]]||d.columns[i])))),
-   h("tbody",{},d.rows.map(row=>h("tr",{},keep.map(i=>{const c=row[i],isNum=typeof c==="number"&&(d.columns[i]==="ConstructionPrice"||(i===d.columns.length-1&&(d.kind==="count"||d.kind==="group")));
-    return h("td",{class:isNum?"num":""},c===null||c===""?"—":isNum?(Number.isInteger(c)?c.toLocaleString():c.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})):c)}))))));
-  else if(d.kind!=="count")out.push(h("div",{class:"note"},"No results"));
+  const fmtN=c=>Number.isInteger(c)?c.toLocaleString():c.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
+  const isId=n=>/(^|_)id$|id$/i.test(n),out=[];
+  if(d.kind==="error")out.push(h("div",{class:"panel err"},d.text));
+  else if(d.kind==="scalar"){const v=d.rows[0][0];out.push(h("div",{class:"count"},h("b",{},typeof v==="number"?fmtN(v):String(v)),h("span",{},d.text)))}
+  else{out.push(h("div",{class:"note"},d.text));
+   if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},d.columns.map(c=>h("th",{},c)))),
+    h("tbody",{},d.rows.map(row=>h("tr",{},row.map((c,i)=>{const num=typeof c==="number"&&!isId(d.columns[i]);
+     return h("td",{class:num?"num":""},c===null||c===""?"—":num?fmtN(c):c)}))))));
+   if(d.truncated)out.push(h("div",{class:"note"},"Showing the first "+d.rows.length+" rows."))}
+  if(d.sql)out.push(h("details",{class:"sql"},h("summary",{},"SQL used"),h("pre",{},d.sql)));
   box.replaceChildren(...out)}catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}});
 </script></body></html>
