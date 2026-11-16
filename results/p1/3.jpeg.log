@@ -1,0 +1,26 @@
+[3.jpeg] extracting...
+Traceback (most recent call last):
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 722, in <module>
+    main()
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 705, in main
+    valves, issues = process_file(client, args.model, f, args)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 669, in process_file
+    pages = build_content(path, args.dpi, args.bands, args.cols)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 290, in build_content
+    blocks.append(img_block(fit(img)))
+                  ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 259, in img_block
+    img.save(buf, format="PNG")
+  File "C:\Users\sriji\Desktop\OCR\.venv\Lib\site-packages\PIL\Image.py", line 2651, in save
+    preinit()
+  File "C:\Users\sriji\Desktop\OCR\.venv\Lib\site-packages\PIL\Image.py", line 466, in preinit
+    from . import PngImagePlugin
+  File "<frozen importlib._bootstrap>", line 1360, in _find_and_load
+  File "<frozen importlib._bootstrap>", line 1331, in _find_and_load_unlocked
+  File "<frozen importlib._bootstrap>", line 935, in _load_unlocked
+  File "<frozen importlib._bootstrap_external>", line 990, in exec_module
+  File "<frozen importlib._bootstrap_external>", line 1086, in get_code
+  File "<frozen importlib._bootstrap_external>", line 1186, in get_data
+MemoryError

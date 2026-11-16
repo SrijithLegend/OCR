@@ -1,0 +1,32 @@
+[1.jpeg] extracting...
+Traceback (most recent call last):
+  File "C:\Users\sriji\Desktop\OCR\.venv\Lib\site-packages\PIL\ImageFile.py", line 669, in _save
+    fh = fp.fileno()
+         ^^^^^^^^^
+AttributeError: '_idat' object has no attribute 'fileno'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 722, in <module>
+    main()
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 705, in main
+    valves, issues = process_file(client, args.model, f, args)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 669, in process_file
+    pages = build_content(path, args.dpi, args.bands, args.cols)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 290, in build_content
+    blocks.append(img_block(fit(img)))
+                  ^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\sriji\Desktop\OCR\main.py", line 259, in img_block
+    img.save(buf, format="PNG")
+  File "C:\Users\sriji\Desktop\OCR\.venv\Lib\site-packages\PIL\Image.py", line 2712, in save
+    save_handler(self, fp, filename)
+  File "C:\Users\sriji\Desktop\OCR\.venv\Lib\site-packages\PIL\PngImagePlugin.py", line 1560, in _save
+    ImageFile._save(
+  File "C:\Users\sriji\Desktop\OCR\.venv\Lib\site-packages\PIL\ImageFile.py", line 673, in _save
+    _encode_tile(im, fp, tile, bufsize, None, exc)
+  File "C:\Users\sriji\Desktop\OCR\.venv\Lib\site-packages\PIL\ImageFile.py", line 708, in _encode_tile
+    raise _get_oserror(errcode, encoder=True) from exc
+OSError: codec configuration error when writing image file
