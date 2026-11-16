@@ -52,6 +52,10 @@ def search(query):
         squashed = re.sub(r"[\s_]+", "", query.lower())
         named = [c[1] for c in conn.execute("PRAGMA table_info(test_data)") if c[1] != "row_id" and c[1].lower().replace("_", "") in squashed]
         colname = max(named, key=len) if named else None  # 'OfficeId' over 'Office'
+        label = None  # extra column shown beside the id when listing
+        if not colname and re.search(r"unique|distinct|different", query, re.I):  # "unique workspaces/items" = distinct ids
+            if re.search(r"\bwor\w*ces?\b", query, re.I): colname, label = "WorkspaceId", "WorkspaceName"
+            elif re.search(r"\bitems?\b", query, re.I): colname, label = "ItemId", "ItemName"
         distinct = colname and re.search(r"unique|distinct|different", query, re.I)
         if distinct or re.search(r"how many|number of|count|total", query, re.I):
             if colname and distinct:
@@ -64,9 +68,11 @@ def search(query):
             n = conn.execute(f"SELECT {expr} FROM test_data WHERE {cond}", args).fetchone()[0]
             res = out("count", f"{n} {unit}" + (f"  ({shown})" if shown else "  (no filters)"))
             if distinct:  # also list every value with how many rows carry it
-                vals = conn.execute(f"SELECT {colname}, COUNT(*) FROM test_data WHERE {cond} AND {colname} IS NOT NULL "
-                                    f"GROUP BY {colname} ORDER BY 2 DESC, 1 LIMIT 500", args).fetchall()
-                res["columns"], res["rows"] = [colname, "Rows"], [list(v) for v in vals]
+                cols = [colname] + ([label] if label else [])
+                vals = conn.execute(f"SELECT {', '.join(cols)}, COUNT(*) FROM test_data WHERE {cond} AND {colname} IS NOT NULL "
+                                    f"GROUP BY {', '.join(cols)} ORDER BY {len(cols) + 1} DESC, 1 LIMIT 500", args).fetchall()
+                res["columns"], res["rows"] = cols + ["Rows"], [list(v) for v in vals]
+                if len(vals) == 500: res["text"] = res["text"].replace("  (", " — top 500 shown  (", 1)
             return res
 
         # 3) Semantic ranking on what's left, inside the filter.
