@@ -16,6 +16,7 @@ main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
 .layout{max-width:1280px;margin:0 auto;padding:0 24px}
 .layout main{margin:0;max-width:none;min-width:0;padding:20px 0 60px}
 aside#find{margin:20px 0 60px;max-width:900px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px}
+#dbline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px}#dbname{font-weight:600;color:var(--text)}
 #find h2{font-size:15px;margin:0 0 8px}
 #find form{display:flex;gap:6px}#find input{flex:1;min-width:0;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}
 #fres{margin-top:12px}
@@ -119,6 +120,11 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
  </section>
 </main>
 <aside id="find" class="hidden"><h2>Ask the database</h2>
+ <div id="dbline" class="muted"><span id="dbname">Loading...</span>
+  <button id="dbchange" class="small" type="button">Use another database...</button>
+  <button id="dbreset" class="small hidden" type="button">Back to default</button>
+  <input id="dbpick" type="file" accept=".db,.sqlite,.sqlite3,.db3" hidden></div>
+ <div id="dbtables" class="muted" style="font-size:12px;margin:2px 0 10px"></div>
  <form id="fform"><input id="fq" type="search" placeholder="e.g. how many rows per category?" aria-label="Search question" autocomplete="off"><button class="primary" type="submit">Search</button></form>
  <div class="muted" style="margin-top:6px;font-size:12px">Ask in plain English. The answer is computed by a read-only SQL query, shown under "SQL used".</div>
  <div id="fres" aria-live="polite"></div></aside>
@@ -282,7 +288,7 @@ wire($("drop"),$("pick"),upload);wire($("sdrop"),$("spick"),stdUpload);
 ["dragover","drop"].forEach(t=>window.addEventListener(t,e=>e.preventDefault()));
 $("only").addEventListener("change",filter);
 function setMode(m){mode=m;data=null;std=null;files=[];fail("");$("mo").classList.toggle("on",m==="ocr");$("ms").classList.toggle("on",m==="std");$("mk").classList.toggle("on",m==="search");
- $("find").classList.toggle("hidden",m!=="search");$("steps").classList.toggle("hidden",m==="search");view("drop");if(m==="search")$("fq").focus()}
+ $("find").classList.toggle("hidden",m!=="search");if(m==="search")loadInfo();$("steps").classList.toggle("hidden",m==="search");view("drop");if(m==="search")$("fq").focus()}
 $("mo").addEventListener("click",()=>setMode("ocr"));$("ms").addEventListener("click",()=>setMode("std"));$("mk").addEventListener("click",()=>setMode("search"));
 $("new").addEventListener("click",()=>setMode(mode));
 
@@ -309,9 +315,20 @@ async function stdDownload(){fail("");
   a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}
  catch(e){fail("Export failed: "+e.message)}}
 
+let dbId="";
+async function loadInfo(){try{const r=await fetch("/search/info?db="+encodeURIComponent(dbId));if(!r.ok)throw new Error(await errText(r));const d=await r.json();
+  $("dbname").textContent="Database: "+d.name;$("dbreset").classList.toggle("hidden",!dbId);
+  $("dbtables").textContent=d.tables.map(t=>t.table+" ("+t.rows.toLocaleString()+" rows, "+t.columns+" columns)").join("  ·  ")}
+ catch(x){$("dbname").textContent="No database";$("dbtables").textContent=String(x.message||x)}}
+$("dbchange").addEventListener("click",()=>$("dbpick").click());
+$("dbreset").addEventListener("click",()=>{dbId="";$("fres").replaceChildren();loadInfo()});
+$("dbpick").addEventListener("change",async()=>{const f=$("dbpick").files[0];$("dbpick").value="";if(!f)return;
+ $("dbname").textContent="Uploading "+f.name+"...";const fd=new FormData();fd.append("file",f);
+ try{const r=await fetch("/search/db",{method:"POST",body:fd});if(!r.ok)throw new Error(await errText(r));dbId=(await r.json()).db;$("fres").replaceChildren();await loadInfo()}
+ catch(x){$("fres").replaceChildren(h("div",{class:"panel err"},String(x.message||x)));loadInfo()}});
 $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq").value.trim(),box=$("fres");if(!q)return;
  box.replaceChildren(h("div",{class:"note"},"Thinking..."));
- try{const r=await fetch("/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q})});
+ try{const r=await fetch("/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q,db:dbId})});
   if(!r.ok)throw new Error(await errText(r));const d=await r.json();
   const fmtN=c=>Number.isInteger(c)?c.toLocaleString():c.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
   const isId=n=>/(^|_)id$|id$/i.test(n),out=[];

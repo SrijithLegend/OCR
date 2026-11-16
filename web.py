@@ -1,8 +1,12 @@
 """Web UI for main.py: upload PDFs/images -> review and edit the extracted table -> export Excel.
 Run: uvicorn web:app --host 127.0.0.1 --port 8000   (needs GENAI_API_KEY, e.g. in .env)"""
+import atexit
 import collections
 import os
+import shutil
+import sqlite3
 import tempfile
+import uuid
 from argparse import Namespace
 from pathlib import Path
 
@@ -24,6 +28,20 @@ ARGS = Namespace(passes=int(os.environ.get("PASSES", "1")), dpi=int(os.environ.g
 PAGE = Path(__file__).with_name("web.html").read_text(encoding="utf-8")
 app = FastAPI(docs_url=None, redoc_url=None)
 
+# Databases uploaded in the Search tab live in a private temp folder for this server run (newest 5 kept, never written to).
+DB_DIR = Path(tempfile.mkdtemp(prefix="nlsql_"))
+atexit.register(shutil.rmtree, DB_DIR, ignore_errors=True)
+DBS = collections.OrderedDict()  # id -> (path, original file name)
+MAX_DBS, MAX_DB_MB = 5, 500
+
+
+def db_path(db_id):
+    if not db_id:
+        return nlsql.DEFAULT_DB, Path(nlsql.DEFAULT_DB).name
+    if db_id not in DBS:
+        raise HTTPException(404, "That database is no longer loaded. Upload it again.")
+    return DBS[db_id]
+
 
 @app.get("/", response_class=HTMLResponse)
 def index():
@@ -32,11 +50,54 @@ def index():
 
 @app.post("/search")
 def search(payload: dict = Body(...)):
-    """Plain-English question about the database -> {kind, text, sql, columns, rows, truncated}. Read-only."""
+    """Plain-English question about a database -> {kind, text, sql, columns, rows, truncated}. Read-only."""
     q = str(payload.get("query", "")).strip()
     if not q:
         raise HTTPException(422, "Type a question first")
-    return nlsql.ask(q)
+    path, _ = db_path(payload.get("db"))
+    return nlsql.ask(q, path)
+
+
+@app.get("/search/info")
+def search_info(db: str = ""):
+    """Which database is in use and what it contains (tables, row and column counts)."""
+    path, name = db_path(db)
+    try:
+        return {"db": db, "name": name, "tables": nlsql.overview(path)}
+    except (sqlite3.Error, OSError) as e:
+        raise HTTPException(422, f"Could not read {name}: {e}")
+
+
+@app.post("/search/db")
+def search_upload_db(file: UploadFile = File(...)):
+    """Upload any SQLite file to ask questions of it. Checked, size-capped, opened read-only."""
+    name = Path(file.filename or "database").name[:120]
+    if Path(name).suffix.lower() not in {".db", ".sqlite", ".sqlite3", ".db3"}:
+        raise HTTPException(415, f"{name}: unsupported type (.db, .sqlite, .sqlite3, .db3 only)")
+    db_id = uuid.uuid4().hex
+    dest, size = DB_DIR / f"{db_id}.sqlite", 0
+    with dest.open("wb") as f:
+        while chunk := file.file.read(1 << 20):
+            size += len(chunk)
+            if size > MAX_DB_MB << 20:
+                f.close(); dest.unlink(missing_ok=True)
+                raise HTTPException(413, f"{name}: larger than {MAX_DB_MB} MB")
+            f.write(chunk)
+    if dest.read_bytes()[:15] != b"SQLite format 3":
+        dest.unlink(missing_ok=True)
+        raise HTTPException(422, f"{name}: not a SQLite database file")
+    try:
+        tables = nlsql.overview(str(dest))
+    except sqlite3.Error as e:
+        dest.unlink(missing_ok=True)
+        raise HTTPException(422, f"{name}: could not read ({e})")
+    if not tables:
+        dest.unlink(missing_ok=True)
+        raise HTTPException(422, f"{name}: no tables found")
+    DBS[db_id] = (str(dest), name)
+    while len(DBS) > MAX_DBS:
+        Path(DBS.popitem(last=False)[1][0]).unlink(missing_ok=True)
+    return {"db": db_id, "name": name, "tables": tables}
 
 
 @app.post("/extract")

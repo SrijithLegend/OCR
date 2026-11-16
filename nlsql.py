@@ -22,6 +22,7 @@ MAX_ROWS = int(os.environ.get("NLSQL_MAX_ROWS", "500"))
 MAX_VALUES = int(os.environ.get("NLSQL_MAX_VALUES", "25"))   # list the values of columns with at most this many distinct values
 INDEX_LIMIT = 50_000                                         # text columns with more distinct values aren't value-matched
 TIMEOUT_S = 15
+RATE_WAIT_MAX = float(os.environ.get("NLSQL_RATE_WAIT", "70"))  # longest we will wait out a rate limit before telling the user
 
 SYSTEM = """You write ONE SQLite SELECT query that answers the user's question about the database described below.
 Reply as JSON: {"sql": "...", "note": "..."}.
@@ -51,7 +52,10 @@ def _q(name):  # quote an identifier
 def _connect(path, sandbox=True):
     """Read-only connection. With sandbox=True (generated SQL) it can only run SELECTs and gives up after TIMEOUT_S seconds."""
     conn = sqlite3.connect(Path(path).resolve().as_uri() + "?mode=ro", uri=True)
+    conn.execute("PRAGMA trusted_schema=OFF")  # the file may be untrusted: don't run schema-defined functions
     if not sandbox:
+        t1 = time.time()
+        conn.set_progress_handler(lambda: 1 if time.time() - t1 > 60 else 0, 20_000)
         return conn
     ok = {sqlite3.SQLITE_SELECT, sqlite3.SQLITE_READ, sqlite3.SQLITE_FUNCTION, sqlite3.SQLITE_RECURSIVE}
     conn.set_authorizer(lambda action, *_: sqlite3.SQLITE_OK if action in ok else sqlite3.SQLITE_DENY)
@@ -109,6 +113,19 @@ def describe(path):
     return out
 
 
+def overview(path):
+    """-> [{"table", "rows", "columns"}] for the UI. Raises sqlite3.Error if the file isn't a readable SQLite database."""
+    conn = _connect(path, sandbox=False)
+    try:
+        out = []
+        for (t,) in conn.execute("SELECT name FROM sqlite_master WHERE type IN ('table','view') AND name NOT LIKE 'sqlite_%' ORDER BY name").fetchall():
+            out.append({"table": t, "rows": conn.execute(f"SELECT COUNT(*) FROM {_q(t)}").fetchone()[0],
+                        "columns": len(conn.execute(f"PRAGMA table_info({_q(t)})").fetchall())})
+        return out
+    finally:
+        conn.close()
+
+
 def hints(question, index):
     """Values the user typed that exist in the data (longest first, no overlaps) -> lines for the prompt. Local only."""
     q, taken, found = question.lower(), [], []
@@ -122,24 +139,39 @@ def hints(question, index):
     return "\n".join(f"{_q(t)}.{_q(c)} has the value {v!r}" for t, c, v in found)
 
 
-def _model(prompt):
+def _get_client():
+    """One shared client, created exactly once (two threads each making one and dropping the other closed it mid-request)."""
     global _client
-    from google import genai
+    with _lock:
+        if _client is None:
+            from google import genai
+            from google.genai import types
+            if not os.environ.get("GENAI_API_KEY"):
+                raise RuntimeError("GENAI_API_KEY is not set (put it in .env)")
+            _client = genai.Client(api_key=os.environ["GENAI_API_KEY"], http_options=types.HttpOptions(timeout=60_000))
+        return _client
+
+
+def _model(prompt):
     from google.genai import types
-    if _client is None:
-        if not os.environ.get("GENAI_API_KEY"):
-            raise RuntimeError("GENAI_API_KEY is not set (put it in .env)")
-        _client = genai.Client(api_key=os.environ["GENAI_API_KEY"], http_options=types.HttpOptions(timeout=60_000))
+    client = _get_client()
     for attempt in range(4):
         try:
-            r = _client.models.generate_content(model=MODEL, contents=prompt, config=types.GenerateContentConfig(
+            r = client.models.generate_content(model=MODEL, contents=prompt, config=types.GenerateContentConfig(
                 system_instruction=SYSTEM, temperature=0, response_mime_type="application/json", response_json_schema=SCHEMA_JSON))
             if not r.text:
                 raise RuntimeError("The model returned nothing (blocked or truncated).")
             return json.loads(r.text)
         except Exception as e:
             msg = f"{type(e).__name__} {e}"
-            if attempt == 3 or not any(c in msg for c in ("503", "429", "500", "disconnected", "timed out", "SSL", "EOF", "ConnectError", "Timeout", "reset")):
+            if "429" in msg or "RESOURCE_EXHAUSTED" in msg:  # rate limit: wait as long as the API asks, if that is reasonable
+                m = re.search(r"retry in ([0-9.]+)s", msg) or re.search(r"retryDelay.: .([0-9.]+)s", msg)
+                wait = float(m.group(1)) + 1 if m else 20
+                if wait > RATE_WAIT_MAX or attempt == 3:
+                    raise RuntimeError(f"Gemini rate limit reached (free tier allows about 15 requests per minute). Try again in {int(wait)} seconds.")
+                time.sleep(wait)
+                continue
+            if attempt == 3 or not any(c in msg for c in ("503", "500", "disconnected", "timed out", "SSL", "EOF", "ConnectError", "Timeout", "reset")):
                 raise
             time.sleep(3 * (attempt + 1))
 
