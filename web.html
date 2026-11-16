@@ -320,8 +320,8 @@ $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq"
   if(filt.length&&filt[0]!=="no filters")out.push(h("div",{class:"chips"},filt.map(f=>h("span",{},f.replace("Week_Label = ","").replace("WorkspaceCreatedBy = ","Created by: ").replace("WorldArea = ","Area: ")))));
   const keep=d.columns.map((c,i)=>i).filter(i=>d.rows.some(r=>r[i]!==null&&r[i]!==""));
   if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},keep.map(i=>h("th",{},NAMES[d.columns[i]]||d.columns[i])))),
-   h("tbody",{},d.rows.map(row=>h("tr",{},keep.map(i=>{const c=row[i],isPrice=d.columns[i]==="ConstructionPrice"&&c!==null;
-    return h("td",{class:isPrice?"num":""},c===null||c===""?"—":isPrice?Number(c).toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2}):c)}))))));
+   h("tbody",{},d.rows.map(row=>h("tr",{},keep.map(i=>{const c=row[i],isNum=typeof c==="number"&&(d.columns[i]==="ConstructionPrice"||(i===d.columns.length-1&&(d.kind==="count"||d.kind==="group")));
+    return h("td",{class:isNum?"num":""},c===null||c===""?"—":isNum?(Number.isInteger(c)?c.toLocaleString():c.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})):c)}))))));
   else if(d.kind!=="count")out.push(h("div",{class:"note"},"No results"));
   box.replaceChildren(...out)}catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}});
 </script></body></html>
