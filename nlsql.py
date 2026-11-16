@@ -34,8 +34,10 @@ Reply as JSON: {"sql": "...", "note": "..."}.
   them exactly as written there.
 - 'How many <things>' where the things have an id/key column: COUNT(DISTINCT that key). If the question asks for rows,
   records or entries, or how many times a specific value occurs: COUNT(*).
-- 'per', 'by', 'each' -> GROUP BY, ordered by the measure DESC. 'Which has the most/least' -> ORDER BY the measure and
-  LIMIT 1..5; never let a NULL/empty group be the winner (filter it out).
+- 'per', 'by', 'each' -> GROUP BY with one row per group and NO LIMIT. Words like highest/lowest/total/average then apply
+  inside each group (MAX / MIN / SUM / AVG per group). Order the groups by that measure DESC.
+- 'Which X has the most/least/highest/lowest ...' -> return the group AND its measure value, ORDER BY the measure,
+  LIMIT 5 (the first row is the answer, the rest give context). Never let a NULL/empty group be the winner.
 - Sums, averages, min and max ignore NULLs; say in the note if many rows have no value.
 - Listing questions: include identifying columns, and LIMIT 200 unless the user asks for all.
 - Match text case-insensitively (lower() or LIKE) unless you are using an exact hint value.
