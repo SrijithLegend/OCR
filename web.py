@@ -14,6 +14,7 @@ from starlette.background import BackgroundTask
 
 import main as ocr
 import openpyxl
+import search as shop_search
 import standard_valve as sv
 
 ALLOWED = {".pdf", ".png", ".jpg", ".jpeg"}
@@ -27,6 +28,18 @@ app = FastAPI(docs_url=None, redoc_url=None)
 @app.get("/", response_class=HTMLResponse)
 def index():
     return PAGE
+
+
+@app.post("/search")
+def search(payload: dict = Body(...)):
+    """Plain-English question about shop.db -> {kind, text, columns, rows}."""
+    q = str(payload.get("query", "")).strip()[:300]
+    if not q:
+        raise HTTPException(422, "Type a question first")
+    try:
+        return shop_search.search(q)
+    except Exception as e:  # missing shop.db / vector_store etc.
+        raise HTTPException(500, f"Search failed: {e}")
 
 
 @app.post("/extract")
