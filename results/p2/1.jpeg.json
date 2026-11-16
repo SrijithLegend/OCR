@@ -1,0 +1,1472 @@
+{
+ "1.jpeg": {
+  "seconds": 138.05,
+  "passes": 2,
+  "model": "gemini-3.5-flash-lite",
+  "calls": 3,
+  "prompt_tokens": 21950,
+  "output_tokens": 19292,
+  "issues": [
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "% Open",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '78', re-read '79'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "% Open",
+    "case": "minimum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '18', re-read '19'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "% Open",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '70'); re-read decided '70'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "(Allowed) / (Calculated w/ Insulation Credit)",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '/ 60', re-read '60'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "(Allowed) / (Calculated w/ Insulation Credit)",
+    "case": "minimum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '/ 56', re-read '56'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "(Allowed) / (Calculated w/ Insulation Credit)",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '/ 62', re-read '62'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Act Orientation:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Vertical', 2: None); re-read decided 'Vertical'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Act. Orientation",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Vertical'); re-read decided 'Vertical'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Actuator Type",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Spring & Diaphragm'); re-read decided 'Spring & Diaphragm'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Actuator Type:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Spring & Diaphragm', 2: None); re-read decided 'Spring & Diaphragm'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Air Failure Valve",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Set at:', re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Air Failure Valve:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Set at:', pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Available Air Supply Pressure Max:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '100psig', pass 2 None, re-read '100'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Available Air Supply Pressure",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "By-Pass",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 None, re-read 'By-Pass:'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "By-Pass:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'By-Pass:', 2: None); re-read decided 'By-Pass:'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Cam Characteristic",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Linear'); re-read decided 'Linear'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Cam Characteristic:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Linear', 2: None); re-read decided 'Linear'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Eff Area",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Gauges",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Yes'); re-read decided 'Yes'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Gauges:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Yes', 2: None); re-read decided 'Yes'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Handwheel Type",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Side Mounted'); re-read decided 'Side Mounted'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Handwheel Type:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Side Mounted', 2: None); re-read decided 'Side Mounted'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Incr Signal Output",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Direct'); re-read decided 'Direct'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Incr Signal Output:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Direct', 2: None); re-read decided 'Direct'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Inlet Pressure (P1)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '45.000'); re-read decided '45.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Inlet Pressure (P1)",
+    "case": "minimum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '22.000', re-read '22.300'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Inlet Pressure (P1)",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '35.000', re-read '35.300'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Inlet Temperature (T1)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '117.8000'); re-read decided '117.8000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Inlet Temperature (T1)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '117.8000'); re-read decided '117.8000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Inlet Temperature (T1)",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '117.8000', re-read '117.4000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Input Signal",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '4-20 mA dc'); re-read decided '4-20 mA dc'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Input Signal:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '4-20 mA dc', 2: None); re-read decided '4-20 mA dc'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Max",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '100psig', re-read '100'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Mfg Model",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Fisher DVC6200'); re-read decided 'Fisher DVC6200'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Mfg Model:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Fisher DVC6200', 2: None); re-read decided 'Fisher DVC6200'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Mfg/Model",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Fisher'); re-read decided 'Fisher'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Mfg/Model:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Fisher', 2: None); re-read decided 'Fisher'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Min",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '10psig', re-read '10'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Min:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '10psig', pass 2 None, re-read '10'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Molecular Weight (M)",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '0.74000', re-read '0.74900'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Molecular Weight (M)",
+    "case": "minimum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '0.74000', re-read '0.79000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Molecular Weight (M)",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '0.74000', re-read '0.74900'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "On/Off",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Modulating'); re-read decided 'Modulating'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "On/Off:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Modulating', 2: None); re-read decided 'Modulating'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Positioner Type",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Electro-Pneumatic'); re-read decided 'Electro-Pneumatic'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Positioner Type:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Electro-Pneumatic', 2: None); re-read decided 'Electro-Pneumatic'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Pressure Differential (dP)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '5.000'); re-read decided '5.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Pressure Differential (dP)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '5.000'); re-read decided '5.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Pressure Differential (dP)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '5.000'); re-read decided '5.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Ratio of Specific Heats (gamma)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1.250'); re-read decided '1.250'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Ratio of Specific Heats (gamma)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1.250'); re-read decided '1.250'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Ratio of Specific Heats (gamma)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1.250'); re-read decided '1.250'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Sizing Coefficient (Cv)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '64.900'); re-read decided '64.900'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Sizing Coefficient (Cv)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '12.300'); re-read decided '12.300'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Sizing Coefficient (Cv)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '56.094'); re-read decided '56.094'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Spring Action",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Open'); re-read decided 'Open'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Spring Action:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Open', 2: None); re-read decided 'Open'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Volumetric Flow Rate Gas (Qp)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1.80000000'); re-read decided '1.80000000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Volumetric Flow Rate Gas (Qp)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '0.25000000'); re-read decided '0.25000000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Volumetric Flow Rate Gas (Qp)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1.40000000'); re-read decided '1.40000000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "AIRSET",
+    "parameter": "Filter",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Gauges'); re-read decided 'Gauges'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "AIRSET",
+    "parameter": "Filter:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Gauges', 2: None); re-read decided 'Gauges'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "AIRSET",
+    "parameter": "Mfg Model",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Fisher'); re-read decided 'Fisher'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "AIRSET",
+    "parameter": "Mfg Model:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Fisher', 2: None); re-read decided 'Fisher'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "ANSI",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'CL150'); re-read decided 'CL150'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "ANSI:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'CL150', 2: None); re-read decided 'CL150'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Balanced/Unbalanced",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Unbalanced'); re-read decided 'Unbalanced'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Balanced/Unbalanced:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Unbalanced', 2: None); re-read decided 'Unbalanced'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Characteristic",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Linear'); re-read decided 'Linear'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Characteristic:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Linear', 2: None); re-read decided 'Linear'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "End Connection In.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '3 inch CL150 3'); re-read decided '3 inch CL150 3'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "End Connection In:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '3 inch CL150 3', 2: None); re-read decided '3 inch CL150 3'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "End Connection Out.",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '3 inch CL150 3'); re-read decided '3 inch CL150 3'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "End Connection Out:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '3 inch CL150 3', 2: None); re-read decided '3 inch CL150 3'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "FL",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '0.94', re-read '6.94'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Fl:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '0.84', pass 2 None, re-read '6.94'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Flow Direction",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Up'); re-read decided 'Up'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Flow Direction:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Up', 2: None); re-read decided 'Up'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Mfg/Model",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Fisher/EZ', re-read 'Fisher EZ'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Mfg/Model:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Fisher/EZ', pass 2 None, re-read 'Fisher EZ'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Rated Cv",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '80.4'); re-read decided '80.4'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Rated Cv:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '80.4', 2: None); re-read decided '80.4'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'NPS 3'); re-read decided 'NPS 3'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '2', re-read '2 inches'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size. Schedule In.",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '3 inches, STD', re-read '3 inches,STD'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size. Schedule In:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '3 inches, STD', pass 2 None, re-read '3 inches,STD'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size. Schedule Out.",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '3 inches, STD', re-read '3 inches,STD'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size. Schedule Out:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '3 inches, STD', pass 2 None, re-read '3 inches,STD'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'NPS 3', 2: None); re-read decided 'NPS 3'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '2', pass 2 None, re-read '2 inches'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Travel",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '1.125 inch'); re-read decided '1.125 inch'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Travel:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.125 inch', 2: None); re-read decided '1.125 inch'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Trim Type",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 '2 inches', re-read '2'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Trim Type:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '2 inches', pass 2 None, re-read '2'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Valve Body/Bonnet Type:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Globe', 2: None); re-read decided 'Globe'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Valve Body/Bonnet",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Globe'); re-read decided 'Globe'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "XT",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '0.749'); re-read decided '0.749'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "xt:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '0.749', 2: None); re-read decided '0.749'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "% Open",
+    "case": "maximum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '78', pass 2 None, re-read '79'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "% Open",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '19', 2: None); re-read decided '19'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "% Open",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '70', 2: None); re-read decided '70'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "(Allowed) / (Calculated w/ Insulation Credit)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '60', 2: None); re-read decided '60'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "(Allowed) / (Calculated w/ Insulation Credit)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '56', 2: None); re-read decided '56'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "(Allowed) / (Calculated w/ Insulation Credit)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '62', 2: None); re-read decided '62'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pressure (P1)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '45.000', 2: None); re-read decided '45.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pressure (P1)",
+    "case": "minimum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '22.000', pass 2 None, re-read '22.300'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Inlet Pressure (P1)",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '35.000', pass 2 None, re-read '35.300'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Inlet Temperature (T1)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '117.8000', 2: None); re-read decided '117.8000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Inlet Temperature (T1)",
+    "case": "minimum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '117.0000', pass 2 None, re-read '117.8000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Inlet Temperature (T1)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '117.4000', 2: None); re-read decided '117.4000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Molecular Weight (M)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '0.74900', 2: None); re-read decided '0.74900'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Molecular Weight (M)",
+    "case": "minimum",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '0.78000', pass 2 None, re-read '0.79000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Molecular Weight (M)",
+    "case": "normal",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '0.74000', pass 2 None, re-read '0.74900'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Pressure Differential (dP)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '5.000', 2: None); re-read decided '5.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Pressure Differential (dP)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '5.000', 2: None); re-read decided '5.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Pressure Differential (dP)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '5.000', 2: None); re-read decided '5.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Ratio of Specific Heats (gamma)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.250', 2: None); re-read decided '1.250'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Ratio of Specific Heats (gamma)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.250', 2: None); re-read decided '1.250'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Ratio of Specific Heats (gamma)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.250', 2: None); re-read decided '1.250'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Sizing Coefficient (Cv)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '64.900', 2: None); re-read decided '64.900'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Sizing Coefficient (Cv)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '12.300', 2: None); re-read decided '12.300'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Sizing Coefficient (Cv)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '56.094', 2: None); re-read decided '56.094'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Volumetric Flow Rate-Gas (Qp)",
+    "case": "maximum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.80000000', 2: None); re-read decided '1.80000000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Volumetric Flow Rate-Gas (Qp)",
+    "case": "minimum",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '0.25000000', 2: None); re-read decided '0.25000000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "Service Conditions",
+    "parameter": "Volumetric Flow Rate-Gas (Qp)",
+    "case": "normal",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: '1.40000000', 2: None); re-read decided '1.40000000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SPECIAL ACCESS",
+    "parameter": "Div",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SPECIAL ACCESS",
+    "parameter": "NEC Class",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Group:', re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SPECIAL ACCESS:",
+    "parameter": "Div.:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Div:', pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SPECIAL ACCESS:",
+    "parameter": "NEC Class:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Group:', pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SWITCHES",
+    "parameter": "Mfg Model",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'Fisher'); re-read decided 'Fisher'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SWITCHES",
+    "parameter": "Mfg Model:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'Fisher', 2: None); re-read decided 'Fisher'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SWITCHES",
+    "parameter": "Type",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 'Qty', re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SWITCHES",
+    "parameter": "Type:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 'Qty:', pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "TESTS",
+    "parameter": "ANSI/FCI Leak Class",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: 'ANSI CL IV'); re-read decided 'ANSI CL IV'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "TESTS",
+    "parameter": "ANSI/FCI Leak Class:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: 'ANSI CL IV', 2: None); re-read decided 'ANSI CL IV'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "TESTS",
+    "parameter": "Hydro Press",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 None, pass 2 None, re-read None"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "TESTS",
+    "parameter": "Shutoff Pressure",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Passes disagreed (1: None, 2: '140.000'); re-read decided '140.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "TESTS",
+    "parameter": "Shutoff Pressure:",
+    "case": "single",
+    "group": "",
+    "severity": "error",
+    "issue": "Unresolved: pass 1 '143.000', pass 2 None, re-read '140.000'"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size:",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Available Air Supply Pressure",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Entry has no value"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "By-Pass",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Entry has no value"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "",
+    "parameter": "Eff Area",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Entry has no value"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "PIPE LINE",
+    "parameter": "Size",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Duplicate entry for the same row and column"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "SPECIAL ACCESS",
+    "parameter": "Div",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Entry has no value"
+   },
+   {
+    "file": "1.jpeg",
+    "valve": "Tag1",
+    "section": "TESTS",
+    "parameter": "Hydro Press",
+    "case": "single",
+    "group": "",
+    "severity": "warning",
+    "issue": "Entry has no value"
+   }
+  ]
+ }
+}
