@@ -13,6 +13,14 @@ header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-betwee
  padding:12px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
 header h1{font-size:17px;margin:0}
 main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
+.layout{max-width:1640px;margin:0 auto;display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start;padding-right:24px}
+.layout main{margin:0;max-width:none;min-width:0}
+aside#find{position:sticky;top:70px;margin-top:20px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+aside#find h2{font-size:15px;margin:0 0 8px}
+#find form{display:flex;gap:6px}#find input{flex:1;min-width:0;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}
+#fres{margin-top:12px;max-height:60vh;overflow:auto}#fres .big{font-size:20px;font-weight:700}
+#fres table{font-size:12px;width:100%}#fres td,#fres th{padding:3px 6px;text-align:left;border-left:0;white-space:nowrap}
+@media(max-width:1100px){.layout{grid-template-columns:1fr;padding-right:0}aside#find{position:static;margin:0 24px 20px}}
 button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 14px}
 button:hover{border-color:var(--accent)}
 button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
@@ -74,6 +82,7 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
  <div class="tabs" style="margin:0"><button id="mo" class="on" type="button">OCR</button><button id="ms" type="button">Standardize descriptions</button></div>
  <div class="steps"><span id="s1" class="on">1 Upload</span><span id="s2">2 Review</span><span id="s3">3 Export</span></div>
  <div><button id="new" class="hidden" type="button">New upload</button></div></header>
+<div class="layout">
 <main>
  <div id="drop" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><b>Drop PDFs or images here</b>
   <span class="muted">or click to choose &middot; PDF, PNG, JPG &middot; original files read far better than screenshots</span>
@@ -102,6 +111,11 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
   </div>
  </section>
 </main>
+<aside id="find"><h2>Search the shop data</h2>
+ <form id="fform"><input id="fq" type="search" placeholder="e.g. how many workspaces by dilla" aria-label="Search question" autocomplete="off"><button class="primary" type="submit">Search</button></form>
+ <div class="muted" style="margin-top:6px;font-size:12px">Item/workspace IDs, "week 33", AP/MEA/EUR, "by dilla", "how many items…"</div>
+ <div id="fres" aria-live="polite"></div></aside>
+</div>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -286,4 +300,14 @@ async function stdDownload(){fail("");
   const a=document.createElement("a");a.href=URL.createObjectURL(await r.blob());
   a.download=std.name.replace(/\.[^.]+$/,"")+"_standardized.xlsx";a.click();$("s3").classList.add("on")}
  catch(e){fail("Export failed: "+e.message)}}
+
+$("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq").value.trim(),box=$("fres");if(!q)return;
+ box.replaceChildren(h("div",{class:"muted"},"Searching..."));
+ try{const r=await fetch("/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q})});
+  if(!r.ok)throw new Error(await errText(r));const d=await r.json();
+  const out=[h("div",{class:d.kind==="count"?"big":"muted"},d.text)];
+  if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},d.columns.map(c=>h("th",{},c)))),
+   h("tbody",{},d.rows.map(row=>h("tr",{},row.map(c=>h("td",{},c??"")))))));
+  else if(d.kind!=="count")out.push(h("div",{class:"muted"},"No results"));
+  box.replaceChildren(...out)}catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}});
 </script></body></html>
