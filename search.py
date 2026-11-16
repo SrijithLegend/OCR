@@ -45,24 +45,29 @@ def search(query):
         rest = rest.strip() or query
         shown = ", ".join(f"{k} = {v}" for d in where for k, v in d.items())
 
-        # Counting questions are answered with SQL over the whole table, never from the top-5 sample.
-        if re.search(r"how many|number of|count|total", query, re.I):
-            cond = " AND ".join(f"{k} = ?" for d in where for k in d) or "1=1"
-            args = [v for d in where for v in d.values()]
-            # A column named in the question ("unique values in officeID column") beats the workspace/item shortcuts.
-            squashed = re.sub(r"[\s_]+", "", query.lower())
-            named = [c[1] for c in conn.execute("PRAGMA table_info(test_data)") if c[1] != "row_id" and c[1].lower().replace("_", "") in squashed]
-            if named:
-                colname = max(named, key=len)  # 'OfficeId' over 'Office'
-                if re.search(r"unique|distinct|different", query, re.I):
-                    unit, expr = f"distinct {colname} values", f"COUNT(DISTINCT {colname})"
-                else:
-                    unit, expr = f"{colname} values (non-empty)", f"COUNT({colname})"
+        # Counting / listing questions are answered with SQL over the whole table, never from the top-5 sample.
+        cond = " AND ".join(f"{k} = ?" for d in where for k in d) or "1=1"
+        args = [v for d in where for v in d.values()]
+        # A column named in the question ("unique values in officeID column") beats the workspace/item shortcuts.
+        squashed = re.sub(r"[\s_]+", "", query.lower())
+        named = [c[1] for c in conn.execute("PRAGMA table_info(test_data)") if c[1] != "row_id" and c[1].lower().replace("_", "") in squashed]
+        colname = max(named, key=len) if named else None  # 'OfficeId' over 'Office'
+        distinct = colname and re.search(r"unique|distinct|different", query, re.I)
+        if distinct or re.search(r"how many|number of|count|total", query, re.I):
+            if colname and distinct:
+                unit, expr = f"distinct {colname} values", f"COUNT(DISTINCT {colname})"
+            elif colname:
+                unit, expr = f"{colname} values (non-empty)", f"COUNT({colname})"
             elif re.search(r"\bwor\w*ces?\b", query, re.I): unit, expr = "workspaces", "COUNT(DISTINCT WorkspaceId)"  # tolerates typos like 'worksapces'
             elif re.search(r"\bitems?\b", query, re.I): unit, expr = "items", "COUNT(DISTINCT ItemId)"
             else: unit, expr = "rows", "COUNT(*)"
             n = conn.execute(f"SELECT {expr} FROM test_data WHERE {cond}", args).fetchone()[0]
-            return out("count", f"{n} {unit}" + (f"  ({shown})" if shown else "  (no filters)"))
+            res = out("count", f"{n} {unit}" + (f"  ({shown})" if shown else "  (no filters)"))
+            if distinct:  # also list every value with how many rows carry it
+                vals = conn.execute(f"SELECT {colname}, COUNT(*) FROM test_data WHERE {cond} AND {colname} IS NOT NULL "
+                                    f"GROUP BY {colname} ORDER BY 2 DESC, 1 LIMIT 500", args).fetchall()
+                res["columns"], res["rows"] = [colname, "Rows"], [list(v) for v in vals]
+            return res
 
         # 3) Semantic ranking on what's left, inside the filter.
         model, col = _vectors()
