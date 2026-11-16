@@ -2,6 +2,8 @@
 
 Reads valve datasheets (PDF, PNG, JPG) with the Gemini API and writes everything printed on them to one Excel sheet: process / service conditions (min / normal / max), body, trim, actuator, materials, dimensions, notes, revision tables and header fields. Parameters are columns (header: section, parameter, unit); each row is one valve's Min / Normal / Max / Design / Single value set.
 
+It also has a **Search** tab: ask any SQLite database a question in plain English and get an exact answer plus the SQL that produced it (see [Ask the database](#ask-the-database-search-tab)).
+
 > Files are sent to the Gemini API. Do not upload anything you are not allowed to share with it.
 
 ## Quick start
@@ -24,7 +26,41 @@ Open http://127.0.0.1:8000 and drop in your files.
 
 **Standardize descriptions** (second tab): upload an .xlsx/.csv of valve descriptions (`ITEM ~ SIZE, CLASS ... PARTNO`). Each part number gets one standard description (`ITEM, MODIFIER, SIZE UNIT, CLASS, END, VARIANT`) by majority vote; disagreements are flagged, never guessed. Runs locally (no Gemini call); *Export to Excel* downloads the result. Also a CLI: `python standard_valve.py in.xlsx -o out.xlsx`.
 
-Nothing is stored on the server. There is no login, so keep it bound to 127.0.0.1.
+**Search** (third tab): ask a question about a database. See the next section.
+
+OCR uploads are not stored. Databases uploaded in the Search tab are kept in a private temp folder (newest 5) until the server stops. There is no login, so keep it bound to 127.0.0.1.
+
+## Ask the database (Search tab)
+
+Ask any SQLite file a question ("how many rows per world area?", "average price of Primary constructions", "which user created the most workspaces?"). Nothing about a particular database is hardcoded.
+
+1. **Schema.** `nlsql.py` reads the tables, columns, types and distinct counts from the file itself, plus the value list of columns with few distinct values (25 or fewer).
+2. **Value hints.** Words in your question that are real values in the data (an office name, a workspace name) are found locally and passed along, so the model filters on the exact spelling.
+3. **SQL.** Gemini writes one `SELECT`.
+4. **Safe run.** It executes on a read-only connection with a SELECT-only authorizer, a 15 s timeout and a 500-row cap. `DROP`, `DELETE`, `UPDATE`, `PRAGMA`, `ATTACH` and chained statements are refused. A query that errors is retried once with the error.
+5. **Answer.** A number or table, a one-line note saying what was counted, and a *SQL used* panel. Read the note: "items" can mean rows or distinct ids, and the note says which.
+
+**Use it**
+- Web: the **Search** tab. *Use another database...* uploads a `.db`, `.sqlite`, `.sqlite3` or `.db3` file (up to 500 MB, checked to be SQLite).
+- CLI: `python nlsql.py --db other.db "your question"`. With no question it opens a prompt. `python search.py` is a shortcut to the same thing.
+- Default database: `shop.db`, or the path in `SHOP_DB`.
+
+**What is sent to the Gemini API:** your question, table and column names and types, the short value lists above, and any value you typed that exists in the data. Never row data or query results.
+
+**Limits**
+- The model can write wrong SQL. Check the note and the SQL on anything that matters.
+- Free-tier Gemini allows about 15 requests per minute. If it is hit, the page says how long to wait.
+- If the database cannot answer the question, it says so instead of guessing.
+
+| Setting (env) | Default | Meaning |
+|---|---|---|
+| `SHOP_DB` | `shop.db` | database used when none is uploaded |
+| `GEMINI_MODEL` | `gemini-3.5-flash-lite` | model id (shared with the OCR) |
+| `NLSQL_MAX_ROWS` | 500 | rows returned |
+| `NLSQL_MAX_VALUES` | 25 | list values for columns with at most this many distinct values |
+| `NLSQL_RATE_WAIT` | 70 | longest wait (seconds) for a rate limit before reporting it |
+
+**Tests:** `python -m pytest eval/test_search.py -q` asks 52 questions (42 on `shop.db`, 8 on a small library database built on the fly, plus a refusal and a safety check) and compares each with independent SQL. It needs `GENAI_API_KEY` and takes about 5 minutes because it paces itself to the rate limit.
 
 ## Command line
 
@@ -54,7 +90,7 @@ The web UI reads the same settings from env vars: `PASSES` (default 1), `DPI` (3
 
 ## Accuracy
 
-Not measured on your sheets. Try one short PDF with `--passes 1` and compare every cell with the page before trusting a batch. Review red and yellow cells first, then spot-check the rest.
+A measured run on public tender sheets is in `results/RESULTS.md` (small sample, and the ground truth was keyed with AI help rather than by hand, so read its limitations before quoting a number). Re-score with `python eval/score.py`. It says nothing about your sheets: try one short PDF with `--passes 1` and compare every cell with the page before trusting a batch. Review red and yellow cells first, then spot-check the rest.
 
 ## Troubleshooting
 
@@ -64,9 +100,15 @@ Not measured on your sheets. Try one short PDF with `--passes 1` and compare eve
 | 413 / 415 error in the UI | File over 50 MB, or not PDF/PNG/JPG. |
 | Many `UNREADABLE` cells | Use the original PDF, or raise `--dpi` / `--bands`. |
 | Slow | Use `--passes 1`. |
+| Search says "rate limit reached" | Free-tier Gemini: wait the number of seconds shown, then ask again. |
+| Search says "GENAI_API_KEY is not set" | Put the key in `.env` next to `nlsql.py`. |
+| Search says the database is no longer loaded | Uploads last until the server restarts; upload the file again. |
 
 ## Files
 
 - `main.py`: prompts, extraction, checks, Excel writer, CLI
-- `web.py`, `web.html`: web UI (`/extract`, `/export`, `/standardize`)
+- `web.py`, `web.html`: web UI (`/extract`, `/export`, `/standardize`, `/search`, `/search/db`, `/search/info`)
 - `standard_valve.py`: description standardizer (used by the web tab and the CLI)
+- `nlsql.py`: plain-English questions over any SQLite file (schema reader, SQL generation, sandboxed run); `search.py` is a shim that runs it
+- `eval/`: accuracy harness for the OCR (`score.py`, ground truth, tests) and `test_search.py` for the database search
+- `build_index.py`, `sync.py`: leftovers from an earlier embedding-based search; nothing uses them now
