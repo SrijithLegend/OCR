@@ -35,7 +35,7 @@ Dev pages (N = 2, reported for transparency, not tuned on): strict 80.9 % (p1) /
 
 Cost on the 4 test files: pass 1 = 158 s total (39.5 s/file mean), 4 API calls, 27,908 prompt + 41,822 output tokens;
 pass 2 = 258 s total (64.5 s/file mean), 12 calls, 81,243 prompt + 85,671 output tokens.
-Manual-entry baseline and review time: **not measured** (`eval/manual_times.csv` was never filled).
+Manual entry took about 2 min per sheet (reported by the repo owner, stopwatch; per-file times not recorded), while the tool ran unattended in 40-65 s per sheet (pass 1 / pass 2, run time only). Review/correction time: **not measured**, so no net time-saved claim is made (`eval/manual_times.csv` not filled).
 
 ## 3. Error analysis (pass 2, test)
 
