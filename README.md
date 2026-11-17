@@ -62,6 +62,17 @@ Ask any SQLite file a question ("how many rows per world area?", "average price 
 
 **Tests:** `python -m pytest eval/test_search.py -q` asks 52 questions (42 on `shop.db`, 8 on a small library database built on the fly, plus a refusal and a safety check) and compares each with independent SQL. It needs `GENAI_API_KEY` and takes about 5 minutes because it paces itself to the rate limit.
 
+### Classic 350 parts dataset: wrong-id repair (Search tab)
+
+`python gen_bikes.py` builds `bike_parts.db` (table `parts`: part_id, part_name, part_description, part_attribute, part_price; 133 rows of Royal Enfield Classic 350 parts, INR prices are rough). 30% of the rows carry another part's id and that part's price. The right answers are kept in `bike_parts_truth.csv`, not in the database. Ids look like `CL350-SEA-004-9F`; the last two characters are a check computed from the part's name and attributes, so a copied id fails it.
+
+In the **Search** tab click *Classic 350 parts* (or upload any database with a `parts` table), then *Check part IDs*. For each row with a wrong id:
+1. The part is looked up in the database by name + attributes among rows whose id checks out. Found: its id and price are used.
+2. Not there (a white seat when only a yellow one is listed): Gemini with Google Search finds the price, and the part gets a new id in the same scheme (next free number, right category, valid check).
+3. If the web lookup fails the row shows *unresolved* and nothing is guessed.
+
+Nothing is written to the database from the page; `python bikefix.py [db] --apply` writes the fixes. Step 2 sends only that part's name, description and attributes to Gemini. It needs a key with Google Search grounding quota: if you see "Google Search quota exhausted", enable billing or set `GROUND_MODEL`. Tests: `python -m pytest eval/test_bikefix.py -q` (offline).
+
 ## Command line
 
 ```bash

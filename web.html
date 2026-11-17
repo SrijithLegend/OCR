@@ -404,7 +404,7 @@ $("fixgo").addEventListener("click",async()=>{const box=$("fixres"),b=$("fixgo")
   box.replaceChildren(h("div",{class:"note"},d.bad+" of "+d.total+" rows have a wrong id: "+n("database")+" fixed from the database, "+n("web")+" priced from the web, "+n("unresolved")+" need a manual look."),
    h("div",{class:"tablewrap"},h("table",{},h("thead",{},h("tr",{},["Row","Part","Attributes","Old id","Old price","New id","New price","How"].map((c,i)=>h("th",{class:i===4||i===6?"num":""},c)))),
     h("tbody",{},d.fixes.map(f=>h("tr",{},h("td",{},f.rowid),h("td",{},f.name),h("td",{},f.attrs),h("td",{},f.old_id),h("td",{class:"num"},money(f.old_price)),h("td",{},f.new_id||"—"),
-     h("td",{class:"num"},money(f.new_price)),h("td",{title:f.source},f.how==="unresolved"?"unresolved: "+f.source:f.how))))))))}
+     h("td",{class:"num"},money(f.new_price)),h("td",{title:f.source},f.how==="unresolved"?"unresolved: "+f.source:f.how)))))))}
  catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}finally{b.disabled=false}});
 $("dbreset").addEventListener("click",()=>{dbId="";$("fres").replaceChildren();loadInfo()});
 $("dbpick").addEventListener("change",async()=>{const f=$("dbpick").files[0];$("dbpick").value="";if(!f)return;
