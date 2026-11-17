@@ -6,13 +6,14 @@ For each row (table `parts`: part_id, part_name, part_description, part_attribut
  3. Not in the database (the white seat when only a yellow one is listed) -> ask Gemini with Google Search for the going price
     and give the part a new id in the database's scheme (next free number, correct category and check characters).
 Nothing is written unless you pass --apply. Sent to Gemini for step 3: only that part's name, description and attributes."""
-import re, sqlite3, sys, time
+import os, re, sqlite3, sys, time
 from pathlib import Path
 
 import nlsql  # loads .env, shares the Gemini client and the rate-limit settings
 from bikeparts import CATS, id_ok, make_id, sig
 
 BATCH = 8
+GROUND_MODEL = os.environ.get("GROUND_MODEL", nlsql.MODEL)  # model used with Google Search; needs a grounding quota on your key
 
 
 def _rows(path):
@@ -36,7 +37,7 @@ def web_prices(parts):
         text = ""
         for attempt in range(3):
             try:
-                r = nlsql._get_client().models.generate_content(model=nlsql.MODEL, contents=prompt, config=types.GenerateContentConfig(
+                r = nlsql._get_client().models.generate_content(model=GROUND_MODEL, contents=prompt, config=types.GenerateContentConfig(
                     temperature=0, tools=[types.Tool(google_search=types.GoogleSearch())]))
                 text = r.text or ""
                 break
@@ -46,11 +47,16 @@ def web_prices(parts):
                 if ("429" in msg or "RESOURCE_EXHAUSTED" in msg) and attempt < 2 and (float(m[1]) if m else 20) <= nlsql.RATE_WAIT_MAX:
                     time.sleep((float(m[1]) if m else 20) + 1)
                     continue
-                text = "ERROR " + msg[:200]
+                if attempt < 2 and "429" not in msg:
+                    time.sleep(3)  # dropped connection: try again
+                    continue
+                text = "ERROR " + ("Google Search quota exhausted for this key/model (set GROUND_MODEL or enable billing)" if "429" in msg else msg[:150])
                 break
+        if text.startswith("ERROR"):  # same cause for the rest: stop instead of hammering the API
+            return [(None, text[6:])] * len(parts)
         for n in range(1, len(chunk) + 1):
             m = re.search(rf"(?m)^\s*{n}\s*\|\s*([0-9][0-9,]*(?:\.[0-9]+)?)\s*\|\s*(.*)$", text)
-            out[i + n - 1] = (float(m[1].replace(",", "")), m[2].strip() or "web") if m else (None, text[:120] if text.startswith("ERROR") else "no price found on the web")
+            out[i + n - 1] = (float(m[1].replace(",", "")), m[2].strip() or "web") if m else (None, "no price found on the web")
     return out
 
 

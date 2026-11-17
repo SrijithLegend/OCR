@@ -20,3 +20,16 @@ def test_dataset_30_percent_wrong_and_detected(tmp_path):
             assert f["new_price"] is None and f["new_id"] != f["old_id"]
             assert id_ok(f["new_id"], f["name"], f["attrs"])
     assert any(f["how"] == "database" for f in res["fixes"]) and any(f["how"] != "database" for f in res["fixes"])
+
+
+def test_web_reply_parsing_and_failure(monkeypatch):
+    class Fake:
+        def __init__(s, text): s.models = s; s.t = text
+        def generate_content(s, **k):
+            if s.t is None: raise RuntimeError("429 RESOURCE_EXHAUSTED")
+            return type("R", (), {"text": s.t})
+    parts = [("Seat", "d", "Colour: White"), ("Horn", "d", "Finish: Gold")]
+    monkeypatch.setattr(bikefix.nlsql, "_get_client", lambda: Fake("1|1,250.50|bikedekho\n2|none|none"))
+    assert bikefix.web_prices(parts) == [(1250.5, "bikedekho"), (None, "no price found on the web")]
+    monkeypatch.setattr(bikefix.nlsql, "_get_client", lambda: Fake(None))
+    assert all(p is None and "quota" in s for p, s in bikefix.web_prices(parts))
