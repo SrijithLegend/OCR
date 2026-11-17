@@ -156,11 +156,14 @@ aside#find{max-width:960px;margin:24px auto 64px;background:var(--panel);border:
 .chip b{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.chip span{font-size:12px;color:var(--muted)}
 .chip.bad b{color:#dc2626}.chip.ok b{color:#16a34a}.chip.web b{color:var(--accent)}.chip.warn b{color:#d97706}
 #fixres .tablewrap{border:1px solid var(--line);border-radius:var(--r);overflow:auto;max-height:65vh}
-table.fix{width:100%;border-collapse:collapse;font-size:13px}
+table.fix{width:100%;min-width:0;table-layout:auto;border-collapse:collapse;font-size:13px}
+table.fix td,table.fix th{white-space:normal;overflow-wrap:anywhere;max-width:none}
+table.fix .mono{white-space:nowrap}
+#fixres .tablewrap{overflow-x:hidden;overflow-y:auto;scrollbar-width:thin}
 table.fix th{position:sticky;top:0;background:var(--bg);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line-2)}
-table.fix td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+table.fix td{border-left:0;padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
 table.fix tbody tr:last-child td{border-bottom:0}table.fix tbody tr:hover td{background:var(--bg)}
-table.fix .rw{color:var(--muted);font-variant-numeric:tabular-nums;width:1%}
+table.fix .rw,table.fix th{white-space:nowrap}table.fix .rw{color:var(--muted);font-variant-numeric:tabular-nums;min-width:52px}
 table.fix .pn{font-weight:600}.sub{font-size:12px;color:var(--muted);margin-top:1px;overflow-wrap:anywhere}
 .mono{font:12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 table.fix .was .mono{color:var(--muted);text-decoration:line-through}table.fix .was .sub{text-decoration:line-through}
