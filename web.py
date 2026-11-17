@@ -18,6 +18,7 @@ from starlette.background import BackgroundTask
 
 import main as ocr
 import openpyxl
+import bikefix
 import nlsql
 import standard_valve as sv
 
@@ -36,6 +37,8 @@ MAX_DBS, MAX_DB_MB = 5, 500
 
 
 def db_path(db_id):
+    if db_id == "bikes":  # the bundled Classic 350 parts dataset (python gen_bikes.py)
+        return "bike_parts.db", "bike_parts.db"
     if not db_id:
         return nlsql.DEFAULT_DB, Path(nlsql.DEFAULT_DB).name
     if db_id not in DBS:
@@ -56,6 +59,18 @@ def search(payload: dict = Body(...)):
         raise HTTPException(422, "Type a question first")
     path, _ = db_path(payload.get("db"))
     return nlsql.ask(q, path)
+
+
+@app.post("/search/fix")
+def search_fix(payload: dict = Body(...)):
+    """Parts table: find rows whose part_id is wrong -> fixes from the database or, failing that, a web price. Reads only."""
+    path, name = db_path(payload.get("db"))
+    try:
+        return bikefix.check(path)
+    except sqlite3.Error as e:
+        raise HTTPException(422, f"{name} has no usable 'parts' table (part_id, part_name, part_description, part_attribute, part_price): {e}")
+    except RuntimeError as e:
+        raise HTTPException(503, str(e))
 
 
 @app.get("/search/info")

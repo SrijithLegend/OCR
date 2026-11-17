@@ -44,8 +44,8 @@ def web_prices(parts):
             except Exception as e:
                 msg = f"{type(e).__name__} {e}"
                 m = re.search(r"retry in ([0-9.]+)s", msg)
-                if ("429" in msg or "RESOURCE_EXHAUSTED" in msg) and attempt < 2 and (float(m[1]) if m else 20) <= nlsql.RATE_WAIT_MAX:
-                    time.sleep((float(m[1]) if m else 20) + 1)
+                if m and attempt < 2 and float(m[1]) <= nlsql.RATE_WAIT_MAX:  # a per-minute limit says how long to wait; a quota does not
+                    time.sleep(float(m[1]) + 1)
                     continue
                 if attempt < 2 and "429" not in msg:
                     time.sleep(3)  # dropped connection: try again

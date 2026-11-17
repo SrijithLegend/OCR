@@ -195,11 +195,14 @@ aside#find{max-width:960px;margin:24px auto 64px;background:var(--panel);border:
  <div id="dbline"><span class="dbicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
   <div class="dbinfo"><span id="dbname">Loading...</span><div id="dbtables"></div></div>
   <div class="dbbtns"><button id="dbchange" class="small" type="button">Use another database...</button>
+  <button id="dbbikes" class="small" type="button">Classic 350 parts</button>
   <button id="dbreset" class="small hidden" type="button">Back to default</button></div>
   <input id="dbpick" type="file" accept=".db,.sqlite,.sqlite3,.db3" hidden></div>
  <form id="fform"><input id="fq" type="search" placeholder="Ask a question, e.g. how many rows are there?" aria-label="Question" autocomplete="off"><button class="primary" type="submit">Ask</button></form>
  <div class="examples"><span>Try:</span><button class="ex" type="button">How many rows are there?</button><button class="ex" type="button">Show 10 sample rows</button><button class="ex" type="button">How many unique values does each column have?</button></div>
- <div id="fres" aria-live="polite"></div></aside>
+ <div id="fres" aria-live="polite"></div>
+ <div id="fixbox" class="hidden"><button id="fixgo" class="primary" type="button">Check part IDs</button>
+  <span class="note">Finds rows whose part_id does not match their name and attributes, then fixes them from the database or a web price.</span><div id="fixres" aria-live="polite"></div></div></aside>
 </div>
 <script>
 "use strict";
@@ -389,10 +392,20 @@ async function stdDownload(){fail("");
 
 let dbId="";
 async function loadInfo(){try{const r=await fetch("/search/info?db="+encodeURIComponent(dbId));if(!r.ok)throw new Error(await errText(r));const d=await r.json();
+  $("fixbox").classList.toggle("hidden",!d.tables.some(t=>t.table==="parts"));$("fixres").replaceChildren();
   $("dbname").textContent=d.name;$("dbreset").classList.toggle("hidden",!dbId);
   $("dbtables").textContent=d.tables.map(t=>t.table+" ("+t.rows.toLocaleString()+" rows, "+t.columns+" columns)").join("  ·  ")}
  catch(x){$("dbname").textContent="No database";$("dbtables").textContent=String(x.message||x)}}
 $("dbchange").addEventListener("click",()=>$("dbpick").click());
+$("dbbikes").addEventListener("click",()=>{dbId="bikes";$("fres").replaceChildren();loadInfo()});
+$("fixgo").addEventListener("click",async()=>{const box=$("fixres"),b=$("fixgo");b.disabled=true;box.replaceChildren(h("div",{class:"note"},"Checking ids and looking up prices (web lookups can take a minute)..."));
+ try{const r=await fetch("/search/fix",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({db:dbId})});if(!r.ok)throw new Error(await errText(r));const d=await r.json();
+  const n=k=>d.fixes.filter(f=>f.how===k).length,money=v=>v===null?"—":Number(v).toLocaleString();
+  box.replaceChildren(h("div",{class:"note"},d.bad+" of "+d.total+" rows have a wrong id: "+n("database")+" fixed from the database, "+n("web")+" priced from the web, "+n("unresolved")+" need a manual look."),
+   h("div",{class:"tablewrap"},h("table",{},h("thead",{},h("tr",{},["Row","Part","Attributes","Old id","Old price","New id","New price","How"].map((c,i)=>h("th",{class:i===4||i===6?"num":""},c)))),
+    h("tbody",{},d.fixes.map(f=>h("tr",{},h("td",{},f.rowid),h("td",{},f.name),h("td",{},f.attrs),h("td",{},f.old_id),h("td",{class:"num"},money(f.old_price)),h("td",{},f.new_id||"—"),
+     h("td",{class:"num"},money(f.new_price)),h("td",{title:f.source},f.how==="unresolved"?"unresolved: "+f.source:f.how))))))))}
+ catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}finally{b.disabled=false}});
 $("dbreset").addEventListener("click",()=>{dbId="";$("fres").replaceChildren();loadInfo()});
 $("dbpick").addEventListener("change",async()=>{const f=$("dbpick").files[0];$("dbpick").value="";if(!f)return;
  $("dbname").textContent="Uploading "+f.name+"...";const fd=new FormData();fd.append("file",f);
