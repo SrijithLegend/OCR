@@ -72,7 +72,7 @@ Any `.db` / `.sqlite` file in the app folder appears in a dropdown at the top of
 
 The page only shows the fixes. `python idfix.py [db] --apply` writes them. Sent to Gemini in step 3: that part's name, description and attributes plus about six other items of the table (name, attributes, price). Needs a key with Google Search grounding quota ("Google Search quota exhausted" means enable billing or set `GROUND_MODEL`). Tests: `python -m pytest eval/test_idfix.py -q` (offline).
 
-`python gen_bikes.py` builds a sample, `bike_parts.db` (133 Royal Enfield Classic 350 parts, 30% with another part's id and price; answers in `bike_parts_truth.csv`).
+`python gen_sample_db.py` builds a sample, `sample_parts.db` (133 motorcycle parts, 30% with another part's id and price; answers in `sample_parts_truth.csv`).
 
 ## Command line
 

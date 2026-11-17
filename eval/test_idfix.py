@@ -2,12 +2,12 @@
 import csv, sqlite3, sys
 from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
-import idfix, gen_bikes
+import idfix, gen_sample_db
 
 
 def test_sample_dataset_30_percent_wrong_and_detected(tmp_path):
     db, tr = tmp_path / "b.db", tmp_path / "t.csv"
-    n, w = gen_bikes.build(str(db), str(tr))
+    n, w = gen_sample_db.build(str(db), str(tr))
     assert round(w / n, 2) == 0.30
     res = idfix.check_table(str(db), web=False)
     assert (res["table"], res["mode"]) == ("parts", "check characters")

@@ -1,9 +1,26 @@
-"""Build bike_parts.db: Royal Enfield Classic 350 parts (part_id, part_name, part_description, part_attribute, part_price).
+"""Build sample_parts.db, a sample catalogue (motorcycle parts) (part_id, part_name, part_description, part_attribute, part_price).
 30% of the rows get a WRONG id plus the price that belongs to that other id (a white seat carrying the yellow seat's id and
-price). The honest answers go to bike_parts_truth.csv, never into the db, so the fixer can be scored.
-Run: python gen_bikes.py   (seeded, same output every time). Prices are rough INR retail figures."""
+price). The honest answers go to sample_parts_truth.csv, never into the db, so the fixer can be scored.
+Run: python gen_sample_db.py   (seeded, same output every time). Prices are rough INR retail figures."""
 import csv, itertools, random, sqlite3
-from bikeparts import make_id
+from idfix import check
+
+# category code -> words that put a part name in it (first hit wins, order matters)
+CATS = {"SEA": ["seat"], "BRK": ["brake", "caliper", "disc"], "FLT": ["filter"],
+        "ENG": ["piston", "gasket", "spark plug", "valve", "cylinder", "clutch plate"],
+        "ELE": ["bulb", "headlight", "battery", "indicator", "horn", "tail lamp", "regulator"],
+        "TYR": ["tyre", "tube"], "CHN": ["chain", "sprocket"], "SUS": ["fork", "shock"],
+        "CBL": ["cable", "lever"], "EXH": ["silencer", "exhaust"],
+        "BDY": ["mirror", "mudguard", "tank", "handlebar", "grip", "footrest", "stand", "guard", "badge"]}
+
+
+def cat_of(name):
+    n = name.lower()
+    return next((c for c, ws in CATS.items() if any(w in n for w in ws)), "GEN")
+
+
+def make_id(name, attrs, n):
+    return f"PRT-{cat_of(name)}-{n:03d}-{check(name, attrs)}"
 
 # (name, base price, description, {attribute: [(option, price delta)]})
 CAT = [
@@ -51,7 +68,7 @@ CAT = [
 ]
 
 
-def build(path="bike_parts.db", truth="bike_parts_truth.csv", seed=7):
+def build(path="sample_parts.db", truth="sample_parts_truth.csv", seed=7):
     rnd = random.Random(seed)
     parts = []  # [name, description, attributes, price, id]
     for name, base, desc, opts in CAT:
@@ -84,4 +101,4 @@ def build(path="bike_parts.db", truth="bike_parts_truth.csv", seed=7):
 
 if __name__ == "__main__":
     n, w = build()
-    print(f"bike_parts.db: {n} rows, {w} with a wrong id ({w / n:.0%}); answers in bike_parts_truth.csv")
+    print(f"sample_parts.db: {n} rows, {w} with a wrong id ({w / n:.0%}); answers in sample_parts_truth.csv")
