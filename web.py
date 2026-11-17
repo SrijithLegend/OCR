@@ -18,7 +18,7 @@ from starlette.background import BackgroundTask
 
 import main as ocr
 import openpyxl
-import bikefix
+import idfix
 import nlsql
 import standard_valve as sv
 
@@ -36,9 +36,19 @@ DBS = collections.OrderedDict()  # id -> (path, original file name)
 MAX_DBS, MAX_DB_MB = 5, 500
 
 
+HERE = Path(__file__).parent
+
+
+def local_dbs():
+    return sorted(p.name for p in HERE.iterdir() if p.is_file() and p.suffix.lower() in {".db", ".sqlite", ".sqlite3", ".db3"})
+
+
 def db_path(db_id):
-    if db_id == "bikes":  # the bundled Classic 350 parts dataset (python gen_bikes.py)
-        return "bike_parts.db", "bike_parts.db"
+    if db_id.startswith("local:"):  # a database file sitting next to the app
+        name = db_id[6:]
+        if name not in local_dbs():
+            raise HTTPException(404, f"{name} is not in the app folder.")
+        return str(HERE / name), name
     if not db_id:
         return nlsql.DEFAULT_DB, Path(nlsql.DEFAULT_DB).name
     if db_id not in DBS:
@@ -61,14 +71,22 @@ def search(payload: dict = Body(...)):
     return nlsql.ask(q, path)
 
 
+@app.get("/search/local")
+def search_local():
+    """Database files found in the app folder, and which one is used when none is chosen."""
+    return {"files": local_dbs(), "default": Path(nlsql.DEFAULT_DB).name}
+
+
 @app.post("/search/fix")
 def search_fix(payload: dict = Body(...)):
-    """Parts table: find rows whose part_id is wrong -> fixes from the database or, failing that, a web price. Reads only."""
+    """Catalogue table (found automatically): rows whose id is wrong -> fixes from the database or, failing that, a web price. Reads only."""
     path, name = db_path(payload.get("db"))
     try:
-        return bikefix.check(path)
+        return idfix.check_table(path)
     except sqlite3.Error as e:
-        raise HTTPException(422, f"{name} has no usable 'parts' table (part_id, part_name, part_description, part_attribute, part_price): {e}")
+        raise HTTPException(422, f"{name} cannot be checked: {e}")
+    except ValueError as e:
+        raise HTTPException(422, str(e))
     except RuntimeError as e:
         raise HTTPException(503, str(e))
 

@@ -145,6 +145,31 @@ aside#find{max-width:960px;margin:24px auto 64px;background:var(--panel);border:
 #fres details.sql summary{cursor:pointer;font-weight:550;width:max-content}
 #fres details.sql pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-s);padding:12px 14px;color:var(--text);font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
 
+/* id check */
+#fixbox{margin-top:28px;padding-top:22px;border-top:1px solid var(--line)}
+.fixhead{display:flex;gap:16px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.fixhead b{display:block;font-size:15px;margin-bottom:2px}.fixhead .note{display:block;max-width:640px;margin:0}
+#dbsel{font:inherit;font-size:12px;padding:5px 8px;border:1px solid var(--line-2);border-radius:var(--r-s);background:var(--panel);color:var(--text);max-width:200px}
+#fixres .note{font-size:13px;color:var(--muted);margin:10px 2px}
+.chips{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0 4px}
+.chip{display:flex;align-items:baseline;gap:8px;padding:10px 16px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg)}
+.chip b{font-size:22px;font-weight:700;font-variant-numeric:tabular-nums;letter-spacing:-.01em}.chip span{font-size:12px;color:var(--muted)}
+.chip.bad b{color:#dc2626}.chip.ok b{color:#16a34a}.chip.web b{color:var(--accent)}.chip.warn b{color:#d97706}
+#fixres .tablewrap{border:1px solid var(--line);border-radius:var(--r);overflow:auto;max-height:65vh}
+table.fix{width:100%;border-collapse:collapse;font-size:13px}
+table.fix th{position:sticky;top:0;background:var(--bg);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);font-weight:600;padding:10px 14px;border-bottom:1px solid var(--line-2)}
+table.fix td{padding:11px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+table.fix tbody tr:last-child td{border-bottom:0}table.fix tbody tr:hover td{background:var(--bg)}
+table.fix .rw{color:var(--muted);font-variant-numeric:tabular-nums;width:1%}
+table.fix .pn{font-weight:600}.sub{font-size:12px;color:var(--muted);margin-top:1px;overflow-wrap:anywhere}
+.mono{font:12px ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+table.fix .was .mono{color:var(--muted);text-decoration:line-through}table.fix .was .sub{text-decoration:line-through}
+table.fix .arr{color:var(--line-2);font-size:16px;padding-left:0;padding-right:0;width:1%}
+table.fix .now .mono{font-weight:600}.price{font-weight:650;font-variant-numeric:tabular-nums;margin-top:1px}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.badge.ok{background:#dcfce7;color:#166534}.badge.web{background:var(--accent-soft);color:var(--accent)}.badge.bad{background:#fee2e2;color:#991b1b}.badge.warn{background:#fef3c7;color:#92400e}
+@media (prefers-color-scheme:dark){.badge.ok{background:#14301f;color:#86efac}.badge.bad{background:#3a1717;color:#fca5a5}.badge.warn{background:#35290d;color:#fcd34d}.chip.bad b{color:#f87171}.chip.ok b{color:#4ade80}}
+
 @media (max-width:900px){
  header{grid-template-columns:auto 1fr;height:auto;padding:10px 16px;row-gap:8px}
  header .tabs{grid-column:1/-1;order:3;justify-self:stretch;display:flex}header .tabs button{flex:1}
@@ -194,15 +219,14 @@ aside#find{max-width:960px;margin:24px auto 64px;background:var(--panel);border:
  <p class="find-sub muted">Ask in plain English. Every answer comes from a read-only SQL query that you can inspect.</p>
  <div id="dbline"><span class="dbicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
   <div class="dbinfo"><span id="dbname">Loading...</span><div id="dbtables"></div></div>
-  <div class="dbbtns"><button id="dbchange" class="small" type="button">Use another database...</button>
-  <button id="dbbikes" class="small" type="button">Classic 350 parts</button>
+  <div class="dbbtns"><select id="dbsel" class="small hidden" aria-label="Database in the app folder"></select><button id="dbchange" class="small" type="button">Use another database...</button>
   <button id="dbreset" class="small hidden" type="button">Back to default</button></div>
   <input id="dbpick" type="file" accept=".db,.sqlite,.sqlite3,.db3" hidden></div>
  <form id="fform"><input id="fq" type="search" placeholder="Ask a question, e.g. how many rows are there?" aria-label="Question" autocomplete="off"><button class="primary" type="submit">Ask</button></form>
  <div class="examples"><span>Try:</span><button class="ex" type="button">How many rows are there?</button><button class="ex" type="button">Show 10 sample rows</button><button class="ex" type="button">How many unique values does each column have?</button></div>
  <div id="fres" aria-live="polite"></div>
- <div id="fixbox" class="hidden"><button id="fixgo" class="primary" type="button">Check part IDs</button>
-  <span class="note">Finds rows whose part_id does not match their name and attributes, then fixes them from the database or a web price.</span><div id="fixres" aria-live="polite"></div></div></aside>
+ <div id="fixbox"><div class="fixhead"><div><b>Check ids</b><span class="note">Finds rows whose id doesn't belong to them (works on any catalogue-style table with an id, a name and a price). Fixes come from the database, or from a web price.</span></div>
+  <button id="fixgo" class="primary" type="button">Check ids</button></div><div id="fixres" aria-live="polite"></div></div></aside>
 </div>
 <script>
 "use strict";
@@ -363,7 +387,7 @@ wire($("drop"),$("pick"),upload);wire($("sdrop"),$("spick"),stdUpload);
 ["dragover","drop"].forEach(t=>window.addEventListener(t,e=>e.preventDefault()));
 $("only").addEventListener("change",filter);
 function setMode(m){mode=m;data=null;std=null;files=[];fail("");$("mo").classList.toggle("on",m==="ocr");$("ms").classList.toggle("on",m==="std");$("mk").classList.toggle("on",m==="search");
- $("find").classList.toggle("hidden",m!=="search");document.querySelector("main").classList.toggle("hidden",m==="search");if(m==="search")loadInfo();$("steps").classList.toggle("hidden",m==="search");view("drop");if(m==="search")$("fq").focus()}
+ $("find").classList.toggle("hidden",m!=="search");document.querySelector("main").classList.toggle("hidden",m==="search");if(m==="search"){loadInfo();loadLocal()}$("steps").classList.toggle("hidden",m==="search");view("drop");if(m==="search")$("fq").focus()}
 $("mo").addEventListener("click",()=>setMode("ocr"));$("ms").addEventListener("click",()=>setMode("std"));$("mk").addEventListener("click",()=>setMode("search"));
 $("new").addEventListener("click",()=>setMode(mode));
 
@@ -392,21 +416,34 @@ async function stdDownload(){fail("");
 
 let dbId="";
 async function loadInfo(){try{const r=await fetch("/search/info?db="+encodeURIComponent(dbId));if(!r.ok)throw new Error(await errText(r));const d=await r.json();
-  $("fixbox").classList.toggle("hidden",!d.tables.some(t=>t.table==="parts"));$("fixres").replaceChildren();
+  $("fixres").replaceChildren();
   $("dbname").textContent=d.name;$("dbreset").classList.toggle("hidden",!dbId);
   $("dbtables").textContent=d.tables.map(t=>t.table+" ("+t.rows.toLocaleString()+" rows, "+t.columns+" columns)").join("  ·  ")}
  catch(x){$("dbname").textContent="No database";$("dbtables").textContent=String(x.message||x)}}
 $("dbchange").addEventListener("click",()=>$("dbpick").click());
-$("dbbikes").addEventListener("click",()=>{dbId="bikes";$("fres").replaceChildren();loadInfo()});
+async function loadLocal(){try{const r=await fetch("/search/local"),d=await r.json(),s=$("dbsel");s.replaceChildren(...d.files.map(f=>h("option",{value:f==d.default?"":"local:"+f},f)));
+  s.classList.toggle("hidden",d.files.length<2);s.value=dbId}catch{}}
+$("dbsel").addEventListener("change",()=>{dbId=$("dbsel").value;$("fres").replaceChildren();loadInfo()});
 $("fixgo").addEventListener("click",async()=>{const box=$("fixres"),b=$("fixgo");b.disabled=true;box.replaceChildren(h("div",{class:"note"},"Checking ids and looking up prices (web lookups can take a minute)..."));
  try{const r=await fetch("/search/fix",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({db:dbId})});if(!r.ok)throw new Error(await errText(r));const d=await r.json();
-  const n=k=>d.fixes.filter(f=>f.how===k).length,money=v=>v===null?"—":Number(v).toLocaleString();
-  box.replaceChildren(h("div",{class:"note"},d.bad+" of "+d.total+" rows have a wrong id: "+n("database")+" fixed from the database, "+n("web")+" priced from the web, "+n("unresolved")+" need a manual look."),
-   h("div",{class:"tablewrap"},h("table",{},h("thead",{},h("tr",{},["Row","Part","Attributes","Old id","Old price","New id","New price","How"].map((c,i)=>h("th",{class:i===4||i===6?"num":""},c)))),
-    h("tbody",{},d.fixes.map(f=>h("tr",{},h("td",{},f.rowid),h("td",{},f.name),h("td",{},f.attrs),h("td",{},f.old_id),h("td",{class:"num"},money(f.old_price)),h("td",{},f.new_id||"—"),
-     h("td",{class:"num"},money(f.new_price)),h("td",{title:f.source},f.how==="unresolved"?"unresolved: "+f.source:f.how)))))))}
+  const n=k=>d.fixes.filter(f=>f.how===k).length,money=v=>v===null||v===undefined?"—":Number(v).toLocaleString(undefined,{maximumFractionDigits:2}),
+   chip=(num,label,cls)=>h("div",{class:"chip "+cls},h("b",{},num),h("span",{},label)),
+   badge={database:["From database","ok"],web:["From web","web"],unresolved:["Unresolved","bad"],ambiguous:["Ambiguous","warn"]};
+  const out=[h("div",{class:"chips"},chip(d.total.toLocaleString(),"rows checked",""),chip(d.bad,"wrong ids","bad"),chip(n("database"),"fixed from database","ok"),chip(n("web"),"priced from web","web"),
+    n("unresolved")+n("ambiguous")?chip(n("unresolved")+n("ambiguous"),"need a look","warn"):null),
+   h("div",{class:"note"},"Table "+d.table+" · id "+d.columns.id+", name "+d.columns.name+", price "+d.columns.price+" · ids judged by "+d.mode)];
+  if(d.fixes.length)out.push(h("div",{class:"tablewrap"},h("table",{class:"fix"},h("thead",{},h("tr",{},h("th",{},"Row"),h("th",{},"Part"),h("th",{},"Was"),h("th",{},""),h("th",{},"Now"),h("th",{},"Fixed by"))),
+    h("tbody",{},d.fixes.map(f=>{const[bl,bc]=badge[f.how]||[f.how,"warn"];
+     return h("tr",{},h("td",{class:"rw"},f.rowid),
+      h("td",{},h("div",{class:"pn"},f.name),f.attrs?h("div",{class:"sub"},f.attrs):null),
+      h("td",{class:"was"},h("div",{class:"mono"},f.old_id??"—"),h("div",{class:"sub"},money(f.old_price))),
+      h("td",{class:"arr"},"→"),
+      h("td",{class:"now"},h("div",{class:"mono"},f.new_id||"—"),h("div",{class:"price"},money(f.new_price))),
+      h("td",{},h("span",{class:"badge "+bc},bl),f.how==="database"?null:h("div",{class:"sub"},f.source)))})))));
+  else out.push(h("div",{class:"note"},"Every id matches its row."));
+  box.replaceChildren(...out)}
  catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}finally{b.disabled=false}});
-$("dbreset").addEventListener("click",()=>{dbId="";$("fres").replaceChildren();loadInfo()});
+$("dbreset").addEventListener("click",()=>{dbId="";$("dbsel").value="";$("fres").replaceChildren();loadInfo()});
 $("dbpick").addEventListener("change",async()=>{const f=$("dbpick").files[0];$("dbpick").value="";if(!f)return;
  $("dbname").textContent="Uploading "+f.name+"...";const fd=new FormData();fd.append("file",f);
  try{const r=await fetch("/search/db",{method:"POST",body:fd});if(!r.ok)throw new Error(await errText(r));dbId=(await r.json()).db;$("fres").replaceChildren();await loadInfo()}
