@@ -9,3 +9,5 @@ eval/sheets/
 shop.db
 vector_store/
 last_sync.txt
+*.db
+sample_parts*

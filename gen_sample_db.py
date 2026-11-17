@@ -1,7 +1,7 @@
 """Build sample_parts.db, a sample catalogue (motorcycle parts) (part_id, part_name, part_description, part_attribute, part_price).
 30% of the rows get a WRONG id plus the price that belongs to that other id (a white seat carrying the yellow seat's id and
 price). The honest answers go to sample_parts_truth.csv, never into the db, so the fixer can be scored.
-Run: python gen_sample_db.py   (seeded, same output every time). Prices are rough INR retail figures."""
+Run: python gen_sample_db.py   (seeded, same output every time; writes the .db, the answer csv and an Excel copy). Prices are rough INR retail figures."""
 import csv, itertools, random, sqlite3
 from idfix import check
 
@@ -99,6 +99,38 @@ def build(path="sample_parts.db", truth="sample_parts_truth.csv", seed=7):
     return len(rows), len(wrong)
 
 
+def export_xlsx(db="sample_parts.db", truth="sample_parts_truth.csv", out="sample_parts.xlsx"):
+    """Excel copy of the table (sheet 'parts', as the database holds it) and of the answer key (sheet 'answer_key')."""
+    from openpyxl import Workbook
+    from openpyxl.styles import Alignment, Font, PatternFill
+    from openpyxl.utils import get_column_letter
+    wb = Workbook()
+    conn = sqlite3.connect(db)
+    cur = conn.execute("SELECT rowid, * FROM parts")
+    sheets = [("parts", ["row"] + [d[0] for d in cur.description[1:]], cur.fetchall(), {"part_price": "#,##0.00"}),
+              ("answer_key", None, list(csv.reader(open(truth)))[1:], {})]
+    conn.close()
+    for i, (title, head, rows, fmt) in enumerate(sheets):
+        ws = wb.active if i == 0 else wb.create_sheet()
+        ws.title = title
+        head = head or ["row", "id_wrong (1 = yes)", "true_id", "true_price"]
+        ws.append(head)
+        for r in rows:
+            ws.append([float(c) if k == len(r) - 1 and title == "answer_key" else int(c) if title == "answer_key" and k < 2 else c for k, c in enumerate(r)])
+        for c in ws[1]:
+            c.font, c.fill = Font(bold=True, color="FFFFFF"), PatternFill("solid", fgColor="1F3A5F")
+            c.alignment = Alignment(vertical="center")
+        for k, name in enumerate(head, 1):
+            width = max(len(str(name)), *(len(str(r[k - 1])) for r in rows)) + 3
+            ws.column_dimensions[get_column_letter(k)].width = min(width, 60)
+            if name in fmt:
+                for cell in ws[get_column_letter(k)][1:]:
+                    cell.number_format = fmt[name]
+        ws.freeze_panes, ws.auto_filter.ref = "A2", ws.dimensions
+    wb.save(out)
+
+
 if __name__ == "__main__":
     n, w = build()
-    print(f"sample_parts.db: {n} rows, {w} with a wrong id ({w / n:.0%}); answers in sample_parts_truth.csv")
+    export_xlsx()
+    print(f"sample_parts.db: {n} rows, {w} with a wrong id ({w / n:.0%}); answers in sample_parts_truth.csv; Excel copy in sample_parts.xlsx")
