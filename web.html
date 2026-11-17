@@ -2,94 +2,164 @@
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Datasheet extractor</title>
 <style>
-:root{--bg:#f5f6f8;--panel:#fff;--text:#1b1f27;--muted:#667085;--line:#d9dde4;--accent:#1f4e9c;--accent-fg:#fff;
---err:#fbd5d5;--err-b:#d64545;--warn:#fff0c2;--warn-b:#d9a400;--edit:#cfe3f8;--edit-b:#3b82c4}
-@media (prefers-color-scheme:dark){:root{--bg:#14171c;--panel:#1c2027;--text:#e7eaf0;--muted:#9aa4b2;--line:#323946;
---accent:#6ea0f0;--accent-fg:#0b1220;--err:#4a2326;--err-b:#e06666;--warn:#4a3d12;--warn-b:#e0b422;--edit:#1f3a56;--edit-b:#5aa0e0}}
+:root{--bg:#f6f7f9;--panel:#fff;--text:#111827;--muted:#6b7280;--line:#e5e7eb;--line-2:#d1d5db;
+--accent:#2563eb;--accent-h:#1d4ed8;--accent-fg:#fff;--accent-soft:#eff6ff;
+--err:#fef2f2;--err-b:#ef4444;--warn:#fffbeb;--warn-b:#f59e0b;--edit:#eff6ff;--edit-b:#3b82f6;
+--shadow:0 1px 2px rgba(16,24,40,.05),0 1px 3px rgba(16,24,40,.08);--shadow-lg:0 4px 14px rgba(16,24,40,.08);
+--r:12px;--r-s:8px}
+@media (prefers-color-scheme:dark){:root{--bg:#0e1116;--panel:#161a21;--text:#e6e8ec;--muted:#9aa3b0;--line:#262c36;--line-2:#343c49;
+--accent:#60a5fa;--accent-h:#93c5fd;--accent-fg:#0b1220;--accent-soft:#17243a;
+--err:#2a1618;--err-b:#f87171;--warn:#2b2410;--warn-b:#fbbf24;--edit:#16263d;--edit-b:#60a5fa;
+--shadow:0 1px 2px rgba(0,0,0,.4);--shadow-lg:0 6px 18px rgba(0,0,0,.45)}}
 *{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;-webkit-font-smoothing:antialiased}
 .hidden{display:none!important}.muted{color:var(--muted)}
-header{position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:12px;
- padding:12px 24px;background:var(--panel);border-bottom:1px solid var(--line)}
-header h1{font-size:17px;margin:0}
-main{max-width:1280px;margin:0 auto;padding:20px 24px 60px}
+h1,h2,h3{letter-spacing:-.01em}
+
+/* header */
+header{position:sticky;top:0;z-index:10;height:60px;display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;
+ padding:0 24px;background:color-mix(in srgb,var(--panel) 92%,transparent);backdrop-filter:saturate(1.4) blur(8px);border-bottom:1px solid var(--line)}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.logo{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;background:var(--accent);color:var(--accent-fg);flex:none}
+.logo svg{width:18px;height:18px}
+header h1{font-size:15px;font-weight:650;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hright{display:flex;justify-content:flex-end;align-items:center;gap:12px}
+header .tabs{display:inline-flex;gap:2px;margin:0;padding:3px;background:var(--bg);border:1px solid var(--line);border-radius:10px}
+header .tabs button{margin-bottom:0;border:0;background:transparent;padding:6px 14px;border-radius:7px;font-weight:550;color:var(--muted)}
+header .tabs button:hover{color:var(--text);border-color:transparent}
+header .tabs button.on{background:var(--panel);color:var(--text);box-shadow:var(--shadow)}
+.steps{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted)}
+.steps span{padding:3px 10px;border-radius:999px;white-space:nowrap}
+.steps span+span:before{content:"";display:inline-block;width:10px;border-top:1px solid var(--line-2);margin-right:14px;vertical-align:middle;margin-left:-4px}
+.steps .on{background:var(--accent-soft);color:var(--accent);font-weight:600}
+
+/* layout */
+main{max-width:1280px;margin:0 auto;padding:24px 24px 64px}
 .layout{max-width:1280px;margin:0 auto;padding:0 24px}
-.layout main{margin:0;max-width:none;min-width:0;padding:20px 0 60px}
-aside#find{margin:20px 0 60px;max-width:900px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 20px}
-#dbline{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:2px}#dbname{font-weight:600;color:var(--text)}
-#find h2{font-size:15px;margin:0 0 8px}
-#find form{display:flex;gap:6px}#find input{flex:1;min-width:0;font:inherit;padding:7px 10px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--text)}
-#fres{margin-top:12px}
-#fres .count{display:flex;align-items:baseline;gap:8px;padding:12px 14px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
-#fres .count b{font-size:32px;line-height:1;color:var(--accent)}#fres .count span{font-size:15px}
-#fres details.sql{margin-top:10px;font-size:12px;color:var(--muted)}#fres details.sql pre{white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;color:var(--text)}
-#fres .note{font-size:12px;color:var(--muted);margin:6px 2px}
-#fres .chips{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0}#fres .chips span{font-size:12px;padding:1px 9px;border-radius:12px;background:var(--edit);border:1px solid var(--edit-b)}
-#fres table{width:100%;border-collapse:collapse;font-size:13px}
-#fres th{position:sticky;top:0;background:var(--panel);text-align:left;font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);padding:6px 8px;border-bottom:2px solid var(--line)}
-#fres td{padding:6px 8px;border-left:0;border-bottom:1px solid var(--line);overflow-wrap:anywhere}
-#fres td.num{text-align:right;font-variant-numeric:tabular-nums}#fres tbody tr:hover{background:var(--bg)}
-button{font:inherit;cursor:pointer;border-radius:8px;border:1px solid var(--line);background:var(--panel);color:var(--text);padding:7px 14px}
+.layout main{margin:0;max-width:none;min-width:0;padding:24px 0 64px}
+
+/* buttons, inputs */
+button{font:inherit;cursor:pointer;border-radius:var(--r-s);border:1px solid var(--line-2);background:var(--panel);color:var(--text);padding:7px 14px;transition:background .12s,border-color .12s,box-shadow .12s}
 button:hover{border-color:var(--accent)}
-button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600}
-button.small{padding:2px 9px;font-size:12px}
-#drop{border:2px dashed var(--line);border-radius:14px;background:var(--panel);text-align:center;padding:56px 20px;cursor:pointer;transition:.15s}
-#drop:hover,#drop.over{border-color:var(--accent)}#drop.over{background:var(--edit)}
-#drop b{display:block;font-size:18px;margin-bottom:6px}
-.panel{display:flex;gap:14px;align-items:center;margin-top:16px;padding:14px 18px;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
-.panel.err{border-color:var(--err-b);background:var(--err)}
-.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:s .9s linear infinite}
-@keyframes s{to{transform:rotate(360deg)}}
-.bar{display:flex;gap:16px;align-items:center;flex-wrap:wrap;margin-bottom:8px}
-.bar .sum{flex:1;min-width:260px;font-weight:600}
-.steps{display:flex;gap:6px;font-size:13px;color:var(--muted)}.steps span{padding:2px 10px;border-radius:12px}
-.steps .on{background:var(--accent);color:var(--accent-fg);font-weight:600}
-#drop svg{width:44px;height:44px;margin-bottom:8px;color:var(--accent)}
-.hint{margin-top:10px;font-size:12px}
-.toolbar{position:sticky;top:51px;z-index:4;background:var(--bg);padding:8px 0}
+button.primary{background:var(--accent);color:var(--accent-fg);border-color:var(--accent);font-weight:600;box-shadow:var(--shadow)}
+button.primary:hover{background:var(--accent-h);border-color:var(--accent-h)}
+button.small{padding:3px 10px;font-size:12px}
 button:disabled{opacity:.55;cursor:wait}
-button:focus-visible,a.pg:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
-details.card>summary{list-style:none;cursor:pointer}details.card>summary::-webkit-details-marker{display:none}
-details.card>summary h2:before{content:"BE ";color:var(--muted)}details.card:not([open])>summary h2:before{content:"B8 "}
-.badge{margin-left:auto;font-size:12px}.badge b{padding:1px 8px;border-radius:10px;margin-left:4px;border:1px solid transparent}
-.badge .e{background:var(--err);border-color:var(--err-b)}.badge .w{background:var(--warn);border-color:var(--warn-b)}
-.legend{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:6px 0 16px}
-.chip{padding:1px 9px;border-radius:10px;font-size:12px;border:1px solid transparent}
+button:focus-visible,a.pg:focus-visible,summary:focus-visible,#drop:focus-visible,#sdrop:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+input[type=checkbox]{accent-color:var(--accent)}
+
+/* upload zones */
+#drop,#sdrop{border:1.5px dashed var(--line-2);border-radius:16px;background:var(--panel);text-align:center;padding:64px 24px;cursor:pointer;transition:border-color .15s,background .15s,box-shadow .15s;box-shadow:var(--shadow)}
+#drop:hover,#sdrop:hover,#drop.over,#sdrop.over{border-color:var(--accent);box-shadow:var(--shadow-lg)}
+#drop.over,#sdrop.over{background:var(--accent-soft)}
+#drop svg,#sdrop svg{width:52px;height:52px;padding:13px;margin-bottom:14px;color:var(--accent);background:var(--accent-soft);border-radius:50%}
+#drop b,#sdrop b{display:block;font-size:18px;font-weight:650;margin-bottom:6px}
+.hint{margin-top:12px;font-size:12px}
+
+/* status panels */
+.panel{display:flex;gap:14px;align-items:center;margin-top:16px;padding:14px 18px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--shadow)}
+.panel.err{border-color:var(--err-b);background:var(--err)}
+.spin{width:22px;height:22px;border-radius:50%;border:3px solid var(--line);border-top-color:var(--accent);animation:s .9s linear infinite;flex:none}
+@keyframes s{to{transform:rotate(360deg)}}
+
+/* review toolbar, legend, tabs */
+.bar{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.bar .sum{flex:1;min-width:260px;font-weight:600}
+.toolbar{position:sticky;top:60px;z-index:4;background:var(--bg);padding:10px 0;margin-bottom:4px}
+.legend{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:4px 0 18px}
+.chip{padding:2px 10px;border-radius:999px;font-size:12px;border:1px solid transparent}
 .chip.error{background:var(--err);border-color:var(--err-b)}.chip.warning{background:var(--warn);border-color:var(--warn-b)}
 .chip.edited{background:var(--edit);border-color:var(--edit-b)}
-.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:18px;overflow:hidden}
-.card-head{padding:12px 16px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline}
-.card-head h2{font-size:15px;margin:0}
-.notes{padding:8px 16px;border-bottom:1px solid var(--line);font-size:13px}
+.tabs{display:flex;gap:4px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.tabs button{border:0;border-bottom:2px solid transparent;border-radius:0;background:transparent;padding:8px 14px;color:var(--muted);font-weight:550;margin-bottom:-1px}
+.tabs button:hover{color:var(--text)}.tabs button.on{color:var(--accent);border-bottom-color:var(--accent)}
+
+/* sheet cards and tables */
+.card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);margin-bottom:18px;overflow:hidden;box-shadow:var(--shadow)}
+.card-head{padding:14px 18px;border-bottom:1px solid var(--line);display:flex;flex-wrap:wrap;gap:4px 16px;align-items:baseline}
+.card-head h2{font-size:15px;font-weight:650;margin:0}
+details.card>summary{list-style:none;cursor:pointer}details.card>summary::-webkit-details-marker{display:none}
+details.card>summary h2:before{content:"▾";display:inline-block;width:1.2em;color:var(--muted)}
+details.card:not([open])>summary h2:before{content:"▸"}
+.badge{margin-left:auto;font-size:12px}.badge b{padding:1px 9px;border-radius:999px;margin-left:4px;border:1px solid transparent;font-weight:600}
+.badge .e{background:var(--err);border-color:var(--err-b)}.badge .w{background:var(--warn);border-color:var(--warn-b)}
+.notes{padding:10px 18px;border-bottom:1px solid var(--line);font-size:13px}
 .notes .error{color:var(--err-b)}.notes .warning{color:var(--warn-b)}
 .scroll{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th,td{padding:4px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
-th{font-size:11px;text-transform:uppercase;letter-spacing:.04em;color:var(--muted);background:var(--bg)}
-tbody tr:not(.sec):hover td{background:var(--bg)}
-tr.sec td{background:var(--bg);font-weight:600;font-size:12px;color:var(--muted);text-transform:uppercase}
+th,td{padding:5px 8px;border-bottom:1px solid var(--line);text-align:left;vertical-align:middle;white-space:nowrap}
+th{font-size:11px;font-weight:650;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg)}
+td{border-left:1px solid var(--line)}
+tbody tr:not(.sec):hover td{background:color-mix(in srgb,var(--accent) 5%,transparent)}
+tr.sec td{background:var(--bg);font-weight:650;font-size:11px;letter-spacing:.05em;color:var(--muted);text-transform:uppercase}
 td.rn{color:var(--muted);text-align:right;width:30px}
-input.c{width:100%;min-width:96px;font:inherit;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:6px;padding:4px 7px}
-input.c:focus{outline:2px solid var(--accent)}
+input.c{width:100%;min-width:96px;font:inherit;color:var(--text);background:transparent;border:1px solid var(--line);border-radius:6px;padding:5px 8px;transition:border-color .12s,box-shadow .12s}
+input.c:hover{border-color:var(--line-2)}
+input.c:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 25%,transparent)}
 input.p{min-width:170px}input.u{min-width:80px;width:100%;margin-top:4px}
 th .ph{display:flex;align-items:center;gap:4px;justify-content:space-between;min-height:22px}
 th.rowh{position:sticky;left:0;background:var(--bg);z-index:1;text-transform:none;font-size:12px}
 th.sechd{text-align:center;border-left:1px solid var(--line)}
-th input.c{text-transform:none;letter-spacing:0;color:var(--text);font-weight:600}
-td{border-left:1px solid var(--line)}
+th input.c{display:block;text-transform:none;letter-spacing:0;color:var(--text);font-weight:600}
 input.c.error{background:var(--err);border-color:var(--err-b)}input.c.warning{background:var(--warn);border-color:var(--warn-b)}
 input.c.edited{background:var(--edit);border-color:var(--edit-b)}
-.kind{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:8px;padding:0 6px;margin-left:6px}
+.kind{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:0 7px;margin-left:6px}
 .flag{font-size:12px;color:var(--muted);white-space:normal;max-width:300px}
 td.changed{background:var(--warn)}td.bad{background:var(--err)}
-.tabs{display:flex;gap:6px;margin-bottom:10px}.tabs button.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
-#acc table{width:auto;min-width:420px;background:var(--panel)}#acc td.n{text-align:right;border-left:0}#acc tr.tot td{font-weight:600}
-a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
+#acc table{width:auto;min-width:420px;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-s)}#acc td.n{text-align:right;border-left:0}#acc tr.tot td{font-weight:650}
+a.pg{color:var(--accent);cursor:pointer;text-decoration:none;border-bottom:1px dotted var(--accent)}
+
+/* search page */
+aside#find{max-width:960px;margin:24px auto 64px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:28px 32px;box-shadow:var(--shadow-lg)}
+#find h2{font-size:20px;font-weight:700;margin:0}
+.find-sub{margin:4px 0 20px;font-size:13px}
+#dbline{display:flex;align-items:center;gap:12px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--bg);margin-bottom:18px}
+.dbicon{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent);flex:none}
+.dbicon svg{width:18px;height:18px}
+.dbinfo{flex:1;min-width:0}
+#dbname{display:block;font-weight:600;color:var(--text);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+#dbtables{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.dbbtns{display:flex;gap:8px;flex:none}
+#find form{display:flex;gap:10px}
+#find input[type=search]{flex:1;min-width:0;font:inherit;font-size:15px;padding:12px 16px;border:1px solid var(--line-2);border-radius:var(--r);background:var(--panel);color:var(--text);transition:border-color .12s,box-shadow .12s}
+#find input[type=search]:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 22%,transparent)}
+#find form button{padding:0 26px;font-size:15px;border-radius:var(--r)}
+.examples{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px;align-items:center;font-size:12px;color:var(--muted)}
+.examples button{padding:4px 12px;border-radius:999px;font-size:12px;color:var(--text);background:var(--bg)}
+.examples button:hover{background:var(--accent-soft);color:var(--accent)}
+#fres{margin-top:22px}
+#fres .count{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;padding:20px 24px;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(135deg,var(--accent-soft),transparent 70%)}
+#fres .count b{font-size:44px;font-weight:750;line-height:1;color:var(--accent);font-variant-numeric:tabular-nums;letter-spacing:-.02em}
+#fres .count span{font-size:15px;color:var(--text)}
+#fres .note{font-size:13px;color:var(--muted);margin:2px 2px 12px}
+#fres .tablewrap{border:1px solid var(--line);border-radius:var(--r);overflow:auto;max-height:60vh}
+#fres table{width:100%;border-collapse:collapse;font-size:13px}
+#fres th{position:sticky;top:0;background:var(--bg);padding:9px 12px;border-bottom:1px solid var(--line-2);border-left:0}
+#fres td{padding:8px 12px;border-left:0;border-bottom:1px solid var(--line);overflow-wrap:anywhere;white-space:normal}
+#fres tbody tr:last-child td{border-bottom:0}
+#fres th.num{text-align:right}
+#fres td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
+#fres tbody tr:hover td{background:var(--bg)}
+#fres details.sql{margin-top:14px;font-size:12px;color:var(--muted)}
+#fres details.sql summary{cursor:pointer;font-weight:550;width:max-content}
+#fres details.sql pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-s);padding:12px 14px;color:var(--text);font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+@media (max-width:900px){
+ header{grid-template-columns:auto 1fr;height:auto;padding:10px 16px;row-gap:8px}
+ header .tabs{grid-column:1/-1;order:3;justify-self:stretch;display:flex}header .tabs button{flex:1}
+ .steps{display:none}.layout{padding:0 16px}main{padding:16px}
+ aside#find{padding:20px 16px;margin:16px 0 48px}#dbline{flex-wrap:wrap}.toolbar{top:0;position:static}
+ #fres .count b{font-size:34px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation-duration:.01s!important}}
 </style></head><body>
-<header><h1>Datasheet extractor</h1>
- <div class="tabs" style="margin:0"><button id="mo" class="on" type="button">OCR</button><button id="ms" type="button">Standardize descriptions</button><button id="mk" type="button">Search</button></div>
- <div class="steps" id="steps"><span id="s1" class="on">1 Upload</span><span id="s2">2 Review</span><span id="s3">3 Export</span></div>
- <div><button id="new" class="hidden" type="button">New upload</button></div></header>
+<header>
+ <div class="brand"><span class="logo"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z"/><path d="M14 3v5h5M9 13h6M9 17h4"/></svg></span><h1>Datasheet extractor</h1></div>
+ <div class="tabs"><button id="mo" class="on" type="button">OCR</button><button id="ms" type="button">Standardize descriptions</button><button id="mk" type="button">Search</button></div>
+ <div class="hright"><div class="steps" id="steps"><span id="s1" class="on">1 Upload</span><span id="s2">2 Review</span><span id="s3">3 Export</span></div>
+  <button id="new" class="hidden small" type="button">New upload</button></div>
+</header>
 <div class="layout">
 <main>
  <div id="drop" tabindex="0" role="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V4m0 0L7 9m5-5 5 5M4 16v3a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-3"/></svg><b>Drop PDFs or images here</b>
@@ -119,14 +189,16 @@ a.pg{color:var(--accent);cursor:pointer;text-decoration:underline}
   </div>
  </section>
 </main>
-<aside id="find" class="hidden"><h2>Ask the database</h2>
- <div id="dbline" class="muted"><span id="dbname">Loading...</span>
-  <button id="dbchange" class="small" type="button">Use another database...</button>
-  <button id="dbreset" class="small hidden" type="button">Back to default</button>
+<aside id="find" class="hidden">
+ <h2>Ask the database</h2>
+ <p class="find-sub muted">Ask in plain English. Every answer comes from a read-only SQL query that you can inspect.</p>
+ <div id="dbline"><span class="dbicon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg></span>
+  <div class="dbinfo"><span id="dbname">Loading...</span><div id="dbtables"></div></div>
+  <div class="dbbtns"><button id="dbchange" class="small" type="button">Use another database...</button>
+  <button id="dbreset" class="small hidden" type="button">Back to default</button></div>
   <input id="dbpick" type="file" accept=".db,.sqlite,.sqlite3,.db3" hidden></div>
- <div id="dbtables" class="muted" style="font-size:12px;margin:2px 0 10px"></div>
- <form id="fform"><input id="fq" type="search" placeholder="e.g. how many rows per category?" aria-label="Search question" autocomplete="off"><button class="primary" type="submit">Search</button></form>
- <div class="muted" style="margin-top:6px;font-size:12px">Ask in plain English. The answer is computed by a read-only SQL query, shown under "SQL used".</div>
+ <form id="fform"><input id="fq" type="search" placeholder="Ask a question, e.g. how many rows are there?" aria-label="Question" autocomplete="off"><button class="primary" type="submit">Ask</button></form>
+ <div class="examples"><span>Try:</span><button class="ex" type="button">How many rows are there?</button><button class="ex" type="button">Show 10 sample rows</button><button class="ex" type="button">How many unique values does each column have?</button></div>
  <div id="fres" aria-live="polite"></div></aside>
 </div>
 <script>
@@ -288,7 +360,7 @@ wire($("drop"),$("pick"),upload);wire($("sdrop"),$("spick"),stdUpload);
 ["dragover","drop"].forEach(t=>window.addEventListener(t,e=>e.preventDefault()));
 $("only").addEventListener("change",filter);
 function setMode(m){mode=m;data=null;std=null;files=[];fail("");$("mo").classList.toggle("on",m==="ocr");$("ms").classList.toggle("on",m==="std");$("mk").classList.toggle("on",m==="search");
- $("find").classList.toggle("hidden",m!=="search");if(m==="search")loadInfo();$("steps").classList.toggle("hidden",m==="search");view("drop");if(m==="search")$("fq").focus()}
+ $("find").classList.toggle("hidden",m!=="search");document.querySelector("main").classList.toggle("hidden",m==="search");if(m==="search")loadInfo();$("steps").classList.toggle("hidden",m==="search");view("drop");if(m==="search")$("fq").focus()}
 $("mo").addEventListener("click",()=>setMode("ocr"));$("ms").addEventListener("click",()=>setMode("std"));$("mk").addEventListener("click",()=>setMode("search"));
 $("new").addEventListener("click",()=>setMode(mode));
 
@@ -317,7 +389,7 @@ async function stdDownload(){fail("");
 
 let dbId="";
 async function loadInfo(){try{const r=await fetch("/search/info?db="+encodeURIComponent(dbId));if(!r.ok)throw new Error(await errText(r));const d=await r.json();
-  $("dbname").textContent="Database: "+d.name;$("dbreset").classList.toggle("hidden",!dbId);
+  $("dbname").textContent=d.name;$("dbreset").classList.toggle("hidden",!dbId);
   $("dbtables").textContent=d.tables.map(t=>t.table+" ("+t.rows.toLocaleString()+" rows, "+t.columns+" columns)").join("  ·  ")}
  catch(x){$("dbname").textContent="No database";$("dbtables").textContent=String(x.message||x)}}
 $("dbchange").addEventListener("click",()=>$("dbpick").click());
@@ -326,6 +398,7 @@ $("dbpick").addEventListener("change",async()=>{const f=$("dbpick").files[0];$("
  $("dbname").textContent="Uploading "+f.name+"...";const fd=new FormData();fd.append("file",f);
  try{const r=await fetch("/search/db",{method:"POST",body:fd});if(!r.ok)throw new Error(await errText(r));dbId=(await r.json()).db;$("fres").replaceChildren();await loadInfo()}
  catch(x){$("fres").replaceChildren(h("div",{class:"panel err"},String(x.message||x)));loadInfo()}});
+document.querySelectorAll(".ex").forEach(b=>b.addEventListener("click",()=>{$("fq").value=b.textContent;$("fform").requestSubmit()}));
 $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq").value.trim(),box=$("fres");if(!q)return;
  box.replaceChildren(h("div",{class:"note"},"Thinking..."));
  try{const r=await fetch("/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q,db:dbId})});
@@ -335,10 +408,10 @@ $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq"
   if(d.kind==="error")out.push(h("div",{class:"panel err"},d.text));
   else if(d.kind==="scalar"){const v=d.rows[0][0];out.push(h("div",{class:"count"},h("b",{},typeof v==="number"?fmtN(v):String(v)),h("span",{},d.text)))}
   else{out.push(h("div",{class:"note"},d.text));
-   if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},d.columns.map(c=>h("th",{},c)))),
+   if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},d.columns.map((c,i)=>h("th",{class:d.rows.some(r=>typeof r[i]==="number")&&!isId(c)?"num":""},c)))),
     h("tbody",{},d.rows.map(row=>h("tr",{},row.map((c,i)=>{const num=typeof c==="number"&&!isId(d.columns[i]);
      return h("td",{class:num?"num":""},c===null||c===""?"—":num?fmtN(c):c)}))))));
    if(d.truncated)out.push(h("div",{class:"note"},"Showing the first "+d.rows.length+" rows."))}
   if(d.sql)out.push(h("details",{class:"sql"},h("summary",{},"SQL used"),h("pre",{},d.sql)));
-  box.replaceChildren(...out)}catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}});
+  box.replaceChildren(...out.map(n=>n.tagName==="TABLE"?h("div",{class:"tablewrap"},n):n))}catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}});
 </script></body></html>
