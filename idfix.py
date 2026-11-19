@@ -81,16 +81,19 @@ def _chk_ok(r):
     return bool(re.search(r"[0-9A-F]{2}$", str(r[1] or ""))) and str(r[1])[-2:].upper() == check(r[2], r[4] or r[3])
 
 
-def web_prices(parts, context=""):
-    """[(name, description, attributes)] -> [(price or None, source text)] from Google Search via Gemini. Never raises: a failure is returned as the source text."""
+def web_prices(parts, context="", market=""):
+    """[(name, description, attributes)] -> [(price or None, source text)] from Google Search via Gemini. Never raises: a failure is returned as the source text.
+    With market (a country), the price is the one in that market, in its local currency, and the source text starts with the ISO currency code: 'KRW, site'."""
     from google.genai import types
     out = [(None, "")] * len(parts)
     for i in range(0, len(parts), BATCH):
         chunk = parts[i:i + BATCH]
         lines = "\n".join(f"{n}. {name} | {desc} | {attrs}" for n, (name, desc, attrs) in enumerate(chunk, 1))
         prompt = ("These items come from a product catalogue database. " + context + "For each item below, search the web for its typical current retail "
-                  "price for exactly that variant (colour, size, material, model as given), in the same currency as the example prices. "
-                  "Reply with one line per item, nothing else, in the form\n<number>|<price as a plain number>|<website name>\n"
+                  f"price{' in ' + market if market else ''} for exactly that variant (colour, size, material, model as given), "
+                  + (f"in the local currency of {market}. " if market else "in the same currency as the example prices. ") +
+                  "Reply with one line per item, nothing else, in the form\n<number>|<price as a plain number>|"
+                  + ("<ISO currency code>, <website name>\n" if market else "<website name>\n") +
                   "If you cannot find a price write <number>|none|none.\n\n" + lines)
         text = ""
         for attempt in range(3):

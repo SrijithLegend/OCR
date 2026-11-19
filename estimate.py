@@ -15,13 +15,15 @@ import nlsql
 SYSTEM = """You read a question about a parts catalogue. Reply as JSON.
 - is_what_if: true only if it asks the price of a variant of a part that may not exist ("if there were yellow", "what would X cost in Y",
   "estimate the price of ..."). Plain lookups are false.
-- part: the product words only, without the variant value and without words like price.
+- part: the product words only, without the variant value and without words like price. Correct obvious spelling mistakes ("hand break" -> "hand brake").
 - attribute_key: EXACTLY one of the ATTRIBUTE KEYS that the wanted value belongs to ("" if none fits).
 - value: the wanted attribute value, as the user wrote it.
-- price_columns: the PRICE COLUMNS the question asks for (for example "in india" -> the India column); [] if it names none."""
-SCHEMA = {"type": "object", "required": ["is_what_if", "part", "attribute_key", "value", "price_columns"],
+- price_columns: the PRICE COLUMNS the question asks for (for example "in india" -> the India column); [] if it names none.
+- market: the country or region the question wants a price for when that is NOT covered by the PRICE COLUMNS (for example "korea"); ""
+  otherwise. A price asked for a market that is not stored is a what-if (is_what_if true), even with no variant (value "")."""
+SCHEMA = {"type": "object", "required": ["is_what_if", "part", "attribute_key", "value", "price_columns", "market"],
           "properties": {"is_what_if": {"type": "boolean"}, "part": {"type": "string"}, "attribute_key": {"type": "string"},
-                         "value": {"type": "string"}, "price_columns": {"type": "array", "items": {"type": "string"}}}}
+                         "value": {"type": "string"}, "price_columns": {"type": "array", "items": {"type": "string"}}, "market": {"type": "string"}}}
 
 
 def _attrs(s):
@@ -34,7 +36,7 @@ def _num(x, whole):
 
 
 def _load(path):
-    """-> (name col, attr col, price cols, {(name, attrs): ([prices per column], text)}) with duplicate rows collapsed to their median price."""
+    """-> (name col, attr col, price cols, {(name, attrs): ([prices per column], text, description)}) with duplicate rows collapsed to their median price."""
     conn = nlsql._connect(path, sandbox=False)
     try:
         table, cols = idfix.find_table(conn)
@@ -43,14 +45,43 @@ def _load(path):
         pcols = [cols["price"], *cols["more"]]
         sel = ", ".join(idfix._q(cols[r]) if r in cols else "NULL" for r in ("name", "attrs", "desc")) + "".join(", " + idfix._q(c) for c in pcols)
         raw = collections.defaultdict(list)
-        text = {}
+        text, descs = {}, {}
         for name, attrs, desc, *prices in conn.execute(f"SELECT {sel} FROM {idfix._q(table)}"):
             raw[(str(name or ""), str(attrs or ""))].append(prices)
             text[(str(name or ""), str(attrs or ""))] = f"{name} {desc} {attrs}".lower()
+            descs[(str(name or ""), str(attrs or ""))] = str(desc or "")
     finally:
         conn.close()
     med = lambda col: statistics.median(v) if (v := [float(p) for p in col if isinstance(p, (int, float))]) else None
-    return cols["name"], cols["attrs"], pcols, {k: ([med(c) for c in zip(*v)], text[k]) for k, v in raw.items()}
+    return cols["name"], cols["attrs"], pcols, {k: ([med(c) for c in zip(*v)], text[k], descs[k]) for k, v in raw.items()}
+
+
+def _web(p, ncol, acol, pcols, variants):
+    """A price for a market the table has no column for: Gemini + Google Search (idfix.web_prices) -> an Estimate row. Never raises."""
+    market = p["market"].strip()
+    words = [w[:-1] if w.endswith("s") and len(w) > 3 else w for w in re.findall(r"[a-z0-9]+", p["part"].lower())]
+    mine = {k: v for k, v in variants.items() if words and all(w in v[1] for w in words)}
+    names = sorted({n for n, _ in mine})[:3] or [p["part"].strip()]  # not in the table at all: look the part up by what the user called it
+    desc = {n: next((v[2] for (m, _), v in mine.items() if m == n and v[2]), "") for n in names}
+    attr = f"{p['attribute_key']}: {p['value'].strip()}" if p["attribute_key"].strip() and p["value"].strip() else ""
+    found = idfix.web_prices([(n, desc[n], attr) for n in names], market=market)
+    columns = [ncol, acol, *pcols, f"price_in_{market.lower().replace(' ', '_')}", "currency", "Source"]
+    rows = [[n, a, *pr, None, None, "Stored"] for (n, a), (pr, _, _) in sorted(mine.items())][:6]
+    basis, ok = [], False
+    for n, (price, src) in zip(names, found):
+        cur, _, site = src.partition(",")
+        if price is None:
+            basis.append(f"{n}: no price found for {market} ({src}).")
+            continue
+        ok = True
+        rows.append([n, attr or "(any variant)", *[None] * len(pcols), price, cur.strip() if site else "", "Estimate"])
+        basis.append(f"{n}: typical retail price in {market} from a web search ({(site or cur).strip() or 'no site named'}), in {cur.strip() if site else 'the local currency'}. "
+                     "Not stored in the database; prices vary by seller, so treat it as a guide.")
+    if not ok:
+        return {"kind": "empty", "text": f"'{p['part']}' in {market} is not stored and the web lookup found nothing: " + " ".join(basis),
+                "sql": "", "columns": [], "rows": [], "truncated": False}
+    return {"kind": "table", "text": f"'{p['part']}' in {market} is not stored, so the {market} price is a web estimate.",
+            "sql": "", "columns": columns, "rows": rows, "truncated": False, "estimated": True, "basis": basis}
 
 
 def what_if(question, path):
@@ -67,7 +98,11 @@ def what_if(question, path):
     keys = sorted(seen)[:60]
     examples = {k: sorted(seen[k])[:8] for k in keys}
     p = nlsql._model(f"ATTRIBUTE KEYS (with some of their values): {examples}\nPRICE COLUMNS: {pcols}\n\nQUESTION\n{question}", SYSTEM, SCHEMA)
-    if not p.get("is_what_if") or not p.get("value", "").strip():
+    if not p.get("is_what_if"):
+        return None
+    if p.get("market", "").strip() and p.get("part", "").strip():
+        return _web(p, ncol, acol, pcols, variants)
+    if not p.get("value", "").strip():
         return None
     key = next((k for k in keys if k.lower() == p["attribute_key"].strip().lower()), None)
     want = p["value"].strip()
@@ -81,7 +116,7 @@ def what_if(question, path):
         return None
     # groups: same name and same other attributes, different value of the wanted attribute
     groups = collections.defaultdict(dict)  # (name, other attrs) -> {value lower: (value, prices, attrs string)}
-    for (name, attrs), (prices, text) in variants.items():
+    for (name, attrs), (prices, text, _) in variants.items():
         at = _attrs(attrs)
         mine = [v for k, v in at if k == key]
         if mine:

@@ -90,6 +90,8 @@ Ask for a variant that is not stored, e.g. `prices of grips if there were yellow
 1. **Ratio:** other parts that have the wanted value and one of this part's values give a price ratio (Yellow / Black). This part's price x that ratio, averaged over the values it has.
 2. **Fallback:** nobody else has the value, so the average of this part's existing variants, flagged as rough.
 
+**Another market, from the web.** Ask for a price in a country the table has no column for (`how much may a hand brake lever cost in korea`) and the app looks it up on the web (Gemini with Google Search, the same lookup Check ids uses). The result shows the stored rows for the part, then an **Estimate** row with the price in that country's local currency, the currency code and the site it came from. The part does not have to be in the table. Sent to Gemini: the part's name, description and the country. This needs a key with Google Search grounding quota (see the Check ids requirement); without it the answer says "Google Search quota exhausted".
+
 Needs an attribute column written `Key: Value; Key: Value`. One attribute at a time. Wrong ids in the data skew the numbers, so run Check ids first.
 
 ## Sample data

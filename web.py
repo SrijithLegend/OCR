@@ -63,7 +63,7 @@ def index():
     return PAGE
 
 
-WHATIF = re.compile(r"\b(if|would|suppose|estimate|hypothetical)\b", re.I)
+WHATIF = re.compile(r"\b(if|would|suppose|estimate|hypothetical|may|might|approx\w*|roughly|how much)\b", re.I)
 
 
 def _estimate(q, path):
