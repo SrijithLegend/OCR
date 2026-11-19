@@ -53,8 +53,8 @@ def test_web_price_for_another_market(tmp_path, monkeypatch):
     monkeypatch.setattr(estimate.idfix, "web_prices", lambda parts, context="", market="": seen.update(parts=parts, market=market) or [(15000.0, "KRW, coupang.com")])
     r = estimate.what_if("how much may grips cost in korea", path)
     assert seen["market"] == "Korea" and seen["parts"][0][:2] == ("Handlebar Grip Set", "Pair of grips")
-    assert r["columns"][-3:] == ["price_in_korea", "currency", "Source"] and r["estimated"]
-    assert r["rows"][-1][-3:] == [15000.0, "KRW", "Estimate"] and [x[-1] for x in r["rows"]][:2] == ["Stored", "Stored"]
+    assert r["columns"][-4:] == ["price_in_korea", "currency", "same_in_catalogue_currency", "Source"] and r["estimated"]
+    assert r["rows"][-1][-4:] == [15000.0, "KRW", None, "Estimate"] and [x[-1] for x in r["rows"]][:2] == ["Stored", "Stored"]
 
 
 def test_web_price_not_in_database_and_failure(tmp_path, monkeypatch):
@@ -62,7 +62,7 @@ def test_web_price_not_in_database_and_failure(tmp_path, monkeypatch):
     monkeypatch.setattr(estimate.nlsql, "_model", market("spark plug"))
     monkeypatch.setattr(estimate.idfix, "web_prices", lambda parts, context="", market="": [(9.5, "USD, amazon.com")])
     r = estimate.what_if("how much may a spark plug cost in the us", path)
-    assert [x[-1] for x in r["rows"]] == ["Estimate"] and r["rows"][0][0] == "spark plug" and r["rows"][0][-2] == "USD"
+    assert [x[-1] for x in r["rows"]] == ["Estimate"] and r["rows"][0][0] == "spark plug" and r["rows"][0][-3] == "USD"
     monkeypatch.setattr(estimate.idfix, "web_prices", lambda parts, context="", market="": [(None, "Google Search quota exhausted")])
     def model(prompt, system=None, schema=None):
         if schema is estimate.GUESS_SCHEMA:
@@ -75,8 +75,14 @@ def test_web_price_not_in_database_and_failure(tmp_path, monkeypatch):
 
 def test_model_guess_when_the_web_lookup_fails(tmp_path, monkeypatch):
     monkeypatch.setattr(estimate.idfix, "web_prices", lambda parts, context="", market="": [(None, "Google Search quota exhausted")])
-    model = lambda prompt, system=None, schema=None: {"estimates": [{"price": 18000, "currency": "krw"}]} if schema is estimate.GUESS_SCHEMA else market("grips")()
+    seen = {}
+    def model(prompt, system=None, schema=None):
+        if schema is estimate.GUESS_SCHEMA:
+            seen["prompt"] = prompt
+            return {"estimates": [{"price": 18000, "currency": "krw", "catalogue_price": 1100, "catalogue_currency": "inr"}]}
+        return market("grips")()
     monkeypatch.setattr(estimate.nlsql, "_model", model)
     r = estimate.what_if("how much may grips cost in korea", db(tmp_path))
-    assert r["estimated"] and r["rows"][-1][-3:] == [18000.0, "KRW", "Estimate (model)"]
-    assert "NOT from the web" in r["basis"][0] and "quota exhausted" in r["basis"][0]
+    assert r["estimated"] and r["rows"][-1][-4:] == [18000.0, "KRW", 1100.0, "Estimate (model)"]
+    assert "part_price_india 360-400" in seen["prompt"]                              # the model sees what the table says the part costs
+    assert "NOT from the web" in r["basis"][0] and "quota exhausted" in r["basis"][0] and "1,100 INR" in r["basis"][0]

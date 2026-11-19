@@ -58,20 +58,27 @@ def _load(path):
 
 GUESS_SYSTEM = "You give rough typical retail prices from your own knowledge (you cannot browse the web). Reply as JSON."
 GUESS_SCHEMA = {"type": "object", "required": ["estimates"], "properties": {"estimates": {"type": "array", "items": {
-    "type": "object", "required": ["price", "currency"], "properties": {"price": {"type": "number"}, "currency": {"type": "string"}}}}}}
+    "type": "object", "required": ["price", "currency", "catalogue_price", "catalogue_currency"],
+    "properties": {"price": {"type": "number"}, "currency": {"type": "string"}, "catalogue_price": {"type": "number"}, "catalogue_currency": {"type": "string"}}}}}}
 
 
 def _guess(items, market):
-    """[(name, description, attrs)] -> [(price, ISO currency) or None], one per item, from the model's own knowledge. Never raises."""
+    """[(name, description, attrs, stored prices text)] -> [(local price, ISO currency, same in the catalogue's currency, its ISO code) or None],
+    one per item, from the model's own knowledge, anchored on the stored prices. Never raises."""
     if not items:
         return []
-    lines = "\n".join(f"{n}. {name} | {d} | {a}" for n, (name, d, a) in enumerate(items, 1))
+    lines = "\n".join(f"{n}. {name} | {d} | {a} | catalogue prices: {anc or 'none (not in the catalogue)'}" for n, (name, d, a, anc) in enumerate(items, 1))
     try:
-        out = nlsql._model(f"Give a rough typical retail price in {market}, in the local currency of {market} (ISO currency code), for each item, in order. "
-                           f"Use price 0 for one you cannot estimate.\n{lines}", GUESS_SYSTEM, GUESS_SCHEMA)["estimates"]
+        out = nlsql._model(
+            f"Estimate what each item would typically sell for in {market}, in order. Give the price in the local currency of {market} (ISO code) and the same "
+            "amount converted to the catalogue's currency (ISO code) at a rough current exchange rate. The catalogue keeps all its prices in one currency, "
+            "probably the local currency of the market named in its first price column (a part_price_india column means INR). 'catalogue prices' is what "
+            "the same item costs there: stay at that price level (a budget part stays a budget part) unless the market is clearly cheaper or dearer. "
+            f"Use price 0 for one you cannot estimate.\n{lines}", GUESS_SYSTEM, GUESS_SCHEMA)["estimates"]
     except Exception:
         return [None] * len(items)
-    got = [(float(e["price"]), str(e["currency"]).strip().upper()) if float(e.get("price") or 0) > 0 else None for e in out[:len(items)]]
+    got = [(float(e["price"]), str(e["currency"]).strip().upper(), float(e.get("catalogue_price") or 0) or None, str(e.get("catalogue_currency") or "").strip().upper())
+           if float(e.get("price") or 0) > 0 else None for e in out[:len(items)]]
     return got + [None] * (len(items) - len(got))
 
 
@@ -85,22 +92,28 @@ def _web(p, ncol, acol, pcols, variants):
     attr = f"{p['attribute_key']}: {p['value'].strip()}" if p["attribute_key"].strip() and p["value"].strip() else ""
     found = idfix.web_prices([(n, desc[n], attr) for n in names], market=market)
     miss = [i for i, (price, _) in enumerate(found) if price is None]
-    guess = dict(zip(miss, _guess([(names[i], desc[names[i]], attr) for i in miss], market)))  # no web price: the model's own rough figure
-    columns = [ncol, acol, *pcols, f"price_in_{market.lower().replace(' ', '_')}", "currency", "Source"]
-    rows = [[n, a, *pr, None, None, "Stored"] for (n, a), (pr, _, _) in sorted(mine.items())][:6]
+    def stored(n):  # what the table already says this part costs, per price column
+        return "; ".join(f"{pcols[c]} {min(v):g}-{max(v):g}" for c in range(len(pcols))
+                         if (v := [pr[c] for (m, _), (pr, _, _) in mine.items() if m == n and pr[c] is not None]))
+    guess = dict(zip(miss, _guess([(names[i], desc[names[i]], attr, stored(names[i])) for i in miss], market)))  # no web price: the model's own rough figure
+    columns = [ncol, acol, *pcols, f"price_in_{market.lower().replace(' ', '_')}", "currency", "same_in_catalogue_currency", "Source"]
+    rows = [[n, a, *pr, None, None, None, "Stored"] for (n, a), (pr, _, _) in sorted(mine.items())][:6]
     basis, ok = [], False
     for i, (n, (price, src)) in enumerate(zip(names, found)):
         cur, _, site = src.partition(",")
         if price is None:
             if guess.get(i):
                 ok = True
-                rows.append([n, attr or "(any variant)", *[None] * len(pcols), guess[i][0], guess[i][1], "Estimate (model)"])
-                basis.append(f"{n}: a rough price for {market} from the model's own knowledge, NOT from the web (the web lookup failed: {src}). Treat it as a guide only.")
+                g = guess[i]
+                rows.append([n, attr or "(any variant)", *[None] * len(pcols), g[0], g[1], g[2], "Estimate (model)"])
+                basis.append(f"{n}: a rough price for {market} ({g[0]:,.0f} {g[1]}" + (f", about {g[2]:,.0f} {g[3]} in the catalogue's currency" if g[2] else "") +
+                             f") from the model's own knowledge, NOT from the web (the web lookup failed: {src}). It was anchored on the stored prices"
+                             f"{' (' + stored(n) + ')' if stored(n) else ' (none: this part is not in the table)'}. Treat it as a guide only.")
             else:
                 basis.append(f"{n}: no price found for {market} ({src}).")
             continue
         ok = True
-        rows.append([n, attr or "(any variant)", *[None] * len(pcols), price, cur.strip() if site else "", "Estimate"])
+        rows.append([n, attr or "(any variant)", *[None] * len(pcols), price, cur.strip() if site else "", None, "Estimate"])
         basis.append(f"{n}: typical retail price in {market} from a web search ({(site or cur).strip() or 'no site named'}), in {cur.strip() if site else 'the local currency'}. "
                      "Not stored in the database; prices vary by seller, so treat it as a guide.")
     if not ok:
