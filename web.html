@@ -463,7 +463,7 @@ $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq"
   else if(d.kind==="scalar"){const v=d.rows[0][0];out.push(h("div",{class:"count"},h("b",{},typeof v==="number"?fmtN(v):String(v)),h("span",{},d.text)))}
   else{out.push(h("div",{class:"note"},d.text));
    if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},d.columns.map((c,i)=>h("th",{class:d.rows.some(r=>typeof r[i]==="number")&&!isId(c)?"num":""},c)))),
-    h("tbody",{},d.rows.map(row=>{const est=d.estimated&&row[row.length-1]==="Estimate";return h("tr",{class:est?"est":""},row.map((c,i)=>{const num=typeof c==="number"&&!isId(d.columns[i]);
+    h("tbody",{},d.rows.map(row=>{const est=d.estimated&&String(row[row.length-1]).startsWith("Estimate");return h("tr",{class:est?"est":""},row.map((c,i)=>{const num=typeof c==="number"&&!isId(d.columns[i]);
      return h("td",{class:(num?"num":"")+(est&&num?" est":"")},c===null||c===""?"—":num?(est?"≈ ":"")+fmtN(c):d.estimated&&i===row.length-1?h("span",{class:"badge "+(est?"warn":"ok")},c):c)}))}))));
    if(d.truncated)out.push(h("div",{class:"note"},"Showing the first "+d.rows.length+" rows."))}
   if(d.basis)out.push(h("details",{class:"sql",open:true},h("summary",{},"How this was estimated"),h("ul",{},d.basis.map(b=>h("li",{},b)))));
