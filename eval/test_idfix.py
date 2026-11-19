@@ -16,6 +16,7 @@ def test_sample_dataset_30_percent_wrong_and_detected(tmp_path):
     for f in res["fixes"]:
         if f["how"] == "database":                            # the same part elsewhere: its true id and price
             assert f["new_id"] == truth[f["rowid"]]["true_id"] and f["new_price"] == float(truth[f["rowid"]]["true_price"])
+            assert f["new_more"] == (float(truth[f["rowid"]]["true_price_china"]),)  # the China price is restored with it
         else:                                                 # not in the database: a new id with a valid check, price left for the web
             assert f["new_price"] is None and f["new_id"] != f["old_id"] and f["new_id"][-2:] == idfix.check(f["name"], f["attrs"])
     assert {f["how"] for f in res["fixes"]} >= {"database", "unresolved"}

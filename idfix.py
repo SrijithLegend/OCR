@@ -48,6 +48,7 @@ def find_table(conn):
                     found[role] = c
                     used.add(c)
                     break
+        found["more"] = [c for c in cols if c not in used and re.search(ROLES["price"], c, re.I)]  # further price columns (e.g. one per country)
         if {"id", "name", "price"} <= found.keys() and (best is None or len(found) > len(best[1])):
             best = (t, found)
     if not best:
@@ -64,7 +65,8 @@ def _load(path):
     try:
         table, cols = find_table(conn)
         sel = ", ".join(_q(cols[r]) if r in cols else "NULL" for r in ("id", "name", "desc", "attrs", "price"))
-        rows = [(rid, pid, str(n or ""), str(d or ""), str(a or ""), p) for rid, pid, n, d, a, p in conn.execute(f"SELECT rowid, {sel} FROM {_q(table)}")]
+        more = "".join(", " + _q(c) for c in cols["more"])
+        rows = [(rid, pid, str(n or ""), str(d or ""), str(a or ""), p, tuple(x)) for rid, pid, n, d, a, p, *x in conn.execute(f"SELECT rowid, {sel}{more} FROM {_q(table)}")]
     finally:
         conn.close()
     return table, cols, rows
@@ -170,7 +172,7 @@ def check_table(path, web=True):
     good = {}
     for r in rows:
         if r[0] not in lose and r[0] not in amb:
-            good.setdefault(_key(r), (r[1], r[5]))
+            good.setdefault(_key(r), (r[1], r[5], r[6]))
     goodrows = [r for r in rows if r[0] not in lose and r[0] not in amb]
     run = lambda i: [int(m[0]) for m in re.finditer(r"\d{2,}", str(i)[:-2] if checked else str(i))][-1:]
     nxt = max([n for r in goodrows for n in run(r[1])] or [0]) + 1
@@ -180,13 +182,13 @@ def check_table(path, web=True):
     for r in rows:
         if r[0] not in lose and r[0] not in amb:
             continue
-        rid, pid, name, desc, attrs, price = r
+        rid, pid, name, desc, attrs, price, _ = r
         s = _key(r)
-        f = {"rowid": rid, "name": name, "attrs": attrs or desc, "old_id": pid, "old_price": price, "new_id": None, "new_price": None, "how": "", "source": ""}
+        f = {"rowid": rid, "name": name, "attrs": attrs or desc, "old_id": pid, "old_price": price, "new_id": None, "new_price": None, "new_more": None, "how": "", "source": ""}
         if rid in amb and s not in good:
             f.update(how="ambiguous", source="two different parts share this id and nothing says which one is right")
         elif s in good:
-            f.update(new_id=good[s][0], new_price=good[s][1], how="database", source="same part elsewhere in the database")
+            f.update(new_id=good[s][0], new_price=good[s][1], new_more=good[s][2], how="database", source="same part elsewhere in the database")
         elif s in minted:  # a second wrong row for a part that is not in the database: share the first one's new id and price
             f["twin"] = minted[s]
             f["new_id"] = minted[s]["new_id"]
@@ -206,7 +208,7 @@ def check_table(path, web=True):
         f.update(new_price=price, how="web" if price is not None else "unresolved", source=src)
     for f in fixes:
         if t := f.pop("twin", None):
-            f.update(new_price=t["new_price"], how=t["how"], source=t["source"])
+            f.update(new_price=t["new_price"], new_more=t["new_more"], how=t["how"], source=t["source"])
     return {"table": table, "columns": cols, "mode": mode, "total": len(rows), "bad": len(fixes), "fixes": fixes}
 
 
@@ -216,7 +218,9 @@ def apply(path, fixes):
     with c:
         for f in fixes:
             if f["new_id"] and f["new_price"] is not None:
-                c.execute(f"UPDATE {_q(table)} SET {_q(cols['id'])}=?, {_q(cols['price'])}=? WHERE rowid=?", (f["new_id"], f["new_price"], f["rowid"]))
+                more = f.get("new_more") or [None] * len(cols["more"])  # other price columns: from the database, else emptied (they were another part's)
+                sets = "".join(f", {_q(m)}=?" for m in cols["more"])
+                c.execute(f"UPDATE {_q(table)} SET {_q(cols['id'])}=?, {_q(cols['price'])}=?{sets} WHERE rowid=?", (f["new_id"], f["new_price"], *more, f["rowid"]))
     c.close()
 
 

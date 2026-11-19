@@ -3,6 +3,7 @@ Run: uvicorn web:app --host 127.0.0.1 --port 8000   (needs GENAI_API_KEY, e.g. i
 import atexit
 import collections
 import os
+import re
 import shutil
 import sqlite3
 import tempfile
@@ -18,6 +19,7 @@ from starlette.background import BackgroundTask
 
 import main as ocr
 import openpyxl
+import estimate
 import idfix
 import nlsql
 import standard_valve as sv
@@ -61,6 +63,16 @@ def index():
     return PAGE
 
 
+WHATIF = re.compile(r"\b(if|would|suppose|estimate|hypothetical)\b", re.I)
+
+
+def _estimate(q, path):
+    try:
+        return estimate.what_if(q, path)
+    except Exception:  # the estimate is a bonus; the normal answer still stands
+        return None
+
+
 @app.post("/search")
 def search(payload: dict = Body(...)):
     """Plain-English question about a database -> {kind, text, sql, columns, rows, truncated}. Read-only."""
@@ -68,7 +80,14 @@ def search(payload: dict = Body(...)):
     if not q:
         raise HTTPException(422, "Type a question first")
     path, _ = db_path(payload.get("db"))
-    return nlsql.ask(q, path)
+    what_if = bool(WHATIF.search(q))
+    r = _estimate(q, path) if what_if else None  # "if there were yellow ...": try an estimate first
+    if r:
+        return r
+    r = nlsql.ask(q, path)
+    if r["kind"] == "empty" and not what_if:  # nothing stored: it may still be a what-if without the usual cue words
+        r = _estimate(q, path) or r
+    return r
 
 
 @app.get("/search/local")

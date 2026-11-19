@@ -41,6 +41,9 @@ Reply as JSON: {"sql": "...", "note": "..."}.
 - Sums, averages, min and max ignore NULLs; say in the note if many rows have no value.
 - Listing questions: include identifying columns, and LIMIT 200 unless the user asks for all.
 - Match text case-insensitively (lower() or LIKE) unless you are using an exact hint value.
+- A product phrase from the question with no VALUE HINT may sit in ANY text column. Never filter on the name column alone and never use '=' on
+  a guessed value: put the whole phrase through LIKE on the name, description AND attribute columns together (OR), and always return
+  the id, name, description, attribute columns plus whatever was asked (price etc.) so the rows can be told apart.
 - If the database cannot answer the question, return {"sql": "", "note": "<why, and what the data does contain>"}."""
 
 SCHEMA_JSON = {"type": "object", "properties": {"sql": {"type": "string"}, "note": {"type": "string"}}, "required": ["sql", "note"]}
@@ -154,13 +157,13 @@ def _get_client():
         return _client
 
 
-def _model(prompt):
+def _model(prompt, system=SYSTEM, schema=SCHEMA_JSON):
     from google.genai import types
     client = _get_client()
     for attempt in range(4):
         try:
             r = client.models.generate_content(model=MODEL, contents=prompt, config=types.GenerateContentConfig(
-                system_instruction=SYSTEM, temperature=0, response_mime_type="application/json", response_json_schema=SCHEMA_JSON))
+                system_instruction=system, temperature=0, response_mime_type="application/json", response_json_schema=schema))
             if not r.text:
                 raise RuntimeError("The model returned nothing (blocked or truncated).")
             return json.loads(r.text)

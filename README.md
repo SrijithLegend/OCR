@@ -83,17 +83,26 @@ The page only shows the fixes. To write them: `python idfix.py [db] --apply`.
 
 **Requirement.** Step 3 needs a key with Google Search grounding quota. "Google Search quota exhausted" means enable billing on the key or set `GROUND_MODEL` to a model that has it.
 
+## What-if prices (estimates)
+
+Ask for a variant that is not stored, e.g. `prices of grips if there were yellow in india`. When a question returns no rows, the app checks whether it is a what-if and, if so, shows the stored variants plus an **Estimate** row (marked, never written to the database). The model only reads the question (part, attribute, value, price columns); the arithmetic is plain Python (`estimate.py`):
+
+1. **Ratio:** other parts that have the wanted value and one of this part's values give a price ratio (Yellow / Black). This part's price x that ratio, averaged over the values it has.
+2. **Fallback:** nobody else has the value, so the average of this part's existing variants, flagged as rough.
+
+Needs an attribute column written `Key: Value; Key: Value`. One attribute at a time. Wrong ids in the data skew the numbers, so run Check ids first.
+
 ## Sample data
 
 `python gen_sample_db.py` builds a sample catalogue of 133 motorcycle parts (seeded, identical every run) with 30% of the rows carrying another part's id and price:
 
 | File | Contents |
 |---|---|
-| `sample_parts.db` | table `parts`: part_id, part_name, part_description, part_attribute, part_price |
-| `sample_parts.xlsx` | Excel copy: sheet `parts` and sheet `answer_key` |
-| `sample_parts_truth.csv` | the correct id and price of every row, for scoring |
+| `sample_parts.db` | table `parts`: part_id, part_name, part_description, part_attribute, part_price_india, part_price_china |
+| `sample_parts.xlsx` | Excel copy: sheet `parts` (Part ID, Part Description, Part Attribute, Part Price in India, Part Price in China) and sheet `answer_key` |
+| `sample_parts_truth.csv` | the correct id and both prices of every row, for scoring |
 
-These are generated files and are not committed (`*.db` and `sample_parts*` are git-ignored). Prices are rough figures.
+These are generated files and are not committed (`*.db` and `sample_parts*` are git-ignored). Prices are rough INR figures; the China-made price is 55-85% of the India-made one. If a table has several price columns, Check ids restores all of them from the database, and empties the extra ones when the main price has to come from the web (they belonged to another part).
 
 ## Command line
 

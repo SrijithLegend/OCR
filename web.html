@@ -141,6 +141,7 @@ aside#find{max-width:960px;margin:24px auto 64px;background:var(--panel);border:
 #fres th.num{text-align:right}
 #fres td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 #fres tbody tr:hover td{background:var(--bg)}
+#fres td.est{color:var(--accent);font-style:italic;font-weight:600}#fres tr.est td{background:var(--accent-soft)}#fres ul{margin:8px 0 0;padding-left:18px;color:var(--text)}
 #fres details.sql{margin-top:14px;font-size:12px;color:var(--muted)}
 #fres details.sql summary{cursor:pointer;font-weight:550;width:max-content}
 #fres details.sql pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-s);padding:12px 14px;color:var(--text);font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -462,9 +463,10 @@ $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq"
   else if(d.kind==="scalar"){const v=d.rows[0][0];out.push(h("div",{class:"count"},h("b",{},typeof v==="number"?fmtN(v):String(v)),h("span",{},d.text)))}
   else{out.push(h("div",{class:"note"},d.text));
    if(d.rows.length)out.push(h("table",{},h("thead",{},h("tr",{},d.columns.map((c,i)=>h("th",{class:d.rows.some(r=>typeof r[i]==="number")&&!isId(c)?"num":""},c)))),
-    h("tbody",{},d.rows.map(row=>h("tr",{},row.map((c,i)=>{const num=typeof c==="number"&&!isId(d.columns[i]);
-     return h("td",{class:num?"num":""},c===null||c===""?"—":num?fmtN(c):c)}))))));
+    h("tbody",{},d.rows.map(row=>{const est=d.estimated&&row[row.length-1]==="Estimate";return h("tr",{class:est?"est":""},row.map((c,i)=>{const num=typeof c==="number"&&!isId(d.columns[i]);
+     return h("td",{class:(num?"num":"")+(est&&num?" est":"")},c===null||c===""?"—":num?(est?"≈ ":"")+fmtN(c):d.estimated&&i===row.length-1?h("span",{class:"badge "+(est?"warn":"ok")},c):c)}))}))));
    if(d.truncated)out.push(h("div",{class:"note"},"Showing the first "+d.rows.length+" rows."))}
+  if(d.basis)out.push(h("details",{class:"sql",open:true},h("summary",{},"How this was estimated"),h("ul",{},d.basis.map(b=>h("li",{},b)))));
   if(d.sql)out.push(h("details",{class:"sql"},h("summary",{},"SQL used"),h("pre",{},d.sql)));
   box.replaceChildren(...out.map(n=>n.tagName==="TABLE"?h("div",{class:"tablewrap"},n):n))}catch(x){box.replaceChildren(h("div",{class:"panel err"},String(x.message||x)))}});
 </script></body></html>
