@@ -142,6 +142,11 @@ aside#find{max-width:960px;margin:24px auto 64px;background:var(--panel);border:
 #fres td.num{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}
 #fres tbody tr:hover td{background:var(--bg)}
 #fres td.est{color:var(--accent);font-style:italic;font-weight:600}#fres tr.est td{background:var(--accent-soft)}#fres ul{margin:8px 0 0;padding-left:18px;color:var(--text)}
+.think{display:flex;align-items:center;gap:18px;padding:22px 24px;margin-top:22px;border:1px solid var(--line);border-radius:var(--r);background:linear-gradient(135deg,var(--accent-soft),transparent 70%)}
+.think .spin{flex:none;width:34px;height:34px;border:4px solid var(--line-2);border-top-color:var(--accent);border-radius:50%;animation:s .8s linear infinite}
+.think b{display:block;font-size:20px;font-weight:650;letter-spacing:-.01em;color:var(--text)}
+.think span{display:block;font-size:13.5px;color:var(--muted);margin-top:3px;font-variant-numeric:tabular-nums}
+@media (prefers-reduced-motion:reduce){.think .spin{animation:none;border-color:var(--accent)}}
 #fres details.sql{margin-top:14px;font-size:12px;color:var(--muted)}
 #fres details.sql summary{cursor:pointer;font-weight:550;width:max-content}
 #fres details.sql pre{margin:8px 0 0;white-space:pre-wrap;word-break:break-word;background:var(--bg);border:1px solid var(--line);border-radius:var(--r-s);padding:12px 14px;color:var(--text);font:12px/1.55 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
@@ -245,6 +250,11 @@ function h(tag,props,...kids){const e=document.createElement(tag);
   else if(v!==null&&v!==undefined&&v!==false)e.setAttribute(k,v===true?"":v)}
  for(const k of kids.flat())if(k!==null&&k!==undefined)e.append(k.nodeType?k:document.createTextNode(String(k)));return e}
 
+const ASK_STAGES=[[0,"Reading your question…"],[4,"Searching your data…"],[10,"Working out an estimate…"],[20,"Still going: web look-ups and estimates can take a minute…"]],
+ FIX_STAGES=[[0,"Checking every id…"],[5,"Looking up prices where needed…"],[30,"Still going: web look-ups can take a minute…"]];
+function thinking(box,stages){const t0=Date.now(),title=h("b",{},stages[0][1]),sub=h("span",{},"0 s"),el=h("div",{class:"think",role:"status"},h("div",{class:"spin"}),h("div",{},title,sub));
+ box.replaceChildren(el);
+ const tick=setInterval(()=>{if(!el.isConnected){clearInterval(tick);return}const n=Math.floor((Date.now()-t0)/1000);title.textContent=stages.filter(x=>n>=x[0]).pop()[1];sub.textContent=n+" s elapsed"},500)}
 let tm=null;
 function view(v,msg){clearInterval(tm);
  if(v==="busy"){const t0=Date.now(),el=$("timer");el.textContent="0:00";tm=setInterval(()=>{const n=Math.floor((Date.now()-t0)/1e3);el.textContent=Math.floor(n/60)+":"+String(n%60).padStart(2,"0")},1e3)}
@@ -428,7 +438,7 @@ $("dbchange").addEventListener("click",()=>$("dbpick").click());
 async function loadLocal(){try{const r=await fetch("/search/local"),d=await r.json(),s=$("dbsel");s.replaceChildren(...d.files.map(f=>h("option",{value:f==d.default?"":"local:"+f},f)));
   s.classList.toggle("hidden",d.files.length<2);s.value=dbId}catch{}}
 $("dbsel").addEventListener("change",()=>{dbId=$("dbsel").value;$("fres").replaceChildren();loadInfo()});
-$("fixgo").addEventListener("click",async()=>{const box=$("fixres"),b=$("fixgo");b.disabled=true;box.replaceChildren(h("div",{class:"note"},"Checking ids and looking up prices (web lookups can take a minute)..."));
+$("fixgo").addEventListener("click",async()=>{const box=$("fixres"),b=$("fixgo");b.disabled=true;thinking(box,FIX_STAGES);
  try{const r=await fetch("/search/fix",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({db:dbId})});if(!r.ok)throw new Error(await errText(r));const d=await r.json();
   const n=k=>d.fixes.filter(f=>f.how===k).length,money=v=>v===null||v===undefined?"—":Number(v).toLocaleString(undefined,{maximumFractionDigits:2}),
    chip=(num,label,cls)=>h("div",{class:"chip "+cls},h("b",{},num),h("span",{},label)),
@@ -454,7 +464,7 @@ $("dbpick").addEventListener("change",async()=>{const f=$("dbpick").files[0];$("
  catch(x){$("fres").replaceChildren(h("div",{class:"panel err"},String(x.message||x)));loadInfo()}});
 document.querySelectorAll(".ex").forEach(b=>b.addEventListener("click",()=>{$("fq").value=b.textContent;$("fform").requestSubmit()}));
 $("fform").addEventListener("submit",async e=>{e.preventDefault();const q=$("fq").value.trim(),box=$("fres");if(!q)return;
- box.replaceChildren(h("div",{class:"note"},"Thinking..."));
+ thinking(box,ASK_STAGES);
  try{const r=await fetch("/search",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({query:q,db:dbId})});
   if(!r.ok)throw new Error(await errText(r));const d=await r.json();
   const fmtN=c=>Number.isInteger(c)?c.toLocaleString():c.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2});
