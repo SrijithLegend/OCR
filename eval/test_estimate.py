@@ -64,5 +64,19 @@ def test_web_price_not_in_database_and_failure(tmp_path, monkeypatch):
     r = estimate.what_if("how much may a spark plug cost in the us", path)
     assert [x[-1] for x in r["rows"]] == ["Estimate"] and r["rows"][0][0] == "spark plug" and r["rows"][0][-2] == "USD"
     monkeypatch.setattr(estimate.idfix, "web_prices", lambda parts, context="", market="": [(None, "Google Search quota exhausted")])
-    r = estimate.what_if("how much may a spark plug cost in the us", path)
+    def model(prompt, system=None, schema=None):
+        if schema is estimate.GUESS_SCHEMA:
+            raise RuntimeError("down")
+        return market("spark plug")()
+    monkeypatch.setattr(estimate.nlsql, "_model", model)
+    r = estimate.what_if("how much may a spark plug cost in the us", path)             # no web, no model guess either
     assert r["kind"] == "empty" and "quota exhausted" in r["text"]
+
+
+def test_model_guess_when_the_web_lookup_fails(tmp_path, monkeypatch):
+    monkeypatch.setattr(estimate.idfix, "web_prices", lambda parts, context="", market="": [(None, "Google Search quota exhausted")])
+    model = lambda prompt, system=None, schema=None: {"estimates": [{"price": 18000, "currency": "krw"}]} if schema is estimate.GUESS_SCHEMA else market("grips")()
+    monkeypatch.setattr(estimate.nlsql, "_model", model)
+    r = estimate.what_if("how much may grips cost in korea", db(tmp_path))
+    assert r["estimated"] and r["rows"][-1][-3:] == [18000.0, "KRW", "Estimate (model)"]
+    assert "NOT from the web" in r["basis"][0] and "quota exhausted" in r["basis"][0]

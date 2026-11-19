@@ -56,6 +56,25 @@ def _load(path):
     return cols["name"], cols["attrs"], pcols, {k: ([med(c) for c in zip(*v)], text[k], descs[k]) for k, v in raw.items()}
 
 
+GUESS_SYSTEM = "You give rough typical retail prices from your own knowledge (you cannot browse the web). Reply as JSON."
+GUESS_SCHEMA = {"type": "object", "required": ["estimates"], "properties": {"estimates": {"type": "array", "items": {
+    "type": "object", "required": ["price", "currency"], "properties": {"price": {"type": "number"}, "currency": {"type": "string"}}}}}}
+
+
+def _guess(items, market):
+    """[(name, description, attrs)] -> [(price, ISO currency) or None], one per item, from the model's own knowledge. Never raises."""
+    if not items:
+        return []
+    lines = "\n".join(f"{n}. {name} | {d} | {a}" for n, (name, d, a) in enumerate(items, 1))
+    try:
+        out = nlsql._model(f"Give a rough typical retail price in {market}, in the local currency of {market} (ISO currency code), for each item, in order. "
+                           f"Use price 0 for one you cannot estimate.\n{lines}", GUESS_SYSTEM, GUESS_SCHEMA)["estimates"]
+    except Exception:
+        return [None] * len(items)
+    got = [(float(e["price"]), str(e["currency"]).strip().upper()) if float(e.get("price") or 0) > 0 else None for e in out[:len(items)]]
+    return got + [None] * (len(items) - len(got))
+
+
 def _web(p, ncol, acol, pcols, variants):
     """A price for a market the table has no column for: Gemini + Google Search (idfix.web_prices) -> an Estimate row. Never raises."""
     market = p["market"].strip()
@@ -65,13 +84,20 @@ def _web(p, ncol, acol, pcols, variants):
     desc = {n: next((v[2] for (m, _), v in mine.items() if m == n and v[2]), "") for n in names}
     attr = f"{p['attribute_key']}: {p['value'].strip()}" if p["attribute_key"].strip() and p["value"].strip() else ""
     found = idfix.web_prices([(n, desc[n], attr) for n in names], market=market)
+    miss = [i for i, (price, _) in enumerate(found) if price is None]
+    guess = dict(zip(miss, _guess([(names[i], desc[names[i]], attr) for i in miss], market)))  # no web price: the model's own rough figure
     columns = [ncol, acol, *pcols, f"price_in_{market.lower().replace(' ', '_')}", "currency", "Source"]
     rows = [[n, a, *pr, None, None, "Stored"] for (n, a), (pr, _, _) in sorted(mine.items())][:6]
     basis, ok = [], False
-    for n, (price, src) in zip(names, found):
+    for i, (n, (price, src)) in enumerate(zip(names, found)):
         cur, _, site = src.partition(",")
         if price is None:
-            basis.append(f"{n}: no price found for {market} ({src}).")
+            if guess.get(i):
+                ok = True
+                rows.append([n, attr or "(any variant)", *[None] * len(pcols), guess[i][0], guess[i][1], "Estimate (model)"])
+                basis.append(f"{n}: a rough price for {market} from the model's own knowledge, NOT from the web (the web lookup failed: {src}). Treat it as a guide only.")
+            else:
+                basis.append(f"{n}: no price found for {market} ({src}).")
             continue
         ok = True
         rows.append([n, attr or "(any variant)", *[None] * len(pcols), price, cur.strip() if site else "", "Estimate"])
@@ -80,7 +106,9 @@ def _web(p, ncol, acol, pcols, variants):
     if not ok:
         return {"kind": "empty", "text": f"'{p['part']}' in {market} is not stored and the web lookup found nothing: " + " ".join(basis),
                 "sql": "", "columns": [], "rows": [], "truncated": False}
-    return {"kind": "table", "text": f"'{p['part']}' in {market} is not stored, so the {market} price is a web estimate.",
+    kinds = {r[-1] for r in rows} - {"Stored"}
+    how = {"Estimate": "a web estimate", "Estimate (model)": "a rough estimate from the model's own knowledge, not from the web"}[kinds.pop()] if len(kinds) == 1 else "an estimate (see the notes)"
+    return {"kind": "table", "text": f"'{p['part']}' in {market} is not stored, so the {market} price is {how}.",
             "sql": "", "columns": columns, "rows": rows, "truncated": False, "estimated": True, "basis": basis}
 
 
